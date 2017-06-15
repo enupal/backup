@@ -1,0 +1,18 @@
+{% extends "_layouts/cp" %}
+
+{% set title  = "Settings"|t %}
+{% set bodyClass = craft.request.getSegments()|slice(0, 3)|join(' ') %}
+
+{% set selectedSubnavItem = craft.request.getSegment(2) %}
+{% set selectedSidebarItem = craft.request.getSegment(3) %}
+
+{% set sidebar %}
+
+  <nav class="last">
+    <ul>
+      <li><a href="{{ cpUrl('enupalbackup/settings/general') }}" {% if selectedSidebarItem == 'general' %}class="sel"{% endif %}>{{"General"|t}}</a></li>
+
+    </ul>
+  </nav>
+
+{% endset %}

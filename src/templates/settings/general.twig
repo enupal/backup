@@ -1,0 +1,38 @@
+{% extends "enupalslider/_layouts/settings" %}
+{% import "_includes/forms" as forms %}
+
+{% set settings = craft.enupalslider.getSettings() %}
+{% set fullPageForm = true %}
+{% set saveShortcutRedirect = 'enupalslider/settings/general' %}
+
+{% set saveButton %}
+	<div class="buttons">
+		<input class="btn submit" type="submit" value="{{ 'Save'|t }}">
+	</div>
+{% endset %}
+
+{% set content %}
+
+  <input type="hidden" name="action" value="enupalslider/settings/save-settings">
+
+  <div id="settings-cp">
+
+    {% namespace 'settings' %}
+
+		  {{ forms.textField({
+			  label: "Plugin Name"|t,
+			  id: 'pluginNameOverride',
+			  name: 'pluginNameOverride',
+			  instructions: "Intuitive, human-readable plugin name for the end user."|t,
+			  value: settings['pluginNameOverride'],
+			  placeholder: "Slider"|t,
+			  autofocus: true,
+			  first: true,
+			  errors: ''
+		  }) }}
+
+	  {% endnamespace %}
+
+  </div>
+
+{% endset %}

@@ -1,0 +1,44 @@
+{
+  "name": "enupal/backup",
+  "description": "Simplifies backups and restoration for Craft CMS",
+  "version": "0.0.1",
+  "type": "craft-plugin",
+  "autoload": {
+    "psr-4": {
+      "enupal\\backup\\": "src/"
+    }
+  },
+  "require": {
+    "phpbu/phpbu": "4.0.*",
+    "aws/aws-sdk-php": "2.7.*",
+    "dropbox/dropbox-sdk":"1.1.*",
+    "phpseclib/phpseclib": "2.0.*@dev",
+    "softlayer/objectstorage":"dev-master"
+  },
+  "minimum-stability": "dev",
+  "authors": [
+    {
+      "name": "Enupal",
+      "homepage": "http://enupal.com/"
+    }
+  ],
+  "support": {
+    "email": "info@enupal.com",
+    "issues": "http://enupal.com/plugins/backup/issues?state=open",
+    "source": "http://enupal.com/plugins/backup/",
+    "docs": "http://enupal.com/plugins/backup/",
+    "rss": "http://enupal.com/plugins/backup/commits/master.atom"
+  },
+  "extra": {
+    "name": "Enupal Backup",
+    "handle": "enupalbackup",
+    "version": "0.0.1",
+    "schemaVersion": "0.0.1",
+    "hasSettings": true,
+    "developer": "Enupal",
+    "class": "enupal\\backup\\Backup",
+    "components": {
+      "app": "enupal\\backup\\services\\App"
+    }
+  }
+}

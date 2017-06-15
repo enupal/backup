@@ -1,0 +1,123 @@
+{% extends "enupalslider/_layouts/base" %}
+{% import "_includes/forms" as forms %}
+{% css %}
+	.enupal-field-heading {
+		background-color: rgb(244, 245, 246);
+		color: rgb(85, 85, 85);
+		font-size: .8em;
+		min-height: auto;
+		padding: 8px auto;
+		text-transform: uppercase;
+	}
+{% endcss %}
+{% set crumbs = [
+	{ label: "Sliders"|t, url: url('enupalslider/sliders') }
+] %}
+
+{% set title = sliderId ? 'Edit Slider' : 'New Slider' %}
+
+{% set fullPageForm = true %}
+{% set saveShortcutRedirect = continueEditingUrl %}
+
+{% block saveButton %}
+	<input type="hidden" name="action" value="enupalslider/sliders/save-slider">
+	{{ redirectInput('enupalslider/sliders') }}
+	<input type="hidden" id="sliderId" name="id" value="{{ slider.id is defined ? slider.id : '' }}">
+
+	<div class="btngroup submit first">
+		<input type="submit" class="btn submit" value="{{ 'Save'|t('enupalslider') }}">
+		{% if slider.id != null %}
+		<div class="btn submit menubtn"></div>
+		<div class="menu">
+			<ul>
+				<li><a class="formsubmit" data-redirect="{{('enupalslider/slider/edit/'~slider.id)|hash}}">{{ "Save and continue editing"|t }} <span class="shortcut">⌘S</span></a></li>
+				{#<li><a class="formsubmit" data-redirect="{{'enupalslider/sliders/edit/'~slider.id|hash}}" data-param='saveAsNew' data-value="true">{{ "Save as a new slider"|t('enupalslider') }}</a></li>#}
+			</ul>
+		</div>
+		{% endif %}
+	</div>
+{% endblock %}
+
+{% block main %}
+	<input type="hidden" name="action" value="enupalslider/sliders/save-slider">
+	<input type="hidden" name="handle" value="{{ slider.handle }}">
+	<input type="hidden" name="sliderId" value="{{ sliderId }}">
+
+	{% if namespace is not defined %}{% set namespace = 'fields' %}{% endif %}
+
+	<div class="grid first" data-max-cols="3">
+		<div class="item" data-position="left" data-min-colspan="2" data-max-colspan="3">
+			<div id="fields" class="pane">
+				{% set oneline = "{{ craft.enupalslider.displaySlider('"~slider.handle~"') }}"%}
+
+				{{ forms.field({
+					label: 'Slides'|t('enupalslider'),
+					instructions: 'Slides that represents your content that will display in the slider. Double click if you want add HTML instead.'|t('enupalslider'),
+					id: 'slides'
+					}, forms.elementSelect({
+					elements: slidesElements,
+					elementType: elementType,
+					sources: sources,
+					id: 'slides',
+					name: 'slides',
+					jsClass: 'Craft.AssetSelectInput',
+					selectionLabel: 'Add Slides'|t('enupalslider'),
+					limit: null,
+					viewMode: 'large',
+					criteria: {kind: ['image'], siteId : null}
+				})) }}
+				{#limit: 1,
+					criteria: {"localeEnabled":null}
+				#}
+			</div>
+			<div class="header" style="display: flex;text-align: center;">
+				<div style="flex-grow: 1;">
+					<h3 style="text-transform: uppercase; display: inline-block;">{{ "One line of code:"|t }} </h3>
+					<span id="one-line" class ="short-url"> {{oneline}} </span><button type="button" class="clipbtn" data-clipboard-target="#one-line" ><i class="fa fa-files-o fa-lg" aria-hidden="true" alt="Copy to clipboard"></i></button>
+				</div>
+			</div>
+		</div>
+		<div class="item" data-position="right" data-colspan="1">
+
+			{% if showPreviewBtn %}
+				{% include "_includes/previewbtns" %}
+			{% endif %}
+			<div class="pane meta">
+			{% include 'enupalslider/sliders/_sidebar/settings' %}
+
+				<div class="field" id="enabled-field">
+					<div class="heading"></div>
+					<div class="input">
+						<div class="right">
+							<input type="button" class="btn small formsubmit" value="Delete" data-action="enupalslider/sliders/delete-slider" data-confirm="Are you sure you want to delete this slider and all of it's data?" data-redirect="enupalslider/sliders">
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	{% do view.registerAssetBundle("enupal\\slider\\assetbundles\\EditSliderAsset") %}
+
+	{% js %}
+	{% if not slider.handle %}
+		new Craft.HandleGenerator('#name', '#handle');
+	{% endif %}
+	$(document).ready(function() {
+		var clipboard = new Clipboard('.clipbtn');
+
+		clipboard.on('success', function(e) {
+			Craft.cp.displayNotice(Craft.t('enupalslider','Copied!'));
+			e.clearSelection();
+		});
+
+		var easingOptions = {{ craft.enupalslider.getEasingOptions(false)|json_encode()|raw }};
+		var cssEasingOptions = {{ craft.enupalslider.getEasingOptions(true)|json_encode()|raw }};
+
+		new EnupalSlider(cssEasingOptions, easingOptions);
+	});
+{% endjs %}
+
+{% endblock %}
+
