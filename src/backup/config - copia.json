@@ -1,0 +1,81 @@
+{
+  "verbose": true,
+  "logging": [
+    {
+      "type": "json",
+      "target": "C:/MAMP/htdocs/craft3.personal/plugins/enupalbackup/src/backup/json.log"
+    }
+  ],
+  "backups": [
+    {
+      "source": {
+        "type": "tar",
+        "options": {
+          "path": "C:/MAMP/htdocs/craft3.personal/web/enupalslider",
+          "pathToTar": "C:\\cygwin64\\bin"
+        }
+      },
+      "target": {
+        "dirname": "C:/MAMP/htdocs/craft3.personal/storage/enupalbackup/backup-%Y%m%d-%H%i/",
+        "filename": "enupalbackup-assets-%Y%m%d-%H%i.tar",
+        "compress": "bzip2"
+      },
+      "checks": [
+        {
+          "type": "sizemin",
+          "value": "1M"
+        }
+      ],
+      "syncs": [
+        {
+          "type": "dropbox",
+          "options": {
+            "token": "WpYFCk46C4QAAAAAAAAHmTbUVAvCFnBzf7Vqm3imO4ANZxazrF8YG0COqlh--tLa",
+            "path": "/enupalbackup"
+          }
+        }
+      ],
+      "cleanup": {
+        "type": "Capacity",
+        "options": {
+          "size": "200M"
+        }
+      }
+    },
+    {
+      "source": {
+        "type": "tar",
+        "options": {
+          "path": "C:/MAMP/htdocs/craft3.personal/templates",
+          "pathToTar": "C:\\cygwin64\\bin"
+        }
+      },
+      "target": {
+        "dirname": "C:/MAMP/htdocs/craft3.personal/storage/enupalbackup/backup-%Y%m%d-%H%i/",
+        "filename": "enupalbackup-templates-%Y%m%d-%H%i.tar",
+        "compress": "bzip2"
+      },
+      "checks": [
+        {
+          "type": "sizemin",
+          "value": "1M"
+        }
+      ],
+      "syncs": [
+        {
+          "type": "dropbox",
+          "options": {
+            "token": "WpYFCk46C4QAAAAAAAAHmTbUVAvCFnBzf7Vqm3imO4ANZxazrF8YG0COqlh--tLa",
+            "path": "/enupalbackup"
+          }
+        }
+      ],
+      "cleanup": {
+        "type": "Capacity",
+        "options": {
+          "size": "200M"
+        }
+      }
+    }
+  ]
+}

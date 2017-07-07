@@ -12,6 +12,8 @@ use craft\helpers\Json;
 use craft\helpers\Template as TemplateHelper;
 
 use enupal\slider\Backup;
+use phpbu\App\Cmd;
+use phpbu\App\Util\Cli;
 
 class BackupsController extends BaseController
 {
@@ -21,6 +23,29 @@ class BackupsController extends BaseController
 	public function actionIndex()
 	{
 		return $this->renderTemplate('enupalbackup/backups/index');
+	}
+
+	public function actionRun()
+	{
+		/*//'\"C:\\Program Files (x86)\\Git\\bin\"'*/
+		// windows needed
+		$path = escapeshellarg('C:\\Program Files (x86)\\Git\\bin');
+		//Craft::dd($path);
+		//Cli::addCommandLocation('tar',$path);
+		$cmd = new Cmd();
+		$response = $cmd->run([
+				'--configuration=C:/MAMP/htdocs/craft3.personal/plugins/enupalbackup/src/backup/config.json',
+				//'--debug'
+		]);
+		print_r($response);
+		die();
+
+		// create new archive
+		/*$zipFile = new \PhpZip\ZipFile();
+		$zipFile
+				->addDir('C:/MAMP/htdocs/craft3.personal/web/', "enupalslider")
+				->saveAsFile("enupalbackup__232232323")
+				->close();*/
 	}
 
 	/**

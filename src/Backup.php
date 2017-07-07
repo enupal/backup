@@ -5,6 +5,8 @@ use Craft;
 use craft\events\RegisterUrlRulesEvent;
 use craft\web\UrlManager;
 use yii\base\Event;
+use phpbu\App\Configuration;
+use phpbu\App\Runner;
 
 use enupal\backup\models\Settings;
 
@@ -89,6 +91,9 @@ class Backup extends \craft\base\Plugin
 	private function getCpUrlRules()
 	{
 		return [
+			'enupalbackup/run' =>
+			'enupalbackup/backups/run',
+
 			'enupalbackup' =>
 			'enupalbackup/backups/index',
 

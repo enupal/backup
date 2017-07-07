@@ -7,10 +7,18 @@ use yii\db\Query;
 use enupal\backup\Backup;
 use enupal\backup\elements\Backup as BackupElement;
 use enupal\backup\records\Backup as BackupRecord;
-
+use phpbu\App\Cmd;
 class Backups extends Component
 {
 	protected $backupRecord;
+
+
+	public function test()
+	{
+		(new Cmd())->run([
+			'--configuration=PATH-TO-MY-CONFIG',
+		]);
+	}
 
 	/**
 	 * Constructor
