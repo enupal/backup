@@ -31,7 +31,7 @@
   },
   "extra": {
     "name": "Enupal Backup",
-    "handle": "enupalbackup",
+    "handle": "enupal-backup",
     "version": "0.0.1",
     "schemaVersion": "0.0.1",
     "hasSettings": true,

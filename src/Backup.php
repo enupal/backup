@@ -67,7 +67,7 @@ class Backup extends \craft\base\Plugin
 	 */
 	public static function t($message, array $params = [])
 	{
-		return Craft::t('enupalbackup', $message, $params);
+		return Craft::t('enupal-backup', $message, $params);
 	}
 
 	public static function log($message, $type = 'info')
