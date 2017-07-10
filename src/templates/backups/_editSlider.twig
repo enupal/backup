@@ -25,13 +25,13 @@
 	<input type="hidden" id="sliderId" name="id" value="{{ slider.id is defined ? slider.id : '' }}">
 
 	<div class="btngroup submit first">
-		<input type="submit" class="btn submit" value="{{ 'Save'|t('enupalslider') }}">
+		<input type="submit" class="btn submit" value="{{ 'Save'|t('enupal-slider') }}">
 		{% if slider.id != null %}
 		<div class="btn submit menubtn"></div>
 		<div class="menu">
 			<ul>
 				<li><a class="formsubmit" data-redirect="{{('enupalslider/slider/edit/'~slider.id)|hash}}">{{ "Save and continue editing"|t }} <span class="shortcut">⌘S</span></a></li>
-				{#<li><a class="formsubmit" data-redirect="{{'enupalslider/sliders/edit/'~slider.id|hash}}" data-param='saveAsNew' data-value="true">{{ "Save as a new slider"|t('enupalslider') }}</a></li>#}
+				{#<li><a class="formsubmit" data-redirect="{{'enupalslider/sliders/edit/'~slider.id|hash}}" data-param='saveAsNew' data-value="true">{{ "Save as a new slider"|t('enupal-slider') }}</a></li>#}
 			</ul>
 		</div>
 		{% endif %}
@@ -51,8 +51,8 @@
 				{% set oneline = "{{ craft.enupalslider.displaySlider('"~slider.handle~"') }}"%}
 
 				{{ forms.field({
-					label: 'Slides'|t('enupalslider'),
-					instructions: 'Slides that represents your content that will display in the slider. Double click if you want add HTML instead.'|t('enupalslider'),
+					label: 'Slides'|t('enupal-slider'),
+					instructions: 'Slides that represents your content that will display in the slider. Double click if you want add HTML instead.'|t('enupal-slider'),
 					id: 'slides'
 					}, forms.elementSelect({
 					elements: slidesElements,
@@ -61,7 +61,7 @@
 					id: 'slides',
 					name: 'slides',
 					jsClass: 'Craft.AssetSelectInput',
-					selectionLabel: 'Add Slides'|t('enupalslider'),
+					selectionLabel: 'Add Slides'|t('enupal-slider'),
 					limit: null,
 					viewMode: 'large',
 					criteria: {kind: ['image'], siteId : null}

@@ -7,17 +7,17 @@
 	<ul>
 		<li>
 			<a class="tab {{ tab == 1 ? ' sel' : '' }}" href="#tab-enupalslider-settings">
-				{{ "Settings"|t('enupalslider') }}
+				{{ "Settings"|t('enupal-slider') }}
 			</a>
 		</li>
 		<li>
 			<a class="tab {{ tab == 2 ? ' sel' : '' }} {{ tab2 ? 'error' : '' }}" href="#tab-enupalslider-controls">
-				{{ "Controls"|t('enupalslider') }}
+				{{ "Controls"|t('enupal-slider') }}
 			</a>
 		</li>
 		<li>
 			<a class="tab {{ tab == 3 ? ' sel' : '' }}" href="#tab-enupalslider-slides">
-				{{ "Slides"|t('enupalslider') }}
+				{{ "Slides"|t('enupal-slider') }}
 			</a>
 		</li>
 	</ul>
@@ -25,9 +25,9 @@
 
 <div>
 	<div class="{{ tab != 1 ? 'hidden' : '' }} meta" id="tab-enupalslider-settings">
-		<div class="field enupal-field-heading">{{'Slider Options'|t('enupalslider')}}</div>
+		<div class="field enupal-field-heading">{{'Slider Options'|t('enupal-slider')}}</div>
 		{{ forms.textField({
-			label: "Name"|t('enupalslider'),
+			label: "Name"|t('enupal-slider'),
 			id: 'name',
 			name: 'name',
 			value: slider.name,
@@ -36,7 +36,7 @@
 		}) }}
 
 		{{ forms.textField({
-			label: "Handle"|t('enupalslider'),
+			label: "Handle"|t('enupal-slider'),
 			id: 'handle',
 			name: 'handle',
 			required: true,
@@ -44,14 +44,14 @@
 			errors: slider.getErrors('handle')
 		}) }}
 
-		<div class="field enupal-field-heading">{{'General Options'|t('enupalslider')}}</div>
+		<div class="field enupal-field-heading">{{'General Options'|t('enupal-slider')}}</div>
 
 		{% set modeOptions = craft.enupalslider.getModes() %}
 		{% set easingOptions = craft.enupalslider.getEasingOptions(slider.useCss) %}
 		{% set preloadImagesOptions = craft.enupalslider.getPreloadImagesOptions() %}
 
 		{{ forms.selectField({
-			label: "Mode <span class='info'>Type of transition between slides.</span>"|t('enupalslider'),
+			label: "Mode <span class='info'>Type of transition between slides.</span>"|t('enupal-slider'),
 			id: 'mode',
 			name: 'mode',
 			class: 'enupalslider',
@@ -61,7 +61,7 @@
 		}) }}
 
 		{{ forms.textField({
-			label: "Slide Margin <span class='info'>Margin between each slide</span>"|t('enupalslider'),
+			label: "Slide Margin <span class='info'>Margin between each slide</span>"|t('enupal-slider'),
 			id: 'slideMargin',
 			name: 'slideMargin',
 			class: 'enupalslider',
@@ -70,7 +70,7 @@
 		}) }}
 
 		{{ forms.textField({
-			label: "Speed <span class='info'>Slide transition duration (in ms).</span>"|t('enupalslider'),
+			label: "Speed <span class='info'>Slide transition duration (in ms).</span>"|t('enupal-slider'),
 			id: 'speed',
 			name: 'speed',
 			class: 'enupalslider',
@@ -79,106 +79,106 @@
 		}) }}
 
 		{{ forms.lightswitchField({
-			label: "Random Start <span class='info'>Start slider on a random slide</span>"|t('enupalslider'),
+			label: "Random Start <span class='info'>Start slider on a random slide</span>"|t('enupal-slider'),
 			id: 'randomStart',
 			name: 'randomStart',
 			class: 'enupalslider',
 			on: slider.randomStart,
-			onLabel: "On"|t('enupalslider'),
-			offLabel: "Off"|t('enupalslider')
+			onLabel: "On"|t('enupal-slider'),
+			offLabel: "Off"|t('enupal-slider')
 		}) }}
 
 		{{ forms.lightswitchField({
-			label: "Infinite Loop <span class='info'>If checked, clicking 'Next' while on the last slide will transition to the first slide and vice-versa.</span>"|t('enupalslider'),
+			label: "Infinite Loop <span class='info'>If checked, clicking 'Next' while on the last slide will transition to the first slide and vice-versa.</span>"|t('enupal-slider'),
 			id: 'infiniteLoop',
 			name: 'infiniteLoop',
 			class: 'enupalslider',
 			on: slider.infiniteLoop,
-			onLabel: "On"|t('enupalslider'),
-			offLabel: "Off"|t('enupalslider')
+			onLabel: "On"|t('enupal-slider'),
+			offLabel: "Off"|t('enupal-slider')
 		}) }}
 		{{ forms.lightswitchField({
-			label: "Captions <span class='info'>Include image captions.</span>"|t('enupalslider'),
+			label: "Captions <span class='info'>Include image captions.</span>"|t('enupal-slider'),
 			id: 'captions',
 			name: 'captions',
 			class: 'enupalslider',
 			on: slider.captions,
-			onLabel: "On"|t('enupalslider'),
-			offLabel: "Off"|t('enupalslider')
+			onLabel: "On"|t('enupal-slider'),
+			offLabel: "Off"|t('enupal-slider')
 		}) }}
-		<div class="field enupal-field-heading">{{'Ticker Options'|t('enupalslider')}}</div>
+		<div class="field enupal-field-heading">{{'Ticker Options'|t('enupal-slider')}}</div>
 		{{ forms.lightswitchField({
-			label: "Ticker <span class='info'>Use slider in ticker mode (similar to a news ticker).</span>"|t('enupalslider'),
+			label: "Ticker <span class='info'>Use slider in ticker mode (similar to a news ticker).</span>"|t('enupal-slider'),
 			id: 'ticker',
 			name: 'ticker',
 			class: 'enupalslider',
 			on: slider.ticker,
-			onLabel: "On"|t('enupalslider'),
-			offLabel: "Off"|t('enupalslider')
+			onLabel: "On"|t('enupal-slider'),
+			offLabel: "Off"|t('enupal-slider')
 		}) }}
 
 		{{ forms.lightswitchField({
-			label: "Ticker Hover <span class='info'>Ticker will pause when mouse hovers over slider. Note: this functionality does NOT work if using CSS transitions!</span>"|t('enupalslider'),
+			label: "Ticker Hover <span class='info'>Ticker will pause when mouse hovers over slider. Note: this functionality does NOT work if using CSS transitions!</span>"|t('enupal-slider'),
 			id: 'tickerHover',
 			name: 'tickerHover',
 			class: 'enupalslider',
 			on: slider.tickerHover,
-			onLabel: "On"|t('enupalslider'),
-			offLabel: "Off"|t('enupalslider')
+			onLabel: "On"|t('enupal-slider'),
+			offLabel: "Off"|t('enupal-slider')
 		}) }}
-		<div class="field enupal-field-heading">{{'Slider Options'|t('enupalslider')}}</div>
+		<div class="field enupal-field-heading">{{'Slider Options'|t('enupal-slider')}}</div>
 		{{ forms.lightswitchField({
-			label: "Adaptive Height <span class='info'>Dynamically adjust slider height based on each slide's height.</span>"|t('enupalslider'),
+			label: "Adaptive Height <span class='info'>Dynamically adjust slider height based on each slide's height.</span>"|t('enupal-slider'),
 			id: 'adaptiveHeight',
 			name: 'adaptiveHeight',
 			class: 'enupalslider',
 			on: slider.adaptiveHeight,
-			onLabel: "On"|t('enupalslider'),
-			offLabel: "Off"|t('enupalslider')
+			onLabel: "On"|t('enupal-slider'),
+			offLabel: "Off"|t('enupal-slider')
 		}) }}
 
 		{{ forms.lightswitchField({
-			label: "Adaptive Height Speed <span class='info'>Slide height transition duration (in ms). Note: only used if Adaptive Height is checked.</span>"|t('enupalslider'),
+			label: "Adaptive Height Speed <span class='info'>Slide height transition duration (in ms). Note: only used if Adaptive Height is checked.</span>"|t('enupal-slider'),
 			id: 'adaptiveHeightSpeed',
 			name: 'adaptiveHeightSpeed',
 			class: 'enupalslider',
 			on: slider.adaptiveHeightSpeed,
-			onLabel: "On"|t('enupalslider'),
-			offLabel: "Off"|t('enupalslider')
+			onLabel: "On"|t('enupal-slider'),
+			offLabel: "Off"|t('enupal-slider')
 		}) }}
 
 		{{ forms.lightswitchField({
-			label: "Has Video? <span class='info'>Check this if any slides contain a video.</span>"|t('enupalslider'),
+			label: "Has Video? <span class='info'>Check this if any slides contain a video.</span>"|t('enupal-slider'),
 			id: 'video',
 			name: 'video',
 			class: 'enupalslider',
 			on: slider.video,
-			onLabel: "On"|t('enupalslider'),
-			offLabel: "Off"|t('enupalslider')
+			onLabel: "On"|t('enupal-slider'),
+			offLabel: "Off"|t('enupal-slider')
 		}) }}
 
 		{{ forms.lightswitchField({
-			label: "Responsive <span class='info'>Enable or disable auto resize of the slider. Useful if you need to use fixed width sliders.</span>"|t('enupalslider'),
+			label: "Responsive <span class='info'>Enable or disable auto resize of the slider. Useful if you need to use fixed width sliders.</span>"|t('enupal-slider'),
 			id: 'responsive',
 			name: 'responsive',
 			class: 'enupalslider',
 			on: slider.responsive,
-			onLabel: "On"|t('enupalslider'),
-			offLabel: "Off"|t('enupalslider')
+			onLabel: "On"|t('enupal-slider'),
+			offLabel: "Off"|t('enupal-slider')
 		}) }}
-		<div class="field enupal-field-heading">{{'Transitions Options'|t('enupalslider')}}</div>
+		<div class="field enupal-field-heading">{{'Transitions Options'|t('enupal-slider')}}</div>
 		{{ forms.lightswitchField({
-			label: "Use Css <span class='info'>If checked, CSS transitions will be used for horizontal and vertical slide animations (this uses native hardware acceleration). If unchecked, jQuery animate() will be used.</span>"|t('enupalslider'),
+			label: "Use Css <span class='info'>If checked, CSS transitions will be used for horizontal and vertical slide animations (this uses native hardware acceleration). If unchecked, jQuery animate() will be used.</span>"|t('enupal-slider'),
 			id: 'useCss',
 			name: 'useCss',
 			class: 'enupalslider',
 			on: slider.useCss,
-			onLabel: "On"|t('enupalslider'),
-			offLabel: "Off"|t('enupalslider')
+			onLabel: "On"|t('enupal-slider'),
+			offLabel: "Off"|t('enupal-slider')
 		}) }}
 
 		{{ forms.selectField({
-			label: "Easing <span class='info'>The type of 'easing' to use during transitions.</span>"|t('enupalslider'),
+			label: "Easing <span class='info'>The type of 'easing' to use during transitions.</span>"|t('enupal-slider'),
 			id: 'easing',
 			name: 'easing',
 			class: 'enupalslider',
@@ -188,7 +188,7 @@
 		}) }}
 
 		{{ forms.selectField({
-			label: "Preload Images <span class='info'>If 'all', preloads all images before starting the slider. If 'visible', preloads only images in the initially visible slides before starting the slider (tip: use 'visible' if all slides are identical dimensions).</span>"|t('enupalslider'),
+			label: "Preload Images <span class='info'>If 'all', preloads all images before starting the slider. If 'visible', preloads only images in the initially visible slides before starting the slider (tip: use 'visible' if all slides are identical dimensions).</span>"|t('enupal-slider'),
 			id: 'preloadImages',
 			name: 'preloadImages',
 			class: 'enupalslider',
@@ -200,19 +200,19 @@
 
 	<div class="{{ tab != 2 ? 'hidden' : '' }} meta" id="tab-enupalslider-controls">
 		{% set pagerTypeOptions = craft.enupalslider.getPagerTypeOptions() %}
-		<div class="field enupal-field-heading">{{'Pager Options'|t('enupalslider')}}</div>
+		<div class="field enupal-field-heading">{{'Pager Options'|t('enupal-slider')}}</div>
 		{{ forms.lightswitchField({
-			label: "Pager <span class='info'>If enabled, a pager will be added.</span>"|t('enupalslider'),
+			label: "Pager <span class='info'>If enabled, a pager will be added.</span>"|t('enupal-slider'),
 			id: 'pager',
 			name: 'pager',
 			class: 'enupalslider',
 			on: slider.pager,
-			onLabel: "On"|t('enupalslider'),
-			offLabel: "Off"|t('enupalslider')
+			onLabel: "On"|t('enupal-slider'),
+			offLabel: "Off"|t('enupal-slider')
 		}) }}
 
 		{{ forms.selectField({
-			label: "Pager Type <span class='info'>If 'full', a pager link will be generated for each slide. If 'short', a x / y pager will be used (ex. 1 / 5)."|t('enupalslider'),
+			label: "Pager Type <span class='info'>If 'full', a pager link will be generated for each slide. If 'short', a x / y pager will be used (ex. 1 / 5)."|t('enupal-slider'),
 			id: 'pagerType',
 			name: 'pagerType',
 			class: 'enupalslider',
@@ -222,7 +222,7 @@
 		}) }}
 
 		{{ forms.textField({
-			label: "Pager Short Separator <span class='info'>If 'short', pager will use this value as the separating character</span>"|t('enupalslider'),
+			label: "Pager Short Separator <span class='info'>If 'short', pager will use this value as the separating character</span>"|t('enupal-slider'),
 			id: 'pagerShortSeparator',
 			name: 'pagerShortSeparator',
 			class: 'enupalslider',
@@ -231,7 +231,7 @@
 		}) }}
 
 		{{ forms.textField({
-			label: "Pager Selector <span class='info'>Element used to populate the pager. By default, the pager is appended to the bx-viewport. Note: Use jQuery selectors.</span>"|t('enupalslider'),
+			label: "Pager Selector <span class='info'>Element used to populate the pager. By default, the pager is appended to the bx-viewport. Note: Use jQuery selectors.</span>"|t('enupal-slider'),
 			id: 'pagerSelector',
 			name: 'pagerSelector',
 			class: 'enupalslider',
@@ -240,29 +240,29 @@
 		}) }}
 
 		{{ forms.lightswitchField({
-			label: "Thumbnail Pager <span class='info'>Enable thumbnails images as pager</span>"|t('enupalslider'),
+			label: "Thumbnail Pager <span class='info'>Enable thumbnails images as pager</span>"|t('enupal-slider'),
 			id: 'thumbnailPager',
 			name: 'thumbnailPager',
 			class: 'enupalslider',
 			on: slider.thumbnailPager,
-			onLabel: "On"|t('enupalslider'),
-			offLabel: "Off"|t('enupalslider')
+			onLabel: "On"|t('enupal-slider'),
+			offLabel: "Off"|t('enupal-slider')
 		}) }}
 
-		<div class="field enupal-field-heading">{{'Controls Options'|t('enupalslider')}}</div>
+		<div class="field enupal-field-heading">{{'Controls Options'|t('enupal-slider')}}</div>
 
 		{{ forms.lightswitchField({
-			label: "Controls <span class='info'>If enabled, 'Next' / 'Prev' controls will be added.</span>"|t('enupalslider'),
+			label: "Controls <span class='info'>If enabled, 'Next' / 'Prev' controls will be added.</span>"|t('enupal-slider'),
 			id: 'controls',
 			name: 'controls',
 			class: 'enupalslider',
 			on: slider.controls,
-			onLabel: "On"|t('enupalslider'),
-			offLabel: "Off"|t('enupalslider')
+			onLabel: "On"|t('enupal-slider'),
+			offLabel: "Off"|t('enupal-slider')
 		}) }}
 
 		{{ forms.textField({
-			label: "Next Text <span class='info'>Text to be used for the 'Next' control.</span>"|t('enupalslider'),
+			label: "Next Text <span class='info'>Text to be used for the 'Next' control.</span>"|t('enupal-slider'),
 			id: 'nextText',
 			name: 'nextText',
 			class: 'enupalslider',
@@ -271,7 +271,7 @@
 		}) }}
 
 		{{ forms.textField({
-			label: "Prev Text <span class='info'>Text to be used for the 'Prev' control.</span>"|t('enupalslider'),
+			label: "Prev Text <span class='info'>Text to be used for the 'Prev' control.</span>"|t('enupal-slider'),
 			id: 'prevText',
 			name: 'prevText',
 			class: 'enupalslider',
@@ -280,7 +280,7 @@
 		}) }}
 
 		{{ forms.textField({
-			label: "Next Selector <span class='info'>Element used to populate the 'Next' control.</span>"|t('enupalslider'),
+			label: "Next Selector <span class='info'>Element used to populate the 'Next' control.</span>"|t('enupal-slider'),
 			id: 'nextSelector',
 			name: 'nextSelector',
 			class: 'enupalslider',
@@ -289,7 +289,7 @@
 		}) }}
 
 		{{ forms.textField({
-			label: "Prev Selector <span class='info'>Element used to populate the 'Prev' control.</span>"|t('enupalslider'),
+			label: "Prev Selector <span class='info'>Element used to populate the 'Prev' control.</span>"|t('enupal-slider'),
 			id: 'prevSelector',
 			name: 'prevSelector',
 			class: 'enupalslider',
@@ -298,17 +298,17 @@
 		}) }}
 
 		{{ forms.lightswitchField({
-			label: "Auto Controls <span class='info'>If enabled, 'Start' / 'Stop' controls will be added.</span>"|t('enupalslider'),
+			label: "Auto Controls <span class='info'>If enabled, 'Start' / 'Stop' controls will be added.</span>"|t('enupal-slider'),
 			id: 'autoControls',
 			name: 'autoControls',
 			class: 'enupalslider',
 			on: slider.autoControls,
-			onLabel: "On"|t('enupalslider'),
-			offLabel: "Off"|t('enupalslider')
+			onLabel: "On"|t('enupal-slider'),
+			offLabel: "Off"|t('enupal-slider')
 		}) }}
 
 		{{ forms.textField({
-			label: "Start Text <span class='info'>Text to be used for the 'Start' control.</span>"|t('enupalslider'),
+			label: "Start Text <span class='info'>Text to be used for the 'Start' control.</span>"|t('enupal-slider'),
 			id: 'startText',
 			name: 'startText',
 			class: 'enupalslider',
@@ -317,7 +317,7 @@
 		}) }}
 
 		{{ forms.textField({
-			label: "Stop Text <span class='info'>Text to be used for the 'Stop' control.</span>"|t('enupalslider'),
+			label: "Stop Text <span class='info'>Text to be used for the 'Stop' control.</span>"|t('enupal-slider'),
 			id: 'stopText',
 			name: 'stopText',
 			class: 'enupalslider',
@@ -326,17 +326,17 @@
 		}) }}
 
 		{{ forms.lightswitchField({
-			label: "Auto Controls Combine <span class='info'>When slideshow is playing only 'Stop' control is displayed and vice-versa.</span>"|t('enupalslider'),
+			label: "Auto Controls Combine <span class='info'>When slideshow is playing only 'Stop' control is displayed and vice-versa.</span>"|t('enupal-slider'),
 			id: 'autoControlsCombine',
 			name: 'autoControlsCombine',
 			class: 'enupalslider',
 			on: slider.autoControlsCombine,
-			onLabel: "On"|t('enupalslider'),
-			offLabel: "Off"|t('enupalslider')
+			onLabel: "On"|t('enupal-slider'),
+			offLabel: "Off"|t('enupal-slider')
 		}) }}
 
 		{{ forms.textField({
-			label: "Auto Controls Selector <span class='info'>Element used to populate the auto controls.</span>"|t('enupalslider'),
+			label: "Auto Controls Selector <span class='info'>Element used to populate the auto controls.</span>"|t('enupal-slider'),
 			id: 'autoControlsSelector',
 			name: 'autoControlsSelector',
 			class: 'enupalslider',
@@ -345,32 +345,32 @@
 		}) }}
 
 		{{ forms.lightswitchField({
-			label: "Keyboard Enabled <span class='info'>Enable keyboard navigation for visible sliders</span>"|t('enupalslider'),
+			label: "Keyboard Enabled <span class='info'>Enable keyboard navigation for visible sliders</span>"|t('enupal-slider'),
 			id: 'keyboardEnabled',
 			name: 'keyboardEnabled',
 			class: 'enupalslider',
 			on: slider.keyboardEnabled,
-			onLabel: "On"|t('enupalslider'),
-			offLabel: "Off"|t('enupalslider')
+			onLabel: "On"|t('enupal-slider'),
+			offLabel: "Off"|t('enupal-slider')
 		}) }}
 
 	</div><!-- controls div -->
 
 	<div class="{{ tab != 3 ? 'hidden' : '' }} meta" id="tab-enupalslider-slides">
 		{% set autoDirectionOptions = craft.enupalslider.getAutoDirectionOptions() %}
-		<div class="field enupal-field-heading">{{'Auto Options'|t('enupalslider')}}</div>
+		<div class="field enupal-field-heading">{{'Auto Options'|t('enupal-slider')}}</div>
 		{{ forms.lightswitchField({
-			label: "Auto <span class='info'>Slides will automatically transition</span>"|t('enupalslider'),
+			label: "Auto <span class='info'>Slides will automatically transition</span>"|t('enupal-slider'),
 			id: 'auto',
 			name: 'auto',
 			class: 'enupalslider',
 			on: slider.auto,
-			onLabel: "On"|t('enupalslider'),
-			offLabel: "Off"|t('enupalslider')
+			onLabel: "On"|t('enupal-slider'),
+			offLabel: "Off"|t('enupal-slider')
 		}) }}
 
 		{{ forms.textField({
-			label: "Pause <span class='info'>The amount of time (in ms) between each auto transition</span>"|t('enupalslider'),
+			label: "Pause <span class='info'>The amount of time (in ms) between each auto transition</span>"|t('enupal-slider'),
 			id: 'pause',
 			name: 'pause',
 			class: 'enupalslider',
@@ -379,17 +379,17 @@
 		}) }}
 
 		{{ forms.lightswitchField({
-			label: "Auto Start <span class='info'>Auto show starts playing on load. If disabled, slideshow will start when the 'Start' control is clicked</span>"|t('enupalslider'),
+			label: "Auto Start <span class='info'>Auto show starts playing on load. If disabled, slideshow will start when the 'Start' control is clicked</span>"|t('enupal-slider'),
 			id: 'autoStart',
 			name: 'autoStart',
 			class: 'enupalslider',
 			on: slider.autoStart,
-			onLabel: "On"|t('enupalslider'),
-			offLabel: "Off"|t('enupalslider')
+			onLabel: "On"|t('enupal-slider'),
+			offLabel: "Off"|t('enupal-slider')
 		}) }}
 
 		{{ forms.selectField({
-			label: "Auto Direction <span class='info'>The direction of auto show slide transitions"|t('enupalslider'),
+			label: "Auto Direction <span class='info'>The direction of auto show slide transitions"|t('enupal-slider'),
 			id: 'autoDirection',
 			name: 'autoDirection',
 			class: 'enupalslider',
@@ -399,17 +399,17 @@
 		}) }}
 
 		{{ forms.lightswitchField({
-			label: "Auto Hover <span class='info'>Auto show will pause when mouse hovers over slider</span>"|t('enupalslider'),
+			label: "Auto Hover <span class='info'>Auto show will pause when mouse hovers over slider</span>"|t('enupal-slider'),
 			id: 'autoHover',
 			name: 'autoHover',
 			class: 'enupalslider',
 			on: slider.autoHover,
-			onLabel: "On"|t('enupalslider'),
-			offLabel: "Off"|t('enupalslider')
+			onLabel: "On"|t('enupal-slider'),
+			offLabel: "Off"|t('enupal-slider')
 		}) }}
 
 		{{ forms.textField({
-			label: "Auto Delay <span class='info'>Time (in ms) auto show should wait before starting</span>"|t('enupalslider'),
+			label: "Auto Delay <span class='info'>Time (in ms) auto show should wait before starting</span>"|t('enupal-slider'),
 			id: 'autoDelay',
 			name: 'autoDelay',
 			class: 'enupalslider',
@@ -417,10 +417,10 @@
 			errors: slider.getErrors('autoDelay')
 		}) }}
 
-		<div class="field enupal-field-heading">{{'Carousel Options'|t('enupalslider')}}</div>
+		<div class="field enupal-field-heading">{{'Carousel Options'|t('enupal-slider')}}</div>
 
 		{{ forms.textField({
-			label: "Min Slides <span class='info'>The maximum number of slides to be shown. Slides will be sized up if carousel becomes larger than the original size.</span>"|t('enupalslider'),
+			label: "Min Slides <span class='info'>The maximum number of slides to be shown. Slides will be sized up if carousel becomes larger than the original size.</span>"|t('enupal-slider'),
 			id: 'minSlides',
 			name: 'minSlides',
 			class: 'enupalslider',
@@ -429,7 +429,7 @@
 		}) }}
 
 		{{ forms.textField({
-			label: "Max Slides <span class='info'>The maximum number of slides to be shown. Slides will be sized up if carousel becomes larger than the original size.</span>"|t('enupalslider'),
+			label: "Max Slides <span class='info'>The maximum number of slides to be shown. Slides will be sized up if carousel becomes larger than the original size.</span>"|t('enupal-slider'),
 			id: 'maxSlides',
 			name: 'maxSlides',
 			class: 'enupalslider',
@@ -438,7 +438,7 @@
 		}) }}
 
 		{{ forms.textField({
-			label: "Move Slides <span class='info'>The number of slides to move on transition. This value must be >= minSlides, and <= maxSlides. If zero (default), the number of fully-visible slides will be used.</span>"|t('enupalslider'),
+			label: "Move Slides <span class='info'>The number of slides to move on transition. This value must be >= minSlides, and <= maxSlides. If zero (default), the number of fully-visible slides will be used.</span>"|t('enupal-slider'),
 			id: 'moveSlides',
 			name: 'moveSlides',
 			class: 'enupalslider',
@@ -447,7 +447,7 @@
 		}) }}
 
 		{{ forms.textField({
-			label: "Slide Width <span class='info'>The width of each slide. This setting is required for all horizontal carousels!</span>"|t('enupalslider'),
+			label: "Slide Width <span class='info'>The width of each slide. This setting is required for all horizontal carousels!</span>"|t('enupal-slider'),
 			id: 'slideWidth',
 			name: 'slideWidth',
 			class: 'enupalslider',
@@ -456,13 +456,13 @@
 		}) }}
 
 		{{ forms.lightswitchField({
-			label: "Shrink Items <span class='info'>The Carousel will only show whole items and shrink the images to fit the viewport based on maxSlides/MinSlides.</span>"|t('enupalslider'),
+			label: "Shrink Items <span class='info'>The Carousel will only show whole items and shrink the images to fit the viewport based on maxSlides/MinSlides.</span>"|t('enupal-slider'),
 			id: 'shrinkItems',
 			name: 'shrinkItems',
 			class: 'enupalslider',
 			on: slider.shrinkItems,
-			onLabel: "On"|t('enupalslider'),
-			offLabel: "Off"|t('enupalslider')
+			onLabel: "On"|t('enupal-slider'),
+			offLabel: "Off"|t('enupal-slider')
 		}) }}
 	</div><!-- slides div -->
 </div>
