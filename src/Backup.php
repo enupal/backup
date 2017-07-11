@@ -49,11 +49,11 @@ class Backup extends \craft\base\Plugin
 			'subnav' => [
 				'backups' => [
 					"label" => Backup::t("Backups"),
-					"url"   => 'enupalbackup/backups'
+					"url"   => 'enupal-backup/backups'
 				],
 				'settings' =>[
 					"label" => Backup::t("Settings"),
-					"url" => 'enupalbackup/settings'
+					"url" => 'enupal-backup/settings'
 				]
 			]
 		]);
@@ -91,17 +91,17 @@ class Backup extends \craft\base\Plugin
 	private function getCpUrlRules()
 	{
 		return [
-			'enupalbackup/run' =>
-			'enupalbackup/backups/run',
+			'enupal-backup/run' =>
+			'enupal-backup/backups/run',
 
-			'enupalbackup' =>
-			'enupalbackup/backups/index',
+			'enupal-backup' =>
+			'enupal-backup/backups/index',
 
-			'enupalbackup/backup/new' =>
-			'enupalbackup/backups/edit-backup',
+			'enupal-backup/backup/new' =>
+			'enupal-backup/backups/edit-backup',
 
-			'enupalbackup/backup/edit/<backupId:\d+>' =>
-			'enupalbackup/backups/edit-backup',
+			'enupal-backup/backup/edit/<backupId:\d+>' =>
+			'enupal-backup/backups/edit-backup',
 		];
 	}
 }

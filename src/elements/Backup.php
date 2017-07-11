@@ -95,7 +95,7 @@ class Backup extends Element
 	public function getCpEditUrl()
 	{
 		return UrlHelper::cpUrl(
-			'enupalbackup/backup/edit/'.$this->id
+			'enupal-backup/backup/edit/'.$this->id
 		);
 	}
 

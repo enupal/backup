@@ -1,4 +1,4 @@
-{% extends "enupalslider/_layouts/base" %}
+{% extends "enupal-backup/_layouts/base" %}
 {% import "_includes/forms" as forms %}
 {% css %}
 	.enupal-field-heading {
@@ -11,7 +11,7 @@
 	}
 {% endcss %}
 {% set crumbs = [
-	{ label: "Sliders"|t, url: url('enupalslider/sliders') }
+	{ label: "Sliders"|t, url: cpUrl('enupal-backup/backups') }
 ] %}
 
 {% set title = sliderId ? 'Edit Slider' : 'New Slider' %}
@@ -20,18 +20,18 @@
 {% set saveShortcutRedirect = continueEditingUrl %}
 
 {% block saveButton %}
-	<input type="hidden" name="action" value="enupalslider/sliders/save-slider">
-	{{ redirectInput('enupalslider/sliders') }}
-	<input type="hidden" id="sliderId" name="id" value="{{ slider.id is defined ? slider.id : '' }}">
+	<input type="hidden" name="action" value="enupal-backup/sliders/save-backup">
+	{{ redirectInput('enupal-backup/sliders') }}
+	<input type="hidden" id="sliderId" name="id" value="{{ backup.id is defined ? backup.id : '' }}">
 
 	<div class="btngroup submit first">
-		<input type="submit" class="btn submit" value="{{ 'Save'|t('enupal-slider') }}">
-		{% if slider.id != null %}
+		<input type="submit" class="btn submit" value="{{ 'Save'|t('enupal-backup') }}">
+		{% if backup.id != null %}
 		<div class="btn submit menubtn"></div>
 		<div class="menu">
 			<ul>
-				<li><a class="formsubmit" data-redirect="{{('enupalslider/slider/edit/'~slider.id)|hash}}">{{ "Save and continue editing"|t }} <span class="shortcut">⌘S</span></a></li>
-				{#<li><a class="formsubmit" data-redirect="{{'enupalslider/sliders/edit/'~slider.id|hash}}" data-param='saveAsNew' data-value="true">{{ "Save as a new slider"|t('enupal-slider') }}</a></li>#}
+				<li><a class="formsubmit" data-redirect="{{('enupal-backup/slider/edit/'~backup.id)|hash}}">{{ "Save and continue editing"|t }} <span class="shortcut">⌘S</span></a></li>
+				{#<li><a class="formsubmit" data-redirect="{{'enupalslider/sliders/edit/'~backup.id|hash}}" data-param='saveAsNew' data-value="true">{{ "Save as a new slider"|t('enupal-slider') }}</a></li>#}
 			</ul>
 		</div>
 		{% endif %}
@@ -39,7 +39,7 @@
 {% endblock %}
 
 {% block main %}
-	<input type="hidden" name="action" value="enupalslider/sliders/save-slider">
+	<input type="hidden" name="action" value="enupal-backup/sliders/save-slider">
 	<input type="hidden" name="handle" value="{{ slider.handle }}">
 	<input type="hidden" name="sliderId" value="{{ sliderId }}">
 

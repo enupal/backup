@@ -22,7 +22,7 @@ class BackupsController extends BaseController
 	*/
 	public function actionIndex()
 	{
-		return $this->renderTemplate('enupalbackup/backups/index');
+		return $this->renderTemplate('enupal-backup/backups/index');
 	}
 
 	public function actionRun()
