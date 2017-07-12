@@ -8,6 +8,7 @@
   ],
   "backups": [
     {
+      "name": "",
       "source": {
         "type": "tar",
         "options": {

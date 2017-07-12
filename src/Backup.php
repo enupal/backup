@@ -7,7 +7,10 @@ use craft\web\UrlManager;
 use yii\base\Event;
 use phpbu\App\Configuration;
 use phpbu\App\Runner;
+use craft\events\DefineComponentsEvent;
+use craft\web\twig\variables\CraftVariable;
 
+use enupal\backup\variables\BackupVariable;
 use enupal\backup\models\Settings;
 
 class Backup extends \craft\base\Plugin
@@ -30,11 +33,19 @@ class Backup extends \craft\base\Plugin
 				$event->rules = array_merge($event->rules, $this->getCpUrlRules());
 			}
 		);
+
+		Event::on(
+			CraftVariable::class,
+			CraftVariable::EVENT_DEFINE_COMPONENTS,
+			function (DefineComponentsEvent $event) {
+					$event->components['enupalbackup'] = BackupVariable::class;
+			}
+		);
 	}
 
 	protected function afterInstall()
 	{
-		#self::$app->backups->installDefaultValues();
+		self::$app->backups->installDefaultValues();
 	}
 
 	protected function createSettingsModel()

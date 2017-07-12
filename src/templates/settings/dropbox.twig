@@ -1,0 +1,38 @@
+{% extends "enupal-backup/_layouts/settings" %}
+{% import "_includes/forms" as forms %}
+
+{% set settings = craft.enupalslider.getSettings() %}
+{% set fullPageForm = true %}
+{% set saveShortcutRedirect = 'enupal-backup/settings/dropbox' %}
+
+{% set saveButton %}
+	<div class="buttons">
+		<input class="btn submit" type="submit" value="{{ 'Save'|t }}">
+	</div>
+{% endset %}
+
+{% set content %}
+
+  <input type="hidden" name="action" value="enupal-backup/settings/save-settings">
+
+  <div id="settings-cp">
+
+    {% namespace 'settings' %}
+
+		  {{ forms.textField({
+			  label: "Secrect Key"|t,
+			  id: 'dropboxApiKey',
+			  name: 'dropboxApiKey',
+			  instructions: "Secrect Key from dropbox"|t,
+			  value: '',
+			  placeholder: "xxxxxxx"|t,
+			  autofocus: true,
+			  first: true,
+			  errors: ''
+		  }) }}
+
+	  {% endnamespace %}
+
+  </div>
+
+{% endset %}

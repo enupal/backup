@@ -5,6 +5,8 @@ use Craft;
 use yii\base\Component;
 
 use enupal\backup\Backup;
+use enupal\backup\models\Settings as SettingsModel;
+use yii\db\Query;
 
 class Settings extends Component
 {
@@ -19,6 +21,8 @@ class Settings extends Component
 	public function saveSettings($postSettings): bool
 	{
 		$settings = Backup::$app->sliders->getSettings();
+
+		//Craft::$app->getSecurity()->hashData($password);
 
 		if (isset($postSettings['pluginNameOverride']))
 		{
@@ -36,5 +40,27 @@ class Settings extends Component
 		)->execute();
 
 		return (bool) $affectedRows;
+	}
+
+	public function getSettings()
+	{
+		$result = (new Query())
+			->select('settings')
+			->from(['{{%plugins}}'])
+			->where(['handle' => 'enupal-backup'])
+			->one();
+
+		$arraySettings = json_decode($result['settings'], true);
+
+		$settings = new SettingsModel($arraySettings);
+
+		/*
+		if ($settings->dropboxToken)
+		{
+			$settings->dropboxToken = Craft::$app->getSecurity()->hashData($settings->dropboxToken);
+		}
+		*/
+
+		return $settings;
 	}
 }

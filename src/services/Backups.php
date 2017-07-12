@@ -8,6 +8,8 @@ use enupal\backup\Backup;
 use enupal\backup\elements\Backup as BackupElement;
 use enupal\backup\records\Backup as BackupRecord;
 use phpbu\App\Cmd;
+use enupal\backup\models\Settings;
+
 class Backups extends Component
 {
 	protected $backupRecord;
@@ -100,16 +102,18 @@ class Backups extends Component
 		return true;
 	}
 
-	public function getSettings()
+	public function installDefaultValues()
 	{
-		$settings = (new Query())
-			->select('settings')
-			->from(['{{%plugins}}'])
-			->where(['handle' => 'enupalbackup'])
-			->one();
+		$model    = new Settings();
+		$settings = $model->getAttributes();
 
-		$settings = json_decode($settings['settings'], true);
-
-		return $settings;
+		$settings = json_encode($settings);
+		$affectedRows = Craft::$app->getDb()->createCommand()->update('plugins', [
+			'settings' => $settings
+			],
+			[
+			'handle' => 'enupal-backup'
+			]
+		)->execute();
 	}
 }
