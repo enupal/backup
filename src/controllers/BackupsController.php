@@ -29,15 +29,22 @@ class BackupsController extends BaseController
 	{
 		/*//'\"C:\\Program Files (x86)\\Git\\bin\"'*/
 		// windows needed
+		$base = Craft::getAlias('@enupal/backup/');
 		$path = escapeshellarg('C:\\Program Files (x86)\\Git\\bin');
-		//Craft::dd($path);
+		#Craft::dd($path);
 		//Cli::addCommandLocation('tar',$path);
 		$cmd = new Cmd();
+		$configFile = $base.'backup/config.json';
 		$response = $cmd->run([
-				'--configuration=C:/MAMP/htdocs/craft3.personal/plugins/enupalbackup/src/backup/config.json',
+				'--configuration='.$configFile
 				//'--debug'
 		]);
-		print_r($response);
+		$logPath = $base.'backup/json.log';
+		$str = file_get_contents($logPath);
+		$json = json_decode($str, true);
+		echo "AS";
+		echo "---------------------";
+		print_r($json);
 		die();
 
 		// create new archive

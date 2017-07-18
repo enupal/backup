@@ -3,31 +3,30 @@
   "logging": [
     {
       "type": "json",
-      "target": "C:/MAMP/htdocs/craft3.personal/plugins/enupalbackup/src/backup/json.log"
+      "target": "C:/MAMP/htdocs/craft3.personal/vendor/enupal/backup/src/backup/json.log"
     }
   ],
   "backups": [
     {
-      "name": "",
+      "name" : "Testing assets",
       "source": {
         "type": "tar",
         "options": {
-          "path": "C:/MAMP/htdocs/craft3.personal/web/web",
+          "path": "C:\\MAMP\\htdocs\\craft3.personal\\web\\web",
           "pathToTar": "C:\\cygwin64\\bin",
-          "forceLocal": "true"
+          "forceLocal": true
         }
       },
       "target": {
-        "dirname": "C:/MAMP/htdocs/craft3.personal/storage/enupalbackup/backup-%Y%m%d-%H%i/",
-        "filename": "enupalbackup-assets-%Y%m%d-%H%i.tar",
-        "compress": "bzip2"
+        "dirname": "C:\\MAMP\\htdocs\\craft3.personal\\storage\\enupalbackup\\backup-%Y%m%d-%H%i\\assets/",
+        "filename": "enupalbackup-assets-%Y%m%d-%H%i.tar"
       },
       "syncs": [
         {
           "type": "dropbox",
           "options": {
             "token": "WpYFCk46C4QAAAAAAAAHmTbUVAvCFnBzf7Vqm3imO4ANZxazrF8YG0COqlh--tLa",
-            "path": "/enupalbackup/%Y%m%d-%H%i"
+            "path": "/enupalbackup/12-07-2017"
           }
         }
       ],
@@ -39,25 +38,25 @@
       }
     },
     {
+      "name" : "Testing Templates",
       "source": {
         "type": "tar",
         "options": {
-          "path": "C:/MAMP/htdocs/craft3.personal/templates",
+          "path": "C:\\MAMP\\htdocs\\craft3.personal\\templates",
           "pathToTar": "C:\\cygwin64\\bin",
-          "forceLocal": "true"
+          "forceLocal": true
         }
       },
       "target": {
-        "dirname": "C:/MAMP/htdocs/craft3.personal/storage/enupalbackup/backup-%Y%m%d-%H%i/",
-        "filename": "enupalbackup-templates-%Y%m%d-%H%i.tar",
-        "compress": "bzip2"
+        "dirname": "C:\\MAMP\\htdocs\\craft3.personal\\storage\\enupalbackup\\backup-%Y%m%d-%H%i\\templates/",
+        "filename": "enupalbackup-templates-%Y%m%d-%H%i.tar"
       },
       "syncs": [
         {
           "type": "dropbox",
           "options": {
             "token": "WpYFCk46C4QAAAAAAAAHmTbUVAvCFnBzf7Vqm3imO4ANZxazrF8YG0COqlh--tLa",
-            "path": "/enupalbackup/%Y%m%d-%H%i"
+            "path": "/enupalbackup/12-07-2017"
           }
         }
       ],

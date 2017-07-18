@@ -8,8 +8,9 @@
       "enupal\\backup\\": "src/"
     }
   },
+  "minimum-stability": "dev",
   "require": {
-    "phpbu/phpbu": "master",
+    "phpbu/phpbu": "dev-master",
     "aws/aws-sdk-php": "2.7.*",
     "dropbox/dropbox-sdk":"1.1.*",
     "phpseclib/phpseclib": "2.0.*@dev"
