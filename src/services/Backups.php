@@ -10,6 +10,8 @@ use enupal\backup\records\Backup as BackupRecord;
 use phpbu\App\Cmd;
 use enupal\backup\models\Settings;
 
+use craft\volumes\Local;
+
 class Backups extends Component
 {
 	protected $backupRecord;
@@ -17,9 +19,7 @@ class Backups extends Component
 
 	public function test()
 	{
-		(new Cmd())->run([
-			'--configuration=PATH-TO-MY-CONFIG',
-		]);
+
 	}
 
 	/**
@@ -116,4 +116,159 @@ class Backups extends Component
 			]
 		)->execute();
 	}
+
+	public function getBasePath()
+	{
+		return Craft::$app->getPath()->getStoragePath().DIRECTORY_SEPARATOR.'enupalbackup'.DIRECTORY_SEPARATOR;
+	}
+
+	public function getAssetsPath()
+	{
+		return $this->getBasePath().'assets'.DIRECTORY_SEPARATOR;
+	}
+
+	public function getTemplatesPath()
+	{
+		return $this->getBasePath().'templates'.DIRECTORY_SEPARATOR;
+	}
+
+	public function getDbPath()
+	{
+		return $this->getBasePath().'databases'.DIRECTORY_SEPARATOR;
+	}
+
+	private function getConfigJson()
+	{
+		$logPath = Craft::getAlias('@enupal/backup/backup/enupalbackup.log');
+		$config  = [
+			'verbose' => true,
+			'logging' => [
+				'type'   => 'json',
+				'target' => $logPath
+			],
+			'backups' => []
+		];
+
+		$date = date('Ymd-His');
+		$syncs        = $this->getSyncs($date);
+		$assetsCleanups = $this->getAssetsCleanup();
+		$pathToTar = $this->getPathToTar();
+		$assetName    = 'backup-assets-'.$date;
+		$templateName = 'backup-templates-'.$date;
+		$dbName       = 'backup-db-'.$date;
+
+		// @todo - add the assets from settings
+		$testAsset = Craft::$app->getVolumes()->getVolumeById(33);
+		$assets[]  = $testAsset;
+		$backups[] = [];
+		// Adding the assets
+		foreach ($assets as $key => $asset)
+		{
+			// Supports local volumes for now.
+			if (get_class($asset) == Local::class)
+			{
+				// @todo - validate if the $asset->path exists
+				$assetBackup = [
+					'name'   => 'Asset:'.$asset->id,
+					'source' => [
+						'type' => 'tar',
+						'options' => [
+							"path" => $asset->path,
+							"forceLocal" => true
+						]
+					],
+					'target' => [
+						'dirname' => $this->getAssetsPath(),
+						'filename' => $assetName.'.tar'
+					]
+				];
+
+				// @todo - add pathToTar validation
+				if (true)
+				{
+					$assetBackup['source']['options']['pathToTar'] => "C:\\cygwin64\\bin";
+				}
+
+				if ($syncs)
+				{
+					$assetBackup['syncs'] = $syncs;
+				}
+
+				if ($assetsCleanups)
+				{
+					$assetBackup['cleanup'] = $assetsCleanups;
+				}
+
+
+				$backups[] = $assetBackup;
+			}
+		}
+
+		// @todo - Adding template backups
+		if (true)
+		{
+			$baseTemplatePath = Craft::$app->getPath()->getSiteTemplatesPath();
+
+			$templateBackup = [
+				'name'   => 'Templates',
+				'source' => [
+					'type' => 'tar',
+					'options' => [
+						"path" => $baseTemplatePath,
+						"forceLocal" => true
+					]
+				],
+				'target' => [
+					'dirname' => $this->getTemplatesPath(),
+					'filename' => $templateName.'.tar'
+				]
+			];
+
+			if ($syncs)
+			{
+				$templateBackup['syncs'] = $syncs;
+			}
+
+
+		}
+	}
+
+	private function getSyncs($date)
+	{
+		$syncs = [];
+		// @todo validate dropbox
+		if (true)
+		{
+			$dropbox = [
+				'type': 'dropbox',
+				'options': [
+					'token': 'WpYFCk46C4QAAAAAAAAHmTbUVAvCFnBzf7Vqm3imO4ANZxazrF8YG0COqlh--tLa',
+					'path': '/enupalbackup/'.$date
+				]
+			];
+
+			$syncs[] = $dropbox;
+		}
+
+		return $syncs;
+	}
+
+	private function getAssetsCleanup()
+	{
+		// @todo - cleanups Capacity- Outdated - quantity
+		$cleanup = [];
+
+		if (true)
+		{
+			$assetBackup['cleanup'] = [
+				'type': 'quantity',
+				'options': [
+					'amount': '3'
+				]
+			];
+		}
+
+		return $cleanup;
+	}
+
 }
