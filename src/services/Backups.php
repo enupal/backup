@@ -137,14 +137,16 @@ class Backups extends Component
 		return $this->getBasePath().'databases'.DIRECTORY_SEPARATOR;
 	}
 
-	private function getConfigJson()
+	public function getConfigJson()
 	{
 		$logPath = Craft::getAlias('@enupal/backup/backup/enupalbackup.log');
 		$config  = [
 			'verbose' => true,
 			'logging' => [
-				'type'   => 'json',
-				'target' => $logPath
+				[
+					'type'   => 'json',
+					'target' => $logPath
+				]
 			],
 			'backups' => []
 		];
@@ -160,7 +162,7 @@ class Backups extends Component
 		// @todo - add the assets from settings
 		$testAsset = Craft::$app->getVolumes()->getVolumeById(33);
 		$assets[]  = $testAsset;
-		$backups[] = [];
+		$backups = [];
 		// Adding the assets
 		foreach ($assets as $key => $asset)
 		{
@@ -183,22 +185,20 @@ class Backups extends Component
 					]
 				];
 
-				// @todo - add pathToTar validation
-				if (true)
+				if ($pathToTar)
 				{
-					$assetBackup['source']['options']['pathToTar'] => "C:\\cygwin64\\bin";
+					$assetBackup['source']['options']['pathToTar'] = "C:\\cygwin64\\bin";
 				}
 
 				if ($syncs)
 				{
-					$assetBackup['syncs'] = $syncs;
+					#$assetBackup['syncs'] = $syncs;
 				}
 
 				if ($assetsCleanups)
 				{
 					$assetBackup['cleanup'] = $assetsCleanups;
 				}
-
 
 				$backups[] = $assetBackup;
 			}
@@ -224,13 +224,30 @@ class Backups extends Component
 				]
 			];
 
-			if ($syncs)
+			if ($pathToTar)
 			{
-				$templateBackup['syncs'] = $syncs;
+				$templateBackup['source']['options']['pathToTar'] = "C:\\cygwin64\\bin";
 			}
 
+			if ($syncs)
+			{
+				#$templateBackup['syncs'] = $syncs;
+			}
 
+			if ($assetsCleanups)
+			{
+				$templateBackup['cleanup'] = $assetsCleanups;
+			}
+
+			$backups[] = $templateBackup;
 		}
+
+		$config['backups'] = $backups;
+		$base = Craft::getAlias('@enupal/backup/');
+		$configFile = $base.'backup'.DIRECTORY_SEPARATOR.'config.json';
+
+		file_put_contents($configFile, json_encode($config));
+		return true;
 	}
 
 	private function getSyncs($date)
@@ -240,10 +257,10 @@ class Backups extends Component
 		if (true)
 		{
 			$dropbox = [
-				'type': 'dropbox',
-				'options': [
-					'token': 'WpYFCk46C4QAAAAAAAAHmTbUVAvCFnBzf7Vqm3imO4ANZxazrF8YG0COqlh--tLa',
-					'path': '/enupalbackup/'.$date
+				'type' => 'dropbox',
+				'options' => [
+					'token' => 'WpYFCk46C4QAAAAAAAAHmTbUVAvCFnBzf7Vqm3imO4ANZxazrF8YG0COqlh--tLa',
+					'path' => '/enupalbackup/'.$date
 				]
 			];
 
@@ -260,15 +277,28 @@ class Backups extends Component
 
 		if (true)
 		{
-			$assetBackup['cleanup'] = [
-				'type': 'quantity',
-				'options': [
-					'amount': '3'
+			$cleanup = [
+				'type' => 'capacity',
+				'options' => [
+					'size' => '30M'
 				]
 			];
 		}
 
 		return $cleanup;
+	}
+
+	private function getPathToTar()
+	{
+		// @todo - add path to tar
+		$pathToTar = null;
+
+		if (true)
+		{
+			$pathToTar = "C:\\cygwin64\\bin";
+		}
+
+		return $pathToTar;
 	}
 
 }

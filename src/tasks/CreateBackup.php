@@ -11,9 +11,6 @@ use Craft;
  */
 class CrateBackup extends Task
 {
-	private $_contentRows;
-	private $_newFormat;
-	private $_contentTable;
 
 	/**
 	 * Returns the default description for this task.
@@ -52,6 +49,17 @@ class CrateBackup extends Task
 	{
 		try
 		{
+			$base = Craft::getAlias('@enupal/backup/');
+			App::maxPowerCaptain();
+			Backup::$app->backups->getConfigJson();
+
+			$cmd = new Cmd();
+			$configFile = $base.'backup/config.json';
+
+			$cmd->run([
+					'--configuration='.$configFile
+					//'--debug'
+			]);
 
 			return true;
 		}
@@ -60,16 +68,6 @@ class CrateBackup extends Task
 			Craft::$app->getErrorHandler()->logException($e);
 			 return 'An exception was thrown while trying to generate the Enupal Backup: '.$e->getMessage();
 		}
-		$contentRow = $this->_contentRows[$step];
-
-		//Call the update process
-		$response = sproutForms()->entries->updateTitleFormat($contentRow, $this->_newFormat, $this->_contentTable);
-
-		if (!$response)
-		{
-			SproutFormsPlugin::log('SproutForms has failed to update the title format for ' . $this->_contentTable . ' Id:' . $contentId, LogLevel::Error);
-		}
-
 
 	}
 }

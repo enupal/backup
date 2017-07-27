@@ -10,8 +10,11 @@ use craft\helpers\ArrayHelper;
 use craft\elements\Asset;
 use craft\helpers\Json;
 use craft\helpers\Template as TemplateHelper;
+use craft\helpers\App;
+use craft\errors\ShellCommandException;
 
-use enupal\slider\Backup;
+use enupal\backup\Backup;
+use mikehaertl\shellcommand\Command as ShellCommand;
 use phpbu\App\Cmd;
 use phpbu\App\Util\Cli;
 
@@ -30,29 +33,51 @@ class BackupsController extends BaseController
 		/*//'\"C:\\Program Files (x86)\\Git\\bin\"'*/
 		// windows needed
 		$base = Craft::getAlias('@enupal/backup/');
-		$path = escapeshellarg('C:\\Program Files (x86)\\Git\\bin');
-		#Craft::dd($path);
-		//Cli::addCommandLocation('tar',$path);
-		$cmd = new Cmd();
+		$phpbuPath = Craft::getAlias('@enupal/backup/resources');
+		Backup::$app->backups->getConfigJson();
+
+		App::maxPowerCaptain();
+		//register_shutdown_function('backupFinished');
+		#$cmd = new Cmd();
 		$configFile = $base.'backup/config.json';
-		$response = $cmd->run([
+
+		// Create the shell command
+		$shellCommand = new ShellCommand();
+		$command = 'cd'.
+				' '.$phpbuPath.
+				' && php phpbu.phar'.
+				' --configuration='.$configFile;
+
+		$shellCommand->setCommand($command);
+
+		// If we don't have proc_open, maybe we've got exec
+		if (!function_exists('proc_open') && function_exists('exec')) {
+			$shellCommand->useExec = true;
+		}
+
+		$success = $shellCommand->execute();
+
+		if (!$success) {
+			throw ShellCommandException::createFromCommand($shellCommand);
+		}
+
+		Craft::dd($success);
+
+		//ob_start();
+		/*$cmd->run([
 				'--configuration='.$configFile
 				//'--debug'
-		]);
-		$logPath = $base.'backup/json.log';
-		$str = file_get_contents($logPath);
-		$json = json_decode($str, true);
-		echo "AS";
-		echo "---------------------";
-		print_r($json);
-		die();
+		]);*/
+		//ob_end_clean();
 
-		// create new archive
-		/*$zipFile = new \PhpZip\ZipFile();
-		$zipFile
-				->addDir('C:/MAMP/htdocs/craft3.personal/web/', "enupalslider")
-				->saveAsFile("enupalbackup__232232323")
-				->close();*/
+		Craft::dd('Finished');
+	}
+
+	function backupFinished()
+	{
+		$message = ob_get_contents(); // Capture 'Doh'
+		ob_end_clean(); // Cleans output buffer
+		Craft::dd($message);
 	}
 
 	/**
