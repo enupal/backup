@@ -10,13 +10,9 @@ use craft\helpers\ArrayHelper;
 use craft\elements\Asset;
 use craft\helpers\Json;
 use craft\helpers\Template as TemplateHelper;
-use craft\helpers\App;
-use craft\errors\ShellCommandException;
+use yii\base\Exception;
 
 use enupal\backup\Backup;
-use mikehaertl\shellcommand\Command as ShellCommand;
-use phpbu\App\Cmd;
-use phpbu\App\Util\Cli;
 
 class BackupsController extends BaseController
 {
@@ -30,47 +26,16 @@ class BackupsController extends BaseController
 
 	public function actionRun()
 	{
-		/*//'\"C:\\Program Files (x86)\\Git\\bin\"'*/
-		// windows needed
-		$base = Craft::getAlias('@enupal/backup/');
-		$phpbuPath = Craft::getAlias('@enupal/backup/resources');
-		Backup::$app->backups->getConfigJson();
-
-		App::maxPowerCaptain();
-		//register_shutdown_function('backupFinished');
-		#$cmd = new Cmd();
-		$configFile = $base.'backup/config.json';
-
-		// Create the shell command
-		$shellCommand = new ShellCommand();
-		$command = 'cd'.
-				' '.$phpbuPath.
-				' && php phpbu.phar'.
-				' --configuration='.$configFile;
-
-		$shellCommand->setCommand($command);
-
-		// If we don't have proc_open, maybe we've got exec
-		if (!function_exists('proc_open') && function_exists('exec')) {
-			$shellCommand->useExec = true;
+		try
+		{
+			$result = Backup::$app->backups->enupalBackup();
+		} catch (\Throwable $e)
+		{
+			Backup::error('Could not create Enupal Backup: '.$e->getMessage());
+			throw new Exception('Could not Enupal Backup: '.$e->getMessage());
 		}
 
-		$success = $shellCommand->execute();
-
-		if (!$success) {
-			throw ShellCommandException::createFromCommand($shellCommand);
-		}
-
-		Craft::dd($success);
-
-		//ob_start();
-		/*$cmd->run([
-				'--configuration='.$configFile
-				//'--debug'
-		]);*/
-		//ob_end_clean();
-
-		Craft::dd('Finished');
+		Craft::dd($result);
 	}
 
 	function backupFinished()

@@ -7,20 +7,16 @@ use yii\db\Query;
 use enupal\backup\Backup;
 use enupal\backup\elements\Backup as BackupElement;
 use enupal\backup\records\Backup as BackupRecord;
-use phpbu\App\Cmd;
 use enupal\backup\models\Settings;
 
+use craft\errors\ShellCommandException;
 use craft\volumes\Local;
+use craft\helpers\App as CraftApp;
+use mikehaertl\shellcommand\Command as ShellCommand;
 
 class Backups extends Component
 {
 	protected $backupRecord;
-
-
-	public function test()
-	{
-
-	}
 
 	/**
 	 * Constructor
@@ -102,6 +98,55 @@ class Backups extends Component
 		return true;
 	}
 
+	/**
+	 * Performs a Enupal Backup operation.
+	 *
+	 * @return boolean
+	 * @throws Exception
+	 * @throws ShellCommandException in case of failure
+	 */
+	public function enupalBackup()
+	{
+		// This may make take a while so..
+		CraftApp::maxPowerCaptain();
+
+		$base       = Craft::getAlias('@enupal/backup/');
+		$phpbuPath  = Craft::getAlias('@enupal/backup/resources');
+		$configFile = Backup::$app->backups->getConfigJson();
+
+		if (!is_file($configFile))
+		{
+			throw new Exception("Could not create the Enupal Backup: the config file doesn't exist.");
+		}
+
+		$configFile = $base.'backup/config.json';
+
+		// Create the shell command
+		$shellCommand = new ShellCommand();
+		$command = 'cd'.
+				' '.$phpbuPath.
+				' && php phpbu.phar'.
+				' --configuration='.$configFile.
+				' --debug';
+
+		$shellCommand->setCommand($command);
+
+		// If we don't have proc_open, maybe we've got exec
+		if (!function_exists('proc_open') && function_exists('exec'))
+		{
+			$shellCommand->useExec = true;
+		}
+
+		$success = $shellCommand->execute();
+
+		if (!$success)
+		{
+			throw ShellCommandException::createFromCommand($shellCommand);
+		}
+
+		return $success;
+	}
+
 	public function installDefaultValues()
 	{
 		$model    = new Settings();
@@ -115,26 +160,6 @@ class Backups extends Component
 			'handle' => 'enupal-backup'
 			]
 		)->execute();
-	}
-
-	public function getBasePath()
-	{
-		return Craft::$app->getPath()->getStoragePath().DIRECTORY_SEPARATOR.'enupalbackup'.DIRECTORY_SEPARATOR;
-	}
-
-	public function getAssetsPath()
-	{
-		return $this->getBasePath().'assets'.DIRECTORY_SEPARATOR;
-	}
-
-	public function getTemplatesPath()
-	{
-		return $this->getBasePath().'templates'.DIRECTORY_SEPARATOR;
-	}
-
-	public function getDbPath()
-	{
-		return $this->getBasePath().'databases'.DIRECTORY_SEPARATOR;
 	}
 
 	public function getConfigJson()
@@ -151,13 +176,13 @@ class Backups extends Component
 			'backups' => []
 		];
 
-		$date = date('Ymd-His');
-		$syncs        = $this->getSyncs($date);
+		$date           = date('Ymd-His');
+		$syncs          = $this->getSyncs($date);
+		$dbName         = 'backup-db-'.$date;
+		$assetName      = 'backup-assets-'.$date;
+		$templateName   = 'backup-templates-'.$date;
+		$pathToTar      = $this->getPathToTar();
 		$assetsCleanups = $this->getAssetsCleanup();
-		$pathToTar = $this->getPathToTar();
-		$assetName    = 'backup-assets-'.$date;
-		$templateName = 'backup-templates-'.$date;
-		$dbName       = 'backup-db-'.$date;
 
 		// @todo - add the assets from settings
 		$testAsset = Craft::$app->getVolumes()->getVolumeById(33);
@@ -231,7 +256,7 @@ class Backups extends Component
 
 			if ($syncs)
 			{
-				#$templateBackup['syncs'] = $syncs;
+				$templateBackup['syncs'] = $syncs;
 			}
 
 			if ($assetsCleanups)
@@ -247,7 +272,8 @@ class Backups extends Component
 		$configFile = $base.'backup'.DIRECTORY_SEPARATOR.'config.json';
 
 		file_put_contents($configFile, json_encode($config));
-		return true;
+
+		return $logPath;
 	}
 
 	private function getSyncs($date)
@@ -299,6 +325,26 @@ class Backups extends Component
 		}
 
 		return $pathToTar;
+	}
+
+	public function getBasePath()
+	{
+		return Craft::$app->getPath()->getStoragePath().DIRECTORY_SEPARATOR.'enupalbackup'.DIRECTORY_SEPARATOR;
+	}
+
+	public function getAssetsPath()
+	{
+		return $this->getBasePath().'assets'.DIRECTORY_SEPARATOR;
+	}
+
+	public function getTemplatesPath()
+	{
+		return $this->getBasePath().'templates'.DIRECTORY_SEPARATOR;
+	}
+
+	public function getDbPath()
+	{
+		return $this->getBasePath().'databases'.DIRECTORY_SEPARATOR;
 	}
 
 }
