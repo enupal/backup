@@ -14,6 +14,7 @@ use craft\validators\UniqueValidator;
 
 use enupal\backup\elements\db\BackupQuery;
 use enupal\backup\records\Backup as BackupRecord;
+use enupal\backup\enums\BackupStatus;
 use enupal\backup\Backup;
 
 /**
@@ -27,6 +28,15 @@ class Backup extends Element
 	// General - Properties
 	// =========================================================================
 	public $id;
+	public $backupId;
+	public $databasePath;
+	public $databaseSize;
+	public $templatesPath;
+	public $templatesSize;
+	public $pluginsPath;
+	public $pluginsSize;
+	public $status = BackupStatus::Running;
+	public $logMessage;
 
 	/**
 	 * Returns the field context this element's content uses.
@@ -172,7 +182,7 @@ class Backup extends Element
 	protected static function defineSortOptions(): array
 	{
 		$attributes = [
-			'elements.dateCreated'      => Backup::t('Date Created')
+			'elements.dateCreated'  => Backup::t('Date Created')
 		];
 
 		return $attributes;
@@ -237,6 +247,16 @@ class Backup extends Element
 			$record = new BackupRecord();
 			$record->id = $this->id;
 		}
+
+		$record->backupId      = $this->backupId;
+		$record->databasePath  = $this->databasePath;
+		$record->databaseSize  = $this->databaseSize;
+		$record->templatesPath = $this->templatesPath;
+		$record->templatesSize = $this->templatesSize;
+		$record->pluginsPath   = $this->pluginsPath;
+		$record->pluginsSize   = $this->pluginsSize;
+		$record->status        = $this->status;
+		$record->logMessage    = $this->logMessage;
 
 		$record->save(false);
 

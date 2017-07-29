@@ -60,8 +60,6 @@ class Backups extends Component
 	 */
 	public function saveBackup(BackupElement $backup)
 	{
-		$isNewSlider  = true;
-
 		if ($backup->id)
 		{
 			$backupRecord = BackupRecord::findOne($backup->id);
@@ -110,9 +108,11 @@ class Backups extends Component
 		// This may make take a while so..
 		CraftApp::maxPowerCaptain();
 
+		$backupId   = date('Ymd-H_i_s');
+		$backup     = new BackupElement();
 		$base       = Craft::getAlias('@enupal/backup/');
 		$phpbuPath  = Craft::getAlias('@enupal/backup/resources');
-		$configFile = Backup::$app->backups->getConfigJson();
+		$configFile = Backup::$app->backups->getConfigJson($backupId, $backup);
 
 		if (!is_file($configFile))
 		{
@@ -144,6 +144,8 @@ class Backups extends Component
 			throw ShellCommandException::createFromCommand($shellCommand);
 		}
 
+
+
 		return $success;
 	}
 
@@ -162,9 +164,22 @@ class Backups extends Component
 		)->execute();
 	}
 
-	public function getConfigJson()
+	public function getSizeFormatted($path)
 	{
-		$logPath = Craft::getAlias('@enupal/backup/backup/enupalbackup.log');
+		$size = filesize($path);
+		$units = array( 'B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
+		$power = $size > 0 ? floor(log($size, 1024)) : 0;
+		return number_format($size / pow(1024, $power), 2, '.', ',') . ' ' . $units[$power];
+	}
+
+	/**
+	 * Generetates the config file and create the backup element entry
+	 *
+	*/
+	private function getConfigJson($backupId, BackupElement $backup)
+	{
+		$logPath = $this->getLogPath();
+
 		$config  = [
 			'verbose' => true,
 			'logging' => [
@@ -176,13 +191,29 @@ class Backups extends Component
 			'backups' => []
 		];
 
-		$date           = date('Ymd-His');
-		$syncs          = $this->getSyncs($date);
-		$dbName         = 'backup-db-'.$date;
-		$assetName      = 'backup-assets-'.$date;
-		$templateName   = 'backup-templates-'.$date;
+		$compress       = $this->getCompressType();
+		$syncs          = $this->getSyncs($backupId);
+		$dbName         = 'backup-db-'.$backupId.$compress;
+		$assetName      = 'backup-assets-'.$backupId.$compress;
+		$templateName   = 'backup-templates-'.$backupId.$compress;
+		$pluginName     = 'backup-plugins-'.$backupId.$compress;
 		$pathToTar      = $this->getPathToTar();
 		$assetsCleanups = $this->getAssetsCleanup();
+
+		// let's create the Backup Element
+		$backup->backupId         = $backupId;
+		$backup->databaseFileName = $dbName;
+		$backup->assetFileName    = $assetName;
+		$backup->templateFileName = $templateName;
+		$backup->pluginFileName   = $pluginName;
+
+		if (!$this->saveBackup($backup))
+		{
+			Backup::error('Unable to create the element record for the Backup: '.$backupId.
+				' Errors: '.json_encode($backup->getErrors()));
+
+			return null;
+		}
 
 		// @todo - add the assets from settings
 		$testAsset = Craft::$app->getVolumes()->getVolumeById(33);
@@ -206,7 +237,7 @@ class Backups extends Component
 					],
 					'target' => [
 						'dirname' => $this->getAssetsPath(),
-						'filename' => $assetName.'.tar'
+						'filename' => $assetName
 					]
 				];
 
@@ -245,7 +276,7 @@ class Backups extends Component
 				],
 				'target' => [
 					'dirname' => $this->getTemplatesPath(),
-					'filename' => $templateName.'.tar'
+					'filename' => $templateName
 				]
 			];
 
@@ -276,7 +307,7 @@ class Backups extends Component
 		return $logPath;
 	}
 
-	private function getSyncs($date)
+	private function getSyncs($backupId)
 	{
 		$syncs = [];
 		// @todo validate dropbox
@@ -286,7 +317,7 @@ class Backups extends Component
 				'type' => 'dropbox',
 				'options' => [
 					'token' => 'WpYFCk46C4QAAAAAAAAHmTbUVAvCFnBzf7Vqm3imO4ANZxazrF8YG0COqlh--tLa',
-					'path' => '/enupalbackup/'.$date
+					'path' => '/enupalbackup/'.$backupId
 				]
 			];
 
@@ -312,6 +343,12 @@ class Backups extends Component
 		}
 
 		return $cleanup;
+	}
+
+	private function getCompressType()
+	{
+		// @todo - add setting to change this bz2 or something else
+		return '.tar';
 	}
 
 	private function getPathToTar()
@@ -345,6 +382,11 @@ class Backups extends Component
 	public function getDbPath()
 	{
 		return $this->getBasePath().'databases'.DIRECTORY_SEPARATOR;
+	}
+
+	public function getLogPath()
+	{
+		return Craft::getAlias('@enupal/backup/backup/enupalbackup.log');
 	}
 
 }

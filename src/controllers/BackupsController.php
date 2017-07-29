@@ -38,13 +38,6 @@ class BackupsController extends BaseController
 		Craft::dd($result);
 	}
 
-	function backupFinished()
-	{
-		$message = ob_get_contents(); // Capture 'Doh'
-		ob_end_clean(); // Cleans output buffer
-		Craft::dd($message);
-	}
-
 	/**
 	 * Save a slider
 	 */

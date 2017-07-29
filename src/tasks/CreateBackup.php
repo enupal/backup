@@ -29,11 +29,6 @@ class CrateBackup extends Task
 	 */
 	public function getTotalSteps(): int
 	{
-		$settings            = $this->getSettings();
-		$this->_contentRows  = $settings->contentRows;
-		$this->_newFormat    = $settings->newFormat;
-		$this->_contentTable = $settings->contentTable;
-
 		// one step
 		return 1;
 	}
@@ -47,27 +42,16 @@ class CrateBackup extends Task
 	 */
 	public function runStep(int $step)
 	{
+		$result = false;
 		try
 		{
-			$base = Craft::getAlias('@enupal/backup/');
-			App::maxPowerCaptain();
-			Backup::$app->backups->getConfigJson();
+			$result = Backup::$app->backups->enupalBackup();
 
-			$cmd = new Cmd();
-			$configFile = $base.'backup/config.json';
-
-			$cmd->run([
-					'--configuration='.$configFile
-					//'--debug'
-			]);
-
-			return true;
-		}
-		catch (\Throwable $e)
+		} catch (\Throwable $e)
 		{
-			Craft::$app->getErrorHandler()->logException($e);
-			 return 'An exception was thrown while trying to generate the Enupal Backup: '.$e->getMessage();
+			Backup::error('Could not create Enupal Backup: '.$e->getMessage());
 		}
 
+		return $result;
 	}
 }
