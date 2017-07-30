@@ -15,11 +15,13 @@ class BackupAsset extends AssetBundle
 		// define the relative path to CSS/JS files that should be registered with the page
 		// when this asset bundle is registered
 		$this->js = [
-			'js/enupalbackup.js'
+			'js/enupalbackup.js',
+			'js/bootstrap.min.js',
 		];
 
 		$this->css = [
-			'css/enupalbackup.css'
+			'css/enupalbackup.css',
+			'css/bootstrap-iso.css'
 		];
 
 		parent::init();

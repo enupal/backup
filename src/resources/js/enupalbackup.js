@@ -5,7 +5,7 @@
 	 */
 	var EnupalBackup = Garnish.Base.extend({
 
-		options: null
+		options: null,
 
 		/**
 		 * The constructor.

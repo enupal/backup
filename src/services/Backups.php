@@ -376,9 +376,14 @@ class Backups extends Component
 		return $this->getBasePath().'templates'.DIRECTORY_SEPARATOR;
 	}
 
-	public function getDbPath()
+	public function getDatabasePath()
 	{
 		return $this->getBasePath().'databases'.DIRECTORY_SEPARATOR;
+	}
+
+	public function getPluginsPath()
+	{
+		return $this->getBasePath().'plugins'.DIRECTORY_SEPARATOR;
 	}
 
 	public function getLogPath()

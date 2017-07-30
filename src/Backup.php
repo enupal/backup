@@ -111,8 +111,8 @@ class Backup extends \craft\base\Plugin
 			'enupal-backup/backup/new' =>
 			'enupal-backup/backups/edit-backup',
 
-			'enupal-backup/backup/edit/<backupId:\d+>' =>
-			'enupal-backup/backups/edit-backup',
+			'enupal-backup/backup/view/<backupId:\d+>' =>
+			'enupal-backup/backups/view-backup',
 		];
 	}
 }

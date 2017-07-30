@@ -1,0 +1,94 @@
+{% extends "enupal-backup/_layouts/base" %}
+{% import "_includes/forms" as forms %}
+{% css %}
+	.enupal-field-heading {
+		background-color: rgb(244, 245, 246);
+		color: rgb(85, 85, 85);
+		font-size: .8em;
+		min-height: auto;
+		padding: 8px auto;
+		text-transform: uppercase;
+	}
+{% endcss %}
+{% set crumbs = [
+	{ label: "Backups"|t('enupal-backup'), url: cpUrl('enupal-backup/backups') }
+] %}
+
+{% set title = 'Backup '~backup.dateCreated|date %}
+
+{% set fullPageForm = true %}
+
+{% block saveButton %}
+	{{ redirectInput('enupal-backup/backups') }}
+
+	<div class="btngroup submit first">
+		<input type="submit" class="btn submit" value="{{ '<-Back'|t('enupal-backup') }}">
+	</div>
+{% endblock %}
+
+{% block main %}
+
+	{% if namespace is not defined %}{% set namespace = 'fields' %}{% endif %}
+
+	<div class="grid first" data-max-cols="3">
+		<div class="item" data-position="left" data-min-colspan="2" data-max-colspan="3">
+			<div id="fields" class="pane">
+
+				<div class="heading">
+					<label>Download your backups!</label>
+					<div class="instructions">
+						The compress file
+					</div>
+				</div>
+				<div class="bootstrap-iso downloads-content">
+					<div class="jumbotron">
+						<div class="row col-sm-offset-1">
+							{% if backup.databaseFileName %}
+								<div class="col-md-4 col-sm-4">
+									<a class="bbtn bbtn-lg bbtn-success" href="#">
+										<i class="fa fa-download fa-2x pull-left"></i> Database<br>25M
+									</a>
+								</div>
+							{% endif %}
+							{% if backup.templateFileName %}
+								<div class="col-md-4 col-sm-4">
+									<a class="bbtn bbtn-lg bbtn-success" href="#">
+										<i class="fa fa-download fa-2x pull-left"></i> Templates<br>25M
+									</a>
+								</div>
+							{% endif %}
+							{% if backup.assetFileName %}
+								<div class="col-md-4 col-sm-4">
+									<a class="bbtn bbtn-lg bbtn-success" href="#">
+										<i class="fa fa-download fa-2x pull-left"></i> Assets<br>25M
+									</a>
+								</div>
+							{% endif %}
+							{% if backup.pluginFileName %}
+								<div class="col-md-4 col-sm-4">
+									<a class="bbtn bbtn-lg bbtn-success" href="#">
+										<i class="fa fa-download fa-2x pull-left"></i> Plugins<br>25M
+									</a>
+								</div>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="item" data-position="right" data-colspan="1">
+			<div class="pane meta">
+				{% include 'enupal-backup/backups/_sidebar/settings' %}
+			</div>
+		</div>
+	</div>
+
+{% do view.registerAssetBundle("enupal\\backup\\assetbundles\\BackupAsset") %}
+{% do view.registerAssetBundle("enupal\\backup\\assetbundles\\FontAwesomeAsset") %}
+{% js %}
+	$(document).ready(function() {
+		new EnupalBackup();
+	});
+{% endjs %}
+{% endblock %}
+

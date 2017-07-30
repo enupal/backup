@@ -113,7 +113,7 @@ class Backup extends Element
 	public function getCpEditUrl()
 	{
 		return UrlHelper::cpUrl(
-			'enupal-backup/backup/edit/'.$this->id
+			'enupal-backup/backup/view/'.$this->id
 		);
 	}
 
@@ -251,6 +251,34 @@ class Backup extends Element
 		}
 
 		return parent::tableAttributeHtml($attribute);
+	}
+
+	public function getDatabaseFile()
+	{
+		$base = Backup::$app->backups->getDatabasePath();
+
+		return $base.$this->databaseFileName;
+	}
+
+	public function getTemplateFile()
+	{
+		$base = Backup::$app->backups->getTemplatesPath();
+
+		return $base.$this->templateFileName;
+	}
+
+	public function getPluginFile()
+	{
+		$base = Backup::$app->backups->getPluginsPath();
+
+		return $base.$this->pluginFileName;
+	}
+
+	public function getAssetFile()
+	{
+		$base = Backup::$app->backups->getAssetsPath();
+
+		return $base.$this->assetFileName;
 	}
 
 	/**

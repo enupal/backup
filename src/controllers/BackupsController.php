@@ -38,167 +38,46 @@ class BackupsController extends BaseController
 	}
 
 	/**
-	 * Save a slider
-	 */
-	public function actionSaveBackup()
-	{
-		$this->requirePostRequest();
-
-		/*$request = Craft::$app->getRequest();
-		$slider  = new SliderElement;
-
-		$sliderId = $request->getBodyParam('sliderId');
-		$isNew    = true;
-
-		if ($sliderId)
-		{
-			$slider = Backup::$app->backups->getSliderById($sliderId);
-
-			if ($slider)
-			{
-				$isNew = false;
-			}
-		}
-
-		//$slider->groupId     = $request->getBodyParam('groupId');
-		$oldHandle              = $slider->handle;
-		$newHandle              = $request->getBodyParam('handle');
-		$slider->name           = $request->getBodyParam('name');
-		$slider->handle         = $newHandle;
-		$slider                 = Backup::$app->backups->populateSliderFromPost($slider);
-
-		// Save it
-		if (!Backup::$app->backups->saveSlider($slider))
-		{
-			Craft::$app->getSession()->setError(Backup::t('Coubackupsave slider.'));
-
-			Craft::$app->getUrlManager()->setRouteParams([
-					'slider'               => $slider
-				]
-			);
-
-			return null;
-		}
-
-		//lets update the subfolder
-		if (!$isNew && $oldHandle != $newHandle)
-		{
-			if (!Backup::$app->backups->updateSubfolder($slider, $oldHandle))
-			{
-				Backup::log("Ubackupto rename subfolder {$oldHandle} to {$slider->handle}", 'error');
-			}
-		}
-
-		Craft::$app->getSession()->setNotice(Backup::t('Slibackupved.'));
-
-		#$_POST['redirect'] = str_replace('{id}', $form->id, $_POST['redirect']);
-
-		return $this->redirectToPostedUrl($slider);
-		*/
-	}
-
-	/**
-	 * Edit a Backup.
+	 * View a Backup.
 	 *
-	 * @param int|null  $slierId The backup's ID, if editing an existing slider.
+	 * @param int|null  $backupId The backup's ID
 	 *
 	 * @throws HttpException
 	 * @throws Exception
 	 */
-	public function actionEditBackup(int $backupId = null)
+	public function actionViewBackup(int $backupId = null)
 	{
-		// Immediately create a new Form
-		/*if ($sliderId === null)
+		// Get the Backup
+		$backup = Backup::$app->backups->getBackupById($backupId);
+
+		if (!$backup)
 		{
-			$slider = Backup::$app->backups->createNewSlider();
-
-			if ($slider->id)
-			{
-				$url = UrlHelper::cpUrl('enupalslider/slider/edit/' . $slider->id);
-				return $this->redirect($url);
-			}
-			else
-			{
-				throw new Exception(Craft::t('Error creating Slider'));
-			}
-		}
-		else
-		{
-			if ($sliderId !== null)
-			{
-				if ($slider === null)
-				{
-					$variables['groups']  = Backup::$app->backup->getAllSlidersGroups();
-					$variables['groupId'] = "";
-
-					// Get the Slider
-					$slider = Backup::$app->backups->getSliderById($sliderId);
-
-					if (!$slider)
-					{
-						throw new NotFoundHttpException(Backup::t('Slibackupt found'));
-					}
-				}
-			}
+			throw new NotFoundHttpException(Backup::t('Backup not found'));
 		}
 
-		$sources = Backup::$app->backups->getVolumeFolder($slider);
-
-		$variables['sources']  = $sources;
-		$variables['sliderId'] = $sliderId;
-		$variables['slider']   = $slider;
-		$variables['name']     = $slider->name;
-		$variables['groupId']  = $slider->groupId;
-		$variables['elementType'] = Asset::class;
-
-		$variables['slidesElements']  = null;
-
-		if ($slider->slides)
+		if (!is_file($backup->getDatabaseFile()))
 		{
-			$slides = $slider->slides;
-			if (is_string($slides))
-			{
-				$slides = json_decode($slider->slides);
-			}
-
-			$slidesElements = [];
-
-			if (count($slides))
-			{
-				foreach ($slides as $key => $slideId)
-				{
-					$slide = Craft::$app->elements->getElementById($slideId);
-					array_push($slidesElements, $slide);
-				}
-
-				$variables['slidesElements'] = $slidesElements;
-			}
+			$backup->databaseFileName = null;
 		}
 
-		$variables['showPreviewBtn'] = false;
-		// Enable Live Preview?
-		if (!Craft::$app->getRequest()->isMobileBrowser(true))
+		if (!is_file($backup->getTemplateFile()))
 		{
-
-			//#title-field, #fields > div > div > .field
-			$this->getView()->registerJs('Craft.LivePreview.init('.Json::encode([
-					'fields' => '.field',
-					'previewAction' => 'enupalslider/sliders/live-preview',
-					'previewParams' => [
-						'sliderId' => $slider->id
-					]
-				]).');');
-
-			$variables['showPreviewBtn'] = true;
+			$backup->templateFileName = null;
 		}
 
-		// Set the "Continue Editing" URL
-		$variables['continueEditingUrl'] = 'enupalslider/slider/edit/{id}';
+		if (!is_file($backup->getPluginFile()))
+		{
+			$backup->pluginFileName = null;
+		}
 
-		$variables['settings'] = Craft::$app->plugins->getPlugin('enupalslider')->getSettings();
+		if (!is_file($backup->getAssetFile()))
+		{
+			$backup->assetFileName = null;
+		}
 
-		return $this->renderTemplate('enupalslider/sliders/_editSlider', $variables);
-		*/
+		$variables['backup'] = $backup;
+
+		return $this->renderTemplate('enupal-backup/backups/_viewBackup', $variables);
 	}
 
 	/**
