@@ -31,8 +31,7 @@ class BackupsController extends BaseController
 			$result = Backup::$app->backups->enupalBackup();
 		} catch (\Throwable $e)
 		{
-			Backup::error('Could not create Enupal Backup: '.$e->getMessage());
-			throw new Exception('Could not Enupal Backup: '.$e->getMessage());
+			throw new Exception('Could not create a Enupal Backup: '.$e->getMessage());
 		}
 
 		Craft::dd($result);

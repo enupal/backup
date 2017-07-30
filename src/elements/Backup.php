@@ -11,6 +11,7 @@ use yii\base\InvalidConfigException;
 use craft\elements\actions\Delete;
 use craft\validators\HandleValidator;
 use craft\validators\UniqueValidator;
+use DateTime;
 
 use enupal\backup\elements\db\BackupQuery;
 use enupal\backup\records\Backup as BackupRecord;
@@ -29,13 +30,20 @@ class Backup extends Element
 	// =========================================================================
 	public $id;
 	public $backupId;
-	public $databasePath;
+	public $databaseFileName;
 	public $databaseSize;
-	public $templatesPath;
-	public $templatesSize;
-	public $pluginsPath;
-	public $pluginsSize;
+	public $assetFileName;
+	public $assetSize;
+	public $templateFileName;
+	public $templateSize;
+	public $pluginFileName;
+	public $pluginSize;
 	public $status = BackupStatus::Running;
+	public $aws = 0;
+	public $dropbox = 0;
+	public $rsync = 0;
+	public $ftp = 0;
+	public $softlayer = 0;
 	public $logMessage;
 
 	/**
@@ -80,7 +88,7 @@ class Backup extends Element
 	 */
 	public static function hasTitles(): bool
 	{
-		return true;
+		return false;
 	}
 
 	/**
@@ -120,7 +128,7 @@ class Backup extends Element
 		try
 		{
 			// @todo - For some reason the Title returns null possible Craft3 bug
-			return $this->dateCreated;
+			return $this->dateCreated->format(DateTime::RFC1123);
 		} catch (\Exception $e) {
 			ErrorHandler::convertExceptionToError($e);
 		}
@@ -173,7 +181,7 @@ class Backup extends Element
 	 */
 	protected static function defineSearchableAttributes(): array
 	{
-		return ['dateCreated'];
+		return ['backupId'];
 	}
 
 	/**
@@ -222,6 +230,10 @@ class Backup extends Element
 			{
 				return 'Links ;D';
 			}
+			case 'dateCreated':
+			{
+				return "Tests";
+			}
 		}
 
 		return parent::tableAttributeHtml($attribute);
@@ -248,15 +260,22 @@ class Backup extends Element
 			$record->id = $this->id;
 		}
 
-		$record->backupId      = $this->backupId;
-		$record->databasePath  = $this->databasePath;
-		$record->databaseSize  = $this->databaseSize;
-		$record->templatesPath = $this->templatesPath;
-		$record->templatesSize = $this->templatesSize;
-		$record->pluginsPath   = $this->pluginsPath;
-		$record->pluginsSize   = $this->pluginsSize;
-		$record->status        = $this->status;
-		$record->logMessage    = $this->logMessage;
+		$record->backupId         = $this->backupId;
+		$record->databaseFileName = $this->databaseFileName;
+		$record->databaseSize     = $this->databaseSize;
+		$record->assetFileName    = $this->assetFileName;
+		$record->assetSize        = $this->assetSize;
+		$record->templateFileName = $this->templateFileName;
+		$record->templateSize     = $this->templateSize;
+		$record->pluginFileName   = $this->pluginFileName;
+		$record->pluginSize       = $this->pluginSize;
+		$record->status           = $this->status;
+		$record->aws              = $this->aws;
+		$record->dropbox          = $this->dropbox;
+		$record->rsync            = $this->rsync;
+		$record->ftp              = $this->ftp;
+		$record->softlayer        = $this->softlayer;
+		$record->logMessage       = $this->logMessage;
 
 		$record->save(false);
 

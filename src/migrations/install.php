@@ -37,11 +37,27 @@ class Install extends Migration
 	protected function createTables()
 	{
 		$this->createTable('{{%enupalbackup_backups}}', [
-			'id'                   => $this->primaryKey(),
+			'id'               => $this->primaryKey(),
+			'backupId'         => $this->string(),
+			'databaseFileName' => $this->string(),
+			'databaseSize'     => $this->string(),
+			'assetFileName'    => $this->string(),
+			'assetSize'        => $this->string(),
+			'templateFileName' => $this->string(),
+			'templateSize'     => $this->string(),
+			'pluginFileName'   => $this->string(),
+			'pluginSize'       => $this->string(),
+			'status'           => $this->integer(),
+			'aws'              => $this->boolean(),
+			'dropbox'          => $this->boolean(),
+			'rsync'            => $this->boolean(),
+			'ftp'              => $this->boolean(),
+			'softlayer'        => $this->boolean(),
+			'logMessage'       => $this->text(),
 			//
-			'dateCreated'          => $this->dateTime()->notNull(),
-			'dateUpdated'          => $this->dateTime()->notNull(),
-			'uid'                  => $this->uid(),
+			'dateCreated'   => $this->dateTime()->notNull(),
+			'dateUpdated'   => $this->dateTime()->notNull(),
+			'uid'           => $this->uid(),
 		]);
 	}
 

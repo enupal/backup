@@ -50,7 +50,22 @@ class BackupQuery extends ElementQuery
 		$this->joinElementTable('enupalbackup_backups');
 
 		$this->query->select([
-			'enupalbackup_backups.dateCreated'
+			'enupalbackup_backups.backupId',
+			'enupalbackup_backups.databaseFileName',
+			'enupalbackup_backups.databaseSize',
+			'enupalbackup_backups.assetFileName',
+			'enupalbackup_backups.assetSize',
+			'enupalbackup_backups.templateFileName',
+			'enupalbackup_backups.templateSize',
+			'enupalbackup_backups.pluginFileName',
+			'enupalbackup_backups.pluginSize',
+			'enupalbackup_backups.status',
+			'enupalbackup_backups.aws',
+			'enupalbackup_backups.dropbox',
+			'enupalbackup_backups.rsync',
+			'enupalbackup_backups.ftp',
+			'enupalbackup_backups.softlayer',
+			'enupalbackup_backups.logMessage',
 		]);
 
 		if ($this->dateCreated) {

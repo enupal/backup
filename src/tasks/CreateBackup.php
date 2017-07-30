@@ -43,6 +43,7 @@ class CrateBackup extends Task
 	public function runStep(int $step)
 	{
 		$result = false;
+
 		try
 		{
 			$result = Backup::$app->backups->enupalBackup();

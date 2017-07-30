@@ -13,6 +13,7 @@ use craft\errors\ShellCommandException;
 use craft\volumes\Local;
 use craft\helpers\App as CraftApp;
 use mikehaertl\shellcommand\Command as ShellCommand;
+use yii\base\Exception;
 
 class Backups extends Component
 {
@@ -116,7 +117,7 @@ class Backups extends Component
 
 		if (!is_file($configFile))
 		{
-			throw new Exception("Could not create the Enupal Backup: the config file doesn't exist.");
+			throw new Exception("Could not create the Enupal Backup: the config file doesn't exist: ".$configFile);
 		}
 
 		$configFile = $base.'backup/config.json';
@@ -209,10 +210,8 @@ class Backups extends Component
 
 		if (!$this->saveBackup($backup))
 		{
-			Backup::error('Unable to create the element record for the Backup: '.$backupId.
+			throw new Exception('Unable to create the element record for the Backup: '.$backupId.
 				' Errors: '.json_encode($backup->getErrors()));
-
-			return null;
 		}
 
 		// @todo - add the assets from settings
