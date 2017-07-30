@@ -39,6 +39,7 @@ class Install extends Migration
 		$this->createTable('{{%enupalbackup_backups}}', [
 			'id'               => $this->primaryKey(),
 			'backupId'         => $this->string(),
+			'time'             => $this->string(),
 			'databaseFileName' => $this->string(),
 			'databaseSize'     => $this->string(),
 			'assetFileName'    => $this->string(),

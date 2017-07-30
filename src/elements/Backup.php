@@ -30,6 +30,7 @@ class Backup extends Element
 	// =========================================================================
 	public $id;
 	public $backupId;
+	public $time;
 	public $databaseFileName;
 	public $databaseSize;
 	public $assetFileName;
@@ -303,6 +304,7 @@ class Backup extends Element
 		}
 
 		$record->backupId         = $this->backupId;
+		$record->time             = $this->time;
 		$record->databaseFileName = $this->databaseFileName;
 		$record->databaseSize     = $this->databaseSize;
 		$record->assetFileName    = $this->assetFileName;

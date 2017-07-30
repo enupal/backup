@@ -145,6 +145,8 @@ class Backups extends Component
 			throw ShellCommandException::createFromCommand($shellCommand);
 		}
 
+		$this->updateBackupOnComplete($backup);
+
 		return $success;
 	}
 
@@ -163,12 +165,89 @@ class Backups extends Component
 		)->execute();
 	}
 
-	public function getSizeFormatted($path)
+	public function getSizeFormatted($size)
 	{
-		$size = filesize($path);
 		$units = array( 'B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
 		$power = $size > 0 ? floor(log($size, 1024)) : 0;
 		return number_format($size / pow(1024, $power), 2, '.', ',') . ' ' . $units[$power];
+	}
+
+	private function updateBackupOnComplete(BackupElement $backup)
+	{
+		// let's update the filenames
+		if (!is_file($backup->getDatabaseFile()))
+		{
+			$backup->databaseFileName = null;
+		}
+		else
+		{
+			$backup->databaseSize = filesize($backup->getDatabaseFile());
+		}
+
+		if (!is_file($backup->getTemplateFile()))
+		{
+			$backup->templateFileName = null;
+		}
+		else
+		{
+			$backup->templateSize = filesize($backup->getTemplateFile());
+		}
+
+		if (!is_file($backup->getPluginFile()))
+		{
+			$backup->pluginFileName = null;
+		}
+		else
+		{
+			$backup->pluginSize = filesize($backup->getPluginFile());
+		}
+
+		if (!is_file($backup->getAssetFile()))
+		{
+			$backup->assetFileName = null;
+		}
+		else
+		{
+			$backup->assetSize = filesize($backup->getAssetFile());
+		}
+
+		$logPath = $this->getLogPath();
+		$log     = file_get_contents($logPath);
+		// Save the log
+		$backup->logMessage = $log;
+
+		$backupLog = json_decode($log, true);
+		// Backup succesfully
+		$backup->status = 1;
+		// @todo depending of the settings
+		$backup->dropbox = 1;
+		$backup->aws = 1;
+		$backup->rsync = 1;
+		$backup->ftp = 1;
+		$backup->softlayer = 1;
+
+		if (isset($backupLog['timestamp']))
+		{
+			$backup->time = $backupLog['timestamp'];
+		}
+
+		// Try to figure out if any sync fails
+		if (isset($backupLog['errors']) && $backupLog['errors'])
+		{
+			foreach ($backupLog['errors'] as $error)
+			{
+				if (isset($error['msg']))
+				{
+					// Dropbox
+					if (strpos(strtolower($error['msg']), 'dropbox') !== false)
+					{
+						$backup->dropbox = 0;
+					}
+				}
+			}
+		}
+
+		$this->saveBackup($backup);
 	}
 
 	/**
@@ -213,7 +292,7 @@ class Backups extends Component
 		}
 
 		// @todo - add the assets from settings
-		$testAsset = Craft::$app->getVolumes()->getVolumeById(33);
+		$testAsset = Craft::$app->getVolumes()->getVolumeById(36);
 		$assets[]  = $testAsset;
 		$backups = [];
 		// Adding the assets
@@ -245,7 +324,7 @@ class Backups extends Component
 
 				if ($syncs)
 				{
-					#$assetBackup['syncs'] = $syncs;
+					$assetBackup['syncs'] = $syncs;
 				}
 
 				if ($assetsCleanups)

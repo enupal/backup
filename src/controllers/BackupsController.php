@@ -32,7 +32,7 @@ class BackupsController extends BaseController
 		$this->requirePostRequest();
 		$backupId = Craft::$app->getRequest()->getRequiredBodyParam('backupId');
 		$type     = Craft::$app->getRequest()->getRequiredBodyParam('type');
-		$backup = Backup::$app->backups->getBackupById($backupId);
+		$backup   = Backup::$app->backups->getBackupById($backupId);
 
 		if ($backup && $type)
 		{

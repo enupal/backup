@@ -15,20 +15,21 @@
 	<div class="{{ tab != 1 ? 'hidden' : '' }} meta" id="tab-enupalbackup-settings">
 		<div class="field enupal-field-heading">{{'Backup Info'|t('enupal-backup')}}</div>
 			{{ forms.dateTimeField({
-				label: "Date Created"|t('enupal-backup'),
+				label: "Started at"|t('enupal-backup'),
 				id: 'dateCreated',
 				name: 'dateCreated',
 				value: backup.dateCreated,
 				disabled: true
 			}) }}
-
-			{{ forms.dateTimeField({
-				label: "Date Updated"|t('enupal-backup'),
-				id: 'dateUpdated',
-				name: 'dateUpdated',
-				value: backup.dateUpdated,
-				disabled: true
-			}) }}
+			{% if backup.status %}
+				{{ forms.dateTimeField({
+					label: "Finished at"|t('enupal-backup'),
+					id: 'dateUpdated',
+					name: 'dateUpdated',
+					value: backup.dateUpdated,
+					disabled: true
+				}) }}
+			{% endif %}
 	</div><!-- settings div -->
 
 </div>

@@ -51,6 +51,7 @@ class BackupQuery extends ElementQuery
 
 		$this->query->select([
 			'enupalbackup_backups.backupId',
+			'enupalbackup_backups.time',
 			'enupalbackup_backups.databaseFileName',
 			'enupalbackup_backups.databaseSize',
 			'enupalbackup_backups.assetFileName',
