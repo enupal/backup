@@ -1,7 +1,7 @@
 {% extends "enupal-backup/_layouts/elementindex" %}
 {% set title = "Backups"|t %}
 {% set elementType = 'enupal\\backup\\elements\\Backup' %}
-
+{% do view.registerAssetBundle("enupal\\backup\\assetbundles\\FontAwesomeAsset") %}
 {% set extraPageHeaderHtml %}
 	<div class="buttons">
 		<a class="btn submit add icon" href="{{ url('enupal-backup/backup/now') }}">{{ "Backup Now"|t('enupalbackup') }}</a>

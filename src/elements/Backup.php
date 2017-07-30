@@ -202,6 +202,7 @@ class Backup extends Element
 	protected static function defineTableAttributes(): array
 	{
 		$attributes['dateCreated'] = ['label' => Backup::t('Backup Date')];
+		$attributes['status']      = ['label' => Backup::t('Status')];
 		$attributes['download']    = ['label' => Backup::t('Data')];
 		$attributes['actions']     = ['label' => Backup::t('Actions')];
 
@@ -210,7 +211,7 @@ class Backup extends Element
 
 	protected static function defineDefaultTableAttributes(string $source): array
 	{
-		$attributes = ['dateCreated', 'download', 'actions'];
+		$attributes = ['dateCreated', 'status', 'download', 'actions'];
 
 		return $attributes;
 	}
@@ -225,6 +226,19 @@ class Backup extends Element
 			case 'download':
 			{
 				return 'Download links ;D';
+			}
+			case 'status':
+			{
+				$message = '';
+				if ($this->status)
+				{
+					$message = '<i class="fa fa-check-square-o" aria-hidden="true"></i> Finished';
+				}
+				else
+				{
+					$message = '<i class="fa fa-circle-o-notch fa-spin fa fa-fw"></i><span class="sr-only">Loading...</span> Running';
+				}
+				return $message;
 			}
 			case 'actions':
 			{

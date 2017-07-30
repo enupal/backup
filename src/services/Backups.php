@@ -145,8 +145,6 @@ class Backups extends Component
 			throw ShellCommandException::createFromCommand($shellCommand);
 		}
 
-
-
 		return $success;
 	}
 
