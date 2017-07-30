@@ -24,6 +24,51 @@ class BackupsController extends BaseController
 		return $this->renderTemplate('enupal-backup/backups/index');
 	}
 
+	/*
+	 * Download backup
+	*/
+	public function actionDownload()
+	{
+		$this->requirePostRequest();
+		$backupId = Craft::$app->getRequest()->getRequiredBodyParam('backupId');
+		$type     = Craft::$app->getRequest()->getRequiredBodyParam('type');
+		$backup = Backup::$app->backups->getBackupById($backupId);
+
+		if ($backup && $type)
+		{
+			$filePath = null;
+
+			switch ($type)
+			{
+				case 'database':
+					$filePath = $backup->getDatabaseFile();
+					break;
+				case 'template':
+					$filePath = $backup->getTemplateFile();
+					break;
+				case 'plugin':
+					$filePath = $backup->getPluginFile();
+					break;
+				case 'asset':
+					$filePath = $backup->getAssetFile();
+					break;
+			}
+
+			if (!is_file($filePath))
+			{
+				throw new NotFoundHttpException(Backup::t('Invalid backup name: {filename}', [
+					'filename' => $filePath
+				]));
+			}
+		}
+		else
+		{
+			throw new NotFoundHttpException(Backup::t('Invalid backup parameters'));
+		}
+
+		return Craft::$app->getResponse()->sendFile($filePath);
+	}
+
 	public function actionRun()
 	{
 		try
