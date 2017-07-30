@@ -1,20 +1,17 @@
 (function($)
 {
 	/**
-	 * EnupalSlider class
+	 * EnupalBackup class
 	 */
-	var EnupalSlider = Garnish.Base.extend({
+	var EnupalBackup = Garnish.Base.extend({
 
-		cssEasingOptions: null,
-		easingOptions: null,
+		options: null
+
 		/**
 		 * The constructor.
-		 * @param - The easing options
 		 */
-		init: function(cssEasingOptions, easingOptions)
+		init: function()
 		{
-			this.easingOptions = easingOptions;
-			this.cssEasingOptions = cssEasingOptions;
 			this.addListener($("#useCss"), 'activate', 'changeOptions');
 		},
 
@@ -40,6 +37,6 @@
 		},
 	});
 
-	window.EnupalSlider = EnupalSlider;
+	window.EnupalBackup = EnupalBackup;
 
 })(jQuery);
