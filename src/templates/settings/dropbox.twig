@@ -13,26 +13,26 @@
 
 {% set content %}
 
-  <input type="hidden" name="action" value="enupal-backup/settings/save-settings">
+	<input type="hidden" name="action" value="enupal-backup/settings/save-settings">
 
-  <div id="settings-cp">
+	<div id="settings-cp">
 
-    {% namespace 'settings' %}
+		{% namespace 'settings' %}
 
-		  {{ forms.textField({
-			  label: "Secrect Key"|t,
-			  id: 'dropboxApiKey',
-			  name: 'dropboxApiKey',
-			  instructions: "Secrect Key from dropbox"|t,
-			  value: '',
-			  placeholder: "xxxxxxx"|t,
-			  autofocus: true,
-			  first: true,
-			  errors: ''
-		  }) }}
+			{{ forms.textField({
+				label: "Secrect Key"|t,
+				id: 'dropboxApiKey',
+				name: 'dropboxApiKey',
+				instructions: "Secrect Key from dropbox"|t,
+				value: '',
+				placeholder: "xxxxxxx"|t,
+				autofocus: true,
+				first: true,
+				errors: ''
+			}) }}
 
-	  {% endnamespace %}
+		{% endnamespace %}
 
-  </div>
+	</div>
 
 {% endset %}

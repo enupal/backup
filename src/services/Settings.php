@@ -7,6 +7,7 @@ use yii\base\Component;
 use enupal\backup\Backup;
 use enupal\backup\models\Settings as SettingsModel;
 use yii\db\Query;
+use craft\volumes\Local;
 
 class Settings extends Component
 {
@@ -62,5 +63,40 @@ class Settings extends Component
 		*/
 
 		return $settings;
+	}
+
+	public function getAllPlugins()
+	{
+		$plugins  = Craft::$app->getPlugins()->getAllPlugins();
+		$response = [];
+
+		foreach ($plugins as $key => $plugin)
+		{
+			$response[] = [
+				'value' => $plugin->getHandle(),
+				'label' => $plugin->name
+			];
+		}
+
+		return $response;
+	}
+
+	public function getAllLocalVolumes()
+	{
+		$volumes  = Craft::$app->getVolumes()->getAllVolumes();
+		$response = [];
+
+		foreach ($volumes as $key => $volume)
+		{
+			if (get_class($volume) == Local::class)
+			{
+				$response[] = [
+					'value' => $volume->id,
+					'label' => $volume->name
+				];
+			}
+		}
+
+		return $response;
 	}
 }

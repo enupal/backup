@@ -6,13 +6,13 @@ class Settings extends \craft\base\Model
 	public $pluginNameOverride = '';
 	// Plugins
 	public $enablePlugins  = 0;
-	public $excludePlugins = '';
+	public $plugins = '';
 	// Templates
 	public $enableTemplates  = 0;
-	public $excludeTemplates = '';
+	public $excludeTemplates = 'cpresources,';
 	// Local Volumes
 	public $enableLocalVolumes = 0;
-	public $excludeVolumes     = '';
+	public $volumes            = '';
 	// Dropbox 	Api
 	public $dopboxToken = '';
 	public $dopboxPath  = '';
