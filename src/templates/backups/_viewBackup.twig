@@ -32,11 +32,11 @@
 					<div class="container-fluid">
 						<div class="row">
 							<div class="col-sm-9 col-md-10  main">
-								<h2 class="page-header">{% if backup.status %} {{"Download Section"|t('enupal-backup')}} {% else %} <i class="fa fa-circle-o-notch fa-spin fa fa-fw"></i> {{"Backup it's still running"}} {% endif %} </h2>
+								<h3 class="page-header">{% if backup.status %} {{"Download Section"|t('enupal-backup')}} {% else %} <i class="fa fa-circle-o-notch fa-spin fa fa-fw"></i> {{"Backup it's still running"}} {% endif %} </h3>
 								{% if backup.status %}
 									<div class="row placeholders">
 										{% if backup.databaseFileName %}
-											<div class="col-xs-12 col-md-4 placeholder">
+											<div class="col-xs-12 col-md-3 placeholder">
 												<form id="database-template" method="post" accept-charset="UTF-8">
 													<input type="hidden" name="action" value="enupal-backup/backups/download">
 													<input type="hidden" name="type" value="database">
@@ -46,12 +46,12 @@
 														<i class="fa fa-cloud-download fa-lg"></i> <b>Dabase</b>
 													</button>
 												</form>
-												<h4>Size: 25MB</h4>
+												<h4><span class="label label-info">Size: {{craft.enupalbackup.getSizeFormatted(backup.databaseSize)}}</span></h4>
 												<span class="text-muted"><a href="">delete</a></span>
 											</div>
 										{% endif %}
 										{% if backup.templateFileName %}
-											<div class="col-xs-12 col-md-4 placeholder">
+											<div class="col-xs-12 col-md-3 placeholder">
 												<form id="form-template" method="post" accept-charset="UTF-8">
 													<input type="hidden" name="action" value="enupal-backup/backups/download">
 													<input type="hidden" name="type" value="template">
@@ -61,12 +61,12 @@
 														<i class="fa fa-cloud-download fa-lg"></i> <b>Templates</b>
 													</button>
 												</form>
-												<h4>Size: 35M</h4>
+												<h4><span class="label label-info">Size: {{craft.enupalbackup.getSizeFormatted(backup.templateSize)}}</span></h4>
 												<span class="text-muted"><a href="">delete</a></span>
 											</div>
 										{% endif %}
 										{% if backup.pluginFileName %}
-											<div class="col-xs-12 col-md-4 placeholder">
+											<div class="col-xs-12 col-md-3 placeholder">
 												<form id="database-template" method="post" accept-charset="UTF-8">
 													<input type="hidden" name="action" value="enupal-backup/backups/download">
 													<input type="hidden" name="type" value="plugin">
@@ -76,12 +76,12 @@
 														<i class="fa fa-cloud-download fa-lg"></i> <b>Plugins</b>
 													</button>
 												</form>
-												<h4>Size: 23M</h4>
+												<h4><span class="label label-info">Size: {{craft.enupalbackup.getSizeFormatted(backup.pluginSize)}}</span></h4>
 												<span class="text-muted"><a href="">delete</a></span>
 											</div>
 										{% endif %}
 										{% if backup.assetFileName %}
-											<div class="col-xs-12 col-md-4 placeholder">
+											<div class="col-xs-12 col-md-3 placeholder">
 												<form id="database-template" method="post" accept-charset="UTF-8">
 													<input type="hidden" name="action" value="enupal-backup/backups/download">
 													<input type="hidden" name="type" value="asset">
@@ -91,7 +91,7 @@
 														<i class="fa fa-cloud-download fa-lg"></i> <b>Assets</b>
 													</button>
 												</form>
-												<h4>Size: 12M</h4>
+												<h4><span class="label label-info">Size: {{craft.enupalbackup.getSizeFormatted(backup.assetSize)}}</span></h4>
 												<span class="text-muted"><a href="">delete</a></span>
 											</div>
 										{% endif %}

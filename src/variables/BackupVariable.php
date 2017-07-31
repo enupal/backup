@@ -56,5 +56,12 @@ class BackupVariable
 		return Backup::$app->settings->getSettings();
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getSizeFormatted($size)
+	{
+		return Backup::$app->backups->getSizeFormatted($size);
+	}
 }
 
