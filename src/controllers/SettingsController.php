@@ -1,5 +1,5 @@
 <?php
-namespace enupal\slider\controllers;
+namespace enupal\backup\controllers;
 
 use Craft;
 use craft\web\Controller as BaseController;
@@ -9,9 +9,9 @@ use yii\db\Query;
 use craft\helpers\ArrayHelper;
 use craft\elements\Asset;
 
-use enupal\slider\models\Settings as SettingsModel;
-use enupal\slider\Slider;
-use enupal\slider\elements\Slider as SliderElement;
+use enupal\backup\models\Settings as SettingsModel;
+use enupal\backup\Backup;
+use enupal\backup\elements\Backup as BackupElement;
 
 class SettingsController extends BaseController
 {
@@ -26,22 +26,19 @@ class SettingsController extends BaseController
 		$request  = Craft::$app->getRequest();
 		$settings = $request->getBodyParam('settings');
 
-		Craft::dd($settings);
-
-		if (Slider::$app->settings->saveSettings($settings))
+		if (!Backup::$app->settings->saveSettings($settings))
 		{
-			Craft::$app->getSession()->setNotice(Slider::t('Settings saved.'));
-
-			return $this->redirectToPostedUrl();
-		}
-		else
-		{
-			Craft::$app->getSession()->setError(Slider::t('Couldn’t save settings.'));
+			Craft::$app->getSession()->setError(Backup::t('Couldn’t save settings.'));
 
 			// Send the settings back to the template
 			craft()->urlManager->setRouteVariables(array(
 				'settings' => $settings
 			));
+
 		}
+
+		Craft::$app->getSession()->setNotice(Backup::t('Settings saved.'));
+
+		return $this->redirectToPostedUrl();
 	}
 }

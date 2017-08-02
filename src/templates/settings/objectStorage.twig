@@ -19,21 +19,37 @@
 
 		{% namespace 'settings' %}
 
-			{{ forms.selectField({
-				label: "Type"|t('app'),
-				id: 'ftpType',
-				name: 'ftpType',
-				options: {'ftp': 'FTP', 'sftp': 'SFTP'},
-				value: settings.ftpType,
+			{{ forms.textField({
+				label: "User"|t('enupal-backup'),
+				id: 'sosUser',
+				name: 'sosUser',
+				instructions: "The user you want to connect with."|t('enupal-backup'),
+				value: settings.sosUser,
 				required: true,
+				autofocus: true,
+				first: true,
+				errors: ''
+			}) }}
+
+			{{ forms.textField({
+				label: "Secret"|t('enupal-backup'),
+				id: 'sosSecret',
+				name: 'sosSecret',
+				instructions: "The api key to authenticate the user."|t('enupal-backup'),
+				value: settings.sosSecret,
+				required: true,
+				type: "password",
+				autofocus: true,
+				first: true,
+				errors: ''
 			}) }}
 
 			{{ forms.textField({
 				label: "Host"|t('enupal-backup'),
-				id: 'ftpHost',
-				name: 'ftpHost',
+				id: 'sosHost',
+				name: 'sosHost',
 				instructions: "The host you want do copy your backups to."|t('enupal-backup'),
-				value: settings.ftpHost,
+				value: settings.sosHost,
 				required: true,
 				autofocus: true,
 				first: true,
@@ -41,24 +57,11 @@
 			}) }}
 
 			{{ forms.textField({
-				label: "User"|t('enupal-backup'),
-				id: 'ftpUser',
-				name: 'ftpUser',
-				instructions: "The user you want to connect with."|t('enupal-backup'),
-				value: settings.ftpUser,
-				required: true,
-				autofocus: true,
-				first: true,
-				errors: ''
-			}) }}
-
-			{{ forms.textField({
-				label: "Password"|t('enupal-backup'),
-				id: 'ftpPassword',
-				name: 'ftpPassword',
-				instructions: "The password to authenticate the user."|t('enupal-backup'),
-				value: settings.ftpPassword,
-				type: "password",
+				label: "Container"|t('enupal-backup'),
+				id: 'sosContainer',
+				name: 'sosContainer',
+				instructions: "The Object Storage Container where to put the backup."|t('enupal-backup'),
+				value: settings.sosContainer,
 				required: true,
 				autofocus: true,
 				first: true,
@@ -67,10 +70,11 @@
 
 			{{ forms.textField({
 				label: "Path"|t('enupal-backup'),
-				id: 'ftpPath',
-				name: 'ftpPath',
+				id: 'sosPath',
+				name: 'sosPath',
 				instructions: "The remote path where to copy the backup."|t('enupal-backup'),
-				value: settings.ftpPath,
+				value: settings.sosPath,
+				required: true,
 				autofocus: true,
 				first: true,
 				errors: ''

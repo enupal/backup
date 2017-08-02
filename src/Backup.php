@@ -105,9 +105,6 @@ class Backup extends \craft\base\Plugin
 			'enupal-backup/run' =>
 			'enupal-backup/backups/run',
 
-			'enupal-backup' =>
-			'enupal-backup/backups/index',
-
 			'enupal-backup/backup/new' =>
 			'enupal-backup/backups/edit-backup',
 

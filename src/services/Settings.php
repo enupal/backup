@@ -21,40 +21,18 @@ class Settings extends Component
 	 */
 	public function saveSettings($postSettings): bool
 	{
-		$settings = Backup::$app->sliders->getSettings();
+		$backupPlugin = $this->getPlugin();
 
 		//Craft::$app->getSecurity()->hashData($password);
 
-		if (isset($postSettings['pluginNameOverride']))
-		{
-			$settings['pluginNameOverride'] = $postSettings['pluginNameOverride'];
-		}
+		$success = Craft::$app->getPlugins()->savePluginSettings($backupPlugin, $postSettings);
 
-		$settings = json_encode($settings);
-
-		$affectedRows = Craft::$app->getDb()->createCommand()->update('plugins', [
-			'settings' => $settings
-			],
-			[
-			'handle' => 'enupalbackup'
-			]
-		)->execute();
-
-		return (bool) $affectedRows;
+		return $success;
 	}
 
 	public function getSettings()
 	{
-		$result = (new Query())
-			->select('settings')
-			->from(['{{%plugins}}'])
-			->where(['handle' => 'enupal-backup'])
-			->one();
-
-		$arraySettings = json_decode($result['settings'], true);
-
-		$settings = new SettingsModel($arraySettings);
-
+		$backupPlugin = $this->getPlugin();
 		/*
 		if ($settings->dropboxToken)
 		{
@@ -62,7 +40,7 @@ class Settings extends Component
 		}
 		*/
 
-		return $settings;
+		return $backupPlugin->getSettings();
 	}
 
 	public function getAllPlugins()
@@ -98,5 +76,10 @@ class Settings extends Component
 		}
 
 		return $response;
+	}
+
+	public function getPlugin()
+	{
+		return Craft::$app->getPlugins()->getPlugin('enupal-backup');
 	}
 }

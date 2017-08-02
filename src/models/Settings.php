@@ -14,18 +14,25 @@ class Settings extends \craft\base\Model
 	public $enableLocalVolumes = 0;
 	public $volumes            = '';
 	// Dropbox 	Api
-	public $dopboxToken = '';
-	public $dopboxPath  = '';
+	public $dropboxToken = '';
+	public $dropboxPath  = '/enupalbackup/';
 	// Amazon S3 Api
 	public $amazonKey    = '';
 	public $amazonSecret = '';
 	public $amazonBucket = '';
 	public $amazonRegion = '';
 	public $amazonPath   = '';
+	public $amazonUseMultiPartUpload   = 0;
 	// FTP or SFTP
 	public $ftpType = 'ftp';
 	public $ftpHost = '';
 	public $ftpUser = '';
 	public $ftpPassword = '';
 	public $ftpPath = '';
+	// Softlayer Object Storage
+	public $sosUser      = '';
+	public $sosSecret    = '';
+	public $sosHost      = '';
+	public $sosContainer = '';
+	public $sosPath      = '';
 }
