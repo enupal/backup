@@ -19,6 +19,15 @@
 
 		{% namespace 'settings' %}
 
+			{{ forms.lightswitchField({
+				label: "Enable Softlayer Object Storage"|t('enupal-backup'),
+				id: 'enableSos',
+				name: 'enableSos',
+				on: settings.enableSos,
+				onLabel: "On"|t('enupal-backup'),
+				offLabel: "Off"|t('enupal-backup')
+			}) }}
+
 			{{ forms.textField({
 				label: "User"|t('enupal-backup'),
 				id: 'sosUser',

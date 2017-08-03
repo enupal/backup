@@ -19,6 +19,15 @@
 
 		{% namespace 'settings' %}
 
+			{{ forms.lightswitchField({
+				label: "Enable Amazon"|t('enupal-backup'),
+				id: 'enableAmazon',
+				name: 'enableAmazon',
+				on: settings.enableAmazon,
+				onLabel: "On"|t('enupal-backup'),
+				offLabel: "Off"|t('enupal-backup')
+			}) }}
+
 			{{ forms.textField({
 				label: "Key"|t('enupal-backup'),
 				id: 'amazonKey',

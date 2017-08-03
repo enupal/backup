@@ -78,6 +78,22 @@ class Settings extends Component
 		return $response;
 	}
 
+	public function getAllLocalVolumesObjects()
+	{
+		$volumes  = Craft::$app->getVolumes()->getAllVolumes();
+		$response = [];
+
+		foreach ($volumes as $key => $volume)
+		{
+			if (get_class($volume) == Local::class)
+			{
+				$response[] = $volume;
+			}
+		}
+
+		return $response;
+	}
+
 	public function getPlugin()
 	{
 		return Craft::$app->getPlugins()->getPlugin('enupal-backup');

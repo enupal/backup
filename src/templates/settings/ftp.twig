@@ -19,6 +19,15 @@
 
 		{% namespace 'settings' %}
 
+			{{ forms.lightswitchField({
+				label: "Enable FTP"|t('enupal-backup'),
+				id: 'enableFtp',
+				name: 'enableFtp',
+				on: settings.enableFtp,
+				onLabel: "On"|t('enupal-backup'),
+				offLabel: "Off"|t('enupal-backup')
+			}) }}
+
 			{{ forms.selectField({
 				label: "Type"|t('app'),
 				id: 'ftpType',

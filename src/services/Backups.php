@@ -37,15 +37,15 @@ class Backups extends Component
 	/**
 	 * Returns a Backup model if one is found in the database by id
 	 *
-	 * @param int $backupId
+	 * @param int $id
 	 * @param int $siteId
 	 *
 	 * @return null|BackupElement
 	 */
-	public function getBackupById(int $backupId, int $siteId = null)
+	public function getBackupById(int $id, int $siteId = null)
 	{
 		$query = BackupElement::find();
-		$query->id($backupId);
+		$query->id($id);
 		$query->siteId($siteId);
 		// @todo - research next function
 		#$query->enabledForSite(false);
@@ -113,18 +113,17 @@ class Backups extends Component
 		$randomStr = $this->getRandomStr();
 		$date      = date('Y-m-d-His');
 
-		$backupId   = $date.'_'.$siteName.'_'.$randomStr;
-		$backup     = new BackupElement();
-		$base       = Craft::getAlias('@enupal/backup/');
-		$phpbuPath  = Craft::getAlias('@enupal/backup/resources');
-		$configFile = Backup::$app->backups->getConfigJson($backupId, $backup);
+		$backupId         = $date.'_'.$siteName.'_'.$randomStr;
+		$backup           = new BackupElement();
+		$backup->backupId = $backupId;
+		$base             = Craft::getAlias('@enupal/backup/');
+		$phpbuPath        = Craft::getAlias('@enupal/backup/resources');
+		$configFile       = Backup::$app->backups->getConfigJson($backup, $date);
 
 		if (!is_file($configFile))
 		{
 			throw new Exception("Could not create the Enupal Backup: the config file doesn't exist: ".$configFile);
 		}
-
-		$configFile = $base.'backup/config.json';
 
 		// Create the shell command
 		$shellCommand = new ShellCommand();
@@ -215,7 +214,7 @@ class Backups extends Component
 			$backup->assetSize = filesize($backup->getAssetFile());
 		}
 
-		$logPath = $this->getLogPath();
+		$logPath = $this->getLogPath($backup->backupId);
 		$log     = file_get_contents($logPath);
 		// Save the log
 		$backup->logMessage = $log;
@@ -255,12 +254,14 @@ class Backups extends Component
 	}
 
 	/**
+	 * @param $backup BackupElement
 	 * Generetates the config file and create the backup element entry
 	 *
 	*/
-	private function getConfigJson($backupId, BackupElement $backup)
+	private function getConfigJson(BackupElement $backup, $date)
 	{
-		$logPath = $this->getLogPath();
+		$logPath  = $this->getLogPath($backup->backupId);
+		$settings = Backup::$app->settings->getSettings();
 
 		$config  = [
 			'verbose' => true,
@@ -273,17 +274,18 @@ class Backups extends Component
 			'backups' => []
 		];
 
+		$backupId       = $backup->backupId;
 		$compress       = $this->getCompressType();
-		$syncs          = $this->getSyncs($backupId);
+		$syncs          = $this->getSyncs($date);
 		$dbName         = 'backup-db-'.$backupId.$compress;
 		$assetName      = 'backup-assets-'.$backupId.$compress;
 		$templateName   = 'backup-templates-'.$backupId.$compress;
 		$pluginName     = 'backup-plugins-'.$backupId.$compress;
 		$pathToTar      = $this->getPathToTar();
 		$assetsCleanups = $this->getAssetsCleanup();
+		$backups        = [];
 
 		// let's create the Backup Element
-		$backup->backupId         = $backupId;
 		$backup->databaseFileName = $dbName;
 		$backup->assetFileName    = $assetName;
 		$backup->templateFileName = $templateName;
@@ -295,10 +297,25 @@ class Backups extends Component
 				' Errors: '.json_encode($backup->getErrors()));
 		}
 
-		// @todo - add the assets from settings
-		$testAsset = Craft::$app->getVolumes()->getVolumeById(36);
-		$assets[]  = $testAsset;
-		$backups = [];
+		// ASSETS
+		$assets = [];
+
+		if ($settings->enableLocalVolumes)
+		{
+			if (is_array($settings->volumes))
+			{
+				foreach ($settings->volumes as $volumeId)
+				{
+					$volume   = Craft::$app->getVolumes()->getVolumeById($volumeId);
+					$assets[] = $volume;
+				}
+			}
+			else
+			{
+				// get all the local volumes (*)
+				$assets = Backup::$app->settings->getAllLocalVolumesObjects();
+			}
+		}
 		// Adding the assets
 		foreach ($assets as $key => $asset)
 		{
@@ -340,11 +357,11 @@ class Backups extends Component
 			}
 		}
 
-		// @todo - Adding template backups
-		if (true)
+		// TEMPLATES
+		if ($settings->enableTemplates)
 		{
 			$baseTemplatePath = Craft::$app->getPath()->getSiteTemplatesPath();
-
+			//@todo - add exclude templates
 			$templateBackup = [
 				'name'   => 'Templates',
 				'source' => [
@@ -379,29 +396,46 @@ class Backups extends Component
 		}
 
 		$config['backups'] = $backups;
-		$base = Craft::getAlias('@enupal/backup/');
-		$configFile = $base.'backup'.DIRECTORY_SEPARATOR.'config.json';
 
+		$configFile = $this->getConfigPath();
 		file_put_contents($configFile, json_encode($config));
 
-		return $logPath;
+		return $configFile;
 	}
 
-	private function getSyncs($backupId)
+	private function getSyncs($date)
 	{
 		$syncs = [];
-		// @todo validate dropbox
-		if (true)
+		$settings = Backup::$app->settings->getSettings();
+		// DROPBOX
+		if ($settings->enableDropbox)
 		{
 			$dropbox = [
 				'type' => 'dropbox',
 				'options' => [
-					'token' => 'WpYFCk46C4QAAAAAAAAHmTbUVAvCFnBzf7Vqm3imO4ANZxazrF8YG0COqlh--tLa',
-					'path' => '/enupalbackup/'.$backupId
+					'token' => $settings->dropboxToken,
+					'path'  => $settings->dropboxPath.$date
 				]
 			];
 
 			$syncs[] = $dropbox;
+		}
+		// AMAZON S3
+		if ($settings->enableAmazon)
+		{
+			$amazon = [
+				'type' => 's3',
+				'options' => [
+					'amazonKey'    => $settings->amazonKey,
+					'amazonSecret' => $settings->amazonSecret,
+					'amazonBucket' => $settings->amazonBucket,
+					'amazonRegion' => $settings->amazonRegion,
+					'amazonPath'   => $settings->amazonPath.$backupId,
+					'amazonUseMultiPartUpload' => $settings->amazonUseMultiPartUpload
+				]
+			];
+
+			$syncs[] = $amazon;
 		}
 
 		return $syncs;
@@ -493,9 +527,19 @@ class Backups extends Component
 		return $this->getBasePath().'plugins'.DIRECTORY_SEPARATOR;
 	}
 
-	public function getLogPath()
+	public function getLogPath($backupId)
 	{
-		return Craft::getAlias('@enupal/backup/backup/enupalbackup.log');
+		$base = Craft::$app->getPath()->getLogPath().DIRECTORY_SEPARATOR.'enupalbackup'.DIRECTORY_SEPARATOR;
+
+		return $base.$backupId.'.log';
+	}
+
+	public function getConfigPath()
+	{
+		$base = $this->getBasePath();
+		$configFile = $base.'config.json';
+
+		return $configFile;
 	}
 
 }

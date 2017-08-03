@@ -19,6 +19,15 @@
 
 		{% namespace 'settings' %}
 
+			{{ forms.lightswitchField({
+				label: "Enable Dropbox"|t('enupal-backup'),
+				id: 'enableDropbox',
+				name: 'enableDropbox',
+				on: settings.enableDropbox,
+				onLabel: "On"|t('enupal-backup'),
+				offLabel: "Off"|t('enupal-backup')
+			}) }}
+
 			{{ forms.textField({
 				label: "Secrect Key"|t('enupal-backup'),
 				id: 'dropboxToken',
