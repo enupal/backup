@@ -408,13 +408,14 @@ class Backups extends Component
 		$syncs = [];
 		$settings = Backup::$app->settings->getSettings();
 		// DROPBOX
+		// @todo - Test with just one backup - triggers an error start with /
 		if ($settings->enableDropbox)
 		{
 			$dropbox = [
 				'type' => 'dropbox',
 				'options' => [
 					'token' => $settings->dropboxToken,
-					'path'  => $settings->dropboxPath.$date
+					'path'  => trim($settings->dropboxPath.$date)
 				]
 			];
 

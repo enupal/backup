@@ -33,70 +33,76 @@
 						<div class="row">
 							<div class="col-sm-9 col-md-10  main">
 								<h3 class="page-header">{% if backup.status %} {{"Download Section"|t('enupal-backup')}} {% else %} <i class="fa fa-circle-o-notch fa-spin fa fa-fw"></i> {{"Backup it's still running"}} {% endif %} </h3>
-								{% if backup.status %}
-									<div class="row placeholders">
-										{% if backup.databaseFileName %}
-											<div class="col-xs-12 col-md-3 placeholder">
-												<form id="database-template" method="post" accept-charset="UTF-8">
-													<input type="hidden" name="action" value="enupal-backup/backups/download">
-													<input type="hidden" name="type" value="database">
-													<input type="hidden" name="backupId" value="{{backup.id}}">
-													{{ csrfInput() }}
-													<button type="submit" class="bbtn bbtn-success btn-full">
-														<i class="fa fa-cloud-download fa-lg"></i> <b>Dabase</b>
-													</button>
-												</form>
+								<div class="row placeholders">
+									{% if backup.databaseFileName %}
+										<div class="col-xs-12 col-md-3 placeholder">
+											<form id="database-template" method="post" accept-charset="UTF-8">
+												<input type="hidden" name="action" value="enupal-backup/backups/download">
+												<input type="hidden" name="type" value="database">
+												<input type="hidden" name="backupId" value="{{backup.id}}">
+												{{ csrfInput() }}
+												<button type="submit" class="bbtn bbtn-success btn-full">
+													<i class="fa fa-cloud-download fa-lg"></i> <b>Dabase</b>
+												</button>
+											</form>
+											{% if backup.status %}
 												<h4><span class="label label-info">Size: {{craft.enupalbackup.getSizeFormatted(backup.databaseSize)}}</span></h4>
-												<span class="text-muted"><a href="">delete</a></span>
-											</div>
-										{% endif %}
-										{% if backup.templateFileName %}
-											<div class="col-xs-12 col-md-3 placeholder">
-												<form id="form-template" method="post" accept-charset="UTF-8">
-													<input type="hidden" name="action" value="enupal-backup/backups/download">
-													<input type="hidden" name="type" value="template">
-													<input type="hidden" name="backupId" value="{{backup.id}}">
-													{{ csrfInput() }}
-													<button type="submit" class="bbtn bbtn-success btn-full">
-														<i class="fa fa-cloud-download fa-lg"></i> <b>Templates</b>
-													</button>
-												</form>
+											{% endif %}
+											<span class="text-muted"><a href="">delete</a></span>
+										</div>
+									{% endif %}
+									{% if backup.templateFileName %}
+										<div class="col-xs-12 col-md-3 placeholder">
+											<form id="form-template" method="post" accept-charset="UTF-8">
+												<input type="hidden" name="action" value="enupal-backup/backups/download">
+												<input type="hidden" name="type" value="template">
+												<input type="hidden" name="backupId" value="{{backup.id}}">
+												{{ csrfInput() }}
+												<button type="submit" class="bbtn bbtn-success btn-full">
+													<i class="fa fa-cloud-download fa-lg"></i> <b>Templates</b>
+												</button>
+											</form>
+											{% if backup.status %}
 												<h4><span class="label label-info">Size: {{craft.enupalbackup.getSizeFormatted(backup.templateSize)}}</span></h4>
-												<span class="text-muted"><a href="">delete</a></span>
-											</div>
-										{% endif %}
-										{% if backup.pluginFileName %}
-											<div class="col-xs-12 col-md-3 placeholder">
-												<form id="database-template" method="post" accept-charset="UTF-8">
-													<input type="hidden" name="action" value="enupal-backup/backups/download">
-													<input type="hidden" name="type" value="plugin">
-													<input type="hidden" name="backupId" value="{{backup.id}}">
-													{{ csrfInput() }}
-													<button type="submit" class="bbtn bbtn-success btn-full">
-														<i class="fa fa-cloud-download fa-lg"></i> <b>Plugins</b>
-													</button>
-												</form>
+											{% endif %}
+											<span class="text-muted"><a href="">delete</a></span>
+										</div>
+									{% endif %}
+									{% if backup.pluginFileName %}
+										<div class="col-xs-12 col-md-3 placeholder">
+											<form id="database-template" method="post" accept-charset="UTF-8">
+												<input type="hidden" name="action" value="enupal-backup/backups/download">
+												<input type="hidden" name="type" value="plugin">
+												<input type="hidden" name="backupId" value="{{backup.id}}">
+												{{ csrfInput() }}
+												<button type="submit" class="bbtn bbtn-success btn-full">
+													<i class="fa fa-cloud-download fa-lg"></i> <b>Plugins</b>
+												</button>
+											</form>
+											{% if backup.status %}
 												<h4><span class="label label-info">Size: {{craft.enupalbackup.getSizeFormatted(backup.pluginSize)}}</span></h4>
-												<span class="text-muted"><a href="">delete</a></span>
-											</div>
-										{% endif %}
-										{% if backup.assetFileName %}
-											<div class="col-xs-12 col-md-3 placeholder">
-												<form id="database-template" method="post" accept-charset="UTF-8">
-													<input type="hidden" name="action" value="enupal-backup/backups/download">
-													<input type="hidden" name="type" value="asset">
-													<input type="hidden" name="backupId" value="{{backup.id}}">
-													{{ csrfInput() }}
-													<button type="submit" class="bbtn bbtn-success btn-full">
-														<i class="fa fa-cloud-download fa-lg"></i> <b>Assets</b>
-													</button>
-												</form>
+											{% endif %}
+											<span class="text-muted"><a href="">delete</a></span>
+										</div>
+									{% endif %}
+									{% if backup.assetFileName %}
+										<div class="col-xs-12 col-md-3 placeholder">
+											<form id="database-template" method="post" accept-charset="UTF-8">
+												<input type="hidden" name="action" value="enupal-backup/backups/download">
+												<input type="hidden" name="type" value="asset">
+												<input type="hidden" name="backupId" value="{{backup.id}}">
+												{{ csrfInput() }}
+												<button type="submit" class="bbtn bbtn-success btn-full">
+													<i class="fa fa-cloud-download fa-lg"></i> <b>Assets</b>
+												</button>
+											</form>
+											{% if backup.status %}
 												<h4><span class="label label-info">Size: {{craft.enupalbackup.getSizeFormatted(backup.assetSize)}}</span></h4>
-												<span class="text-muted"><a href="">delete</a></span>
-											</div>
-										{% endif %}
-									</div>
-								{% endif %}
+											{% endif %}
+											<span class="text-muted"><a href="">delete</a></span>
+										</div>
+									{% endif %}
+								</div>
 							</div>
 						</div>
 					</div>
