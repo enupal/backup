@@ -73,12 +73,15 @@ class BackupsController extends BaseController
 	public function actionRun()
 	{
 		#$result = Backup::$app->backups->enupalBackup();
+		$tasksService = Craft::$app->getTasks();
 
-		Craft::$app->getTasks()->queueTask([
+		$tasksService->queueTask([
 			'type' => CreateBackup::class
 		]);
 
-		Craft::dd("Running");
+		$tasksService->runPendingTasks();
+
+		Craft::dd('Runing');
 	}
 
 	/**

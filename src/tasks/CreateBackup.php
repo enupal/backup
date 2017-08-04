@@ -78,7 +78,7 @@ class CreateBackup extends Task
 
 			Backup::error($error);
 		}
-
-		return $result;
+		// let's dont return false if the backup fails we'll know it
+		return true;
 	}
 }
