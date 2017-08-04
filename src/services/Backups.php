@@ -352,37 +352,46 @@ class Backups extends Component
 			// Supports local volumes for now.
 			if (get_class($asset) == Local::class)
 			{
-				$assetBackup = [
-					'name'   => 'Asset'.$asset->id,
-					'source' => [
-						'type' => 'tar',
-						'options' => [
-							"path" => $asset->path,
-							"forceLocal" => true
+				// Check if the path exists
+				// @todo - research and test this looks to easy :D
+				if (is_dir($asset->path))
+				{
+					$assetBackup = [
+						'name'   => 'Asset'.$asset->id,
+						'source' => [
+							'type' => 'tar',
+							'options' => [
+								"path" => $asset->path,
+								"forceLocal" => true
+							]
+						],
+						'target' => [
+							'dirname' => $this->getAssetsPath(),
+							'filename' => $assetName
 						]
-					],
-					'target' => [
-						'dirname' => $this->getAssetsPath(),
-						'filename' => $assetName
-					]
-				];
+					];
 
-				if ($pathToTar)
-				{
-					$assetBackup['source']['options']['pathToTar'] = "C:\\cygwin64\\bin";
+					if ($pathToTar)
+					{
+						$assetBackup['source']['options']['pathToTar'] = "C:\\cygwin64\\bin";
+					}
+
+					if ($syncs)
+					{
+						$assetBackup['syncs'] = $syncs;
+					}
+
+					if ($assetsCleanups)
+					{
+						$assetBackup['cleanup'] = $assetsCleanups;
+					}
+
+					$backups[] = $assetBackup;
 				}
-
-				if ($syncs)
+				else
 				{
-					$assetBackup['syncs'] = $syncs;
+					Backup::error('Skipped the volume: '.$asset->id.' because the path does not exists');
 				}
-
-				if ($assetsCleanups)
-				{
-					$assetBackup['cleanup'] = $assetsCleanups;
-				}
-
-				$backups[] = $assetBackup;
 			}
 		}
 
