@@ -16,6 +16,7 @@ use craft\volumes\Local;
 use craft\helpers\App as CraftApp;
 use mikehaertl\shellcommand\Command as ShellCommand;
 use yii\base\Exception;
+use craft\helpers\Path;
 
 class Backups extends Component
 {
@@ -351,9 +352,8 @@ class Backups extends Component
 			// Supports local volumes for now.
 			if (get_class($asset) == Local::class)
 			{
-				// @todo - validate if the $asset->path exists
 				$assetBackup = [
-					'name'   => 'Asset:'.$asset->id,
+					'name'   => 'Asset'.$asset->id,
 					'source' => [
 						'type' => 'tar',
 						'options' => [
