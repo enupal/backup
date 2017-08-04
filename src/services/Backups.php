@@ -8,7 +8,9 @@ use enupal\backup\Backup;
 use enupal\backup\elements\Backup as BackupElement;
 use enupal\backup\records\Backup as BackupRecord;
 use enupal\backup\models\Settings;
+use enupal\backup\enums\BackupStatus;
 
+use craft\helpers\FileHelper;
 use craft\errors\ShellCommandException;
 use craft\volumes\Local;
 use craft\helpers\App as CraftApp;
@@ -54,7 +56,7 @@ class Backups extends Component
 	}
 
 	/**
-	 * @param BackupElement $backup
+	 * @param $backup BackupElement
 	 *
 	 * @throws \Exception
 	 * @return bool
@@ -104,21 +106,23 @@ class Backups extends Component
 	 * @throws Exception
 	 * @throws ShellCommandException in case of failure
 	 */
-	public function enupalBackup()
+	public function enupalBackup(BackupElement $backup)
 	{
 		// This may make take a while so..
 		CraftApp::maxPowerCaptain();
-		$info      = Craft::$app->getInfo();
-		$siteName  = $info->name ?? '';
-		$randomStr = $this->getRandomStr();
-		$date      = date('Y-m-d-His');
 
-		$backupId         = $date.'_'.$siteName.'_'.$randomStr;
-		$backup           = new BackupElement();
-		$backup->backupId = $backupId;
-		$base             = Craft::getAlias('@enupal/backup/');
-		$phpbuPath        = Craft::getAlias('@enupal/backup/resources');
-		$configFile       = Backup::$app->backups->getConfigJson($backup, $date);
+		$base       = Craft::getAlias('@enupal/backup/');
+		$phpbuPath  = Craft::getAlias('@enupal/backup/resources');
+		$pieces     = explode('_', $backup->backupId);
+		$date       = $pieces[0] ?? date('Y-m-d-His');
+		$configFile = Backup::$app->backups->getConfigJson($backup, $date);
+		// update the the backup to running
+		$backup->status = BackupStatus::RUNNING;
+
+		if (!$this->saveBackup($backup))
+		{
+			return false;
+		}
 
 		if (!is_file($configFile))
 		{
@@ -166,6 +170,31 @@ class Backups extends Component
 			'handle' => 'enupal-backup'
 			]
 		)->execute();
+	}
+
+	/**
+	 * This function creates a default backup and generates the id
+	 * @return BackupElement
+	*/
+	public function initializeBackup()
+	{
+		$info      = Craft::$app->getInfo();
+		$systemName = FileHelper::sanitizeFilename($info->name, ['asciiOnly' => true]);
+		$siteName  = $systemName ?? '';
+		$randomStr = $this->getRandomStr();
+		$date      = date('Y-m-d-His');
+
+		$backupId         = strtolower($date.'_'.$siteName.'_'.$randomStr);
+		$backup           = new BackupElement();
+		$backup->backupId = $backupId;
+		$backup->status   = BackupStatus::STARTED;
+
+		if (!$this->saveBackup($backup))
+		{
+			return $backup;
+		}
+
+		return $backup;
 	}
 
 	public function getSizeFormatted($size)
@@ -221,7 +250,7 @@ class Backups extends Component
 
 		$backupLog = json_decode($log, true);
 		// Backup succesfully
-		$backup->status = 1;
+		$backup->status = BackupStatus::FINISHED;
 		// @todo depending of the settings
 		$backup->dropbox = 1;
 		$backup->aws = 1;

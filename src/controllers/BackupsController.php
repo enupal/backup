@@ -12,6 +12,7 @@ use craft\helpers\Json;
 use craft\helpers\Template as TemplateHelper;
 use yii\base\Exception;
 
+use enupal\backup\tasks\CreateBackup;
 use enupal\backup\Backup;
 
 class BackupsController extends BaseController
@@ -71,15 +72,13 @@ class BackupsController extends BaseController
 
 	public function actionRun()
 	{
-		try
-		{
-			$result = Backup::$app->backups->enupalBackup();
-		} catch (\Throwable $e)
-		{
-			throw new Exception('Could not create a Enupal Backup: '.$e->getMessage());
-		}
+		#$result = Backup::$app->backups->enupalBackup();
 
-		Craft::dd($result);
+		Craft::$app->getTasks()->queueTask([
+			'type' => CreateBackup::class
+		]);
+
+		Craft::dd("Running");
 	}
 
 	/**

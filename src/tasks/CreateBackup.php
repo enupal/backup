@@ -6,11 +6,17 @@ use enupal\backup\Backup;
 use craft\base\Task;
 use Craft;
 
+use enupal\backup\enums\BackupStatus;
+
 /**
- * CrateBackup task
+ * CreateBackup task
  */
-class CrateBackup extends Task
+class CreateBackup extends Task
 {
+	/**
+	 * @var BackupElement|null
+	 */
+	private $_backup;
 
 	/**
 	 * Returns the default description for this task.
@@ -29,6 +35,7 @@ class CrateBackup extends Task
 	 */
 	public function getTotalSteps(): int
 	{
+		$this->_backup = Backup::$app->backups->initializeBackup();
 		// one step
 		return 1;
 	}
@@ -46,11 +53,30 @@ class CrateBackup extends Task
 
 		try
 		{
-			$result = Backup::$app->backups->enupalBackup();
+			if ($this->_backup->id)
+			{
+				$result = Backup::$app->backups->enupalBackup($this->_backup);
+			}
+			else
+			{
+				$error = '01 - Unable to execute the Enupal Backup: '.json_encode($this->_backup->getErrors());
+				$this->_backup->status = BackupStatus::ERROR;
+				$this->_backup->logMessage = $error;
+
+				Backup::$app->backups->saveBackup($this->_backup);
+
+				Backup::error($error);
+			}
 
 		} catch (\Throwable $e)
 		{
-			Backup::error('Could not create Enupal Backup: '.$e->getMessage());
+			$error = '02 - Could not create Enupal Backup: '.$e->getMessage();
+			$this->_backup->status = BackupStatus::ERROR;
+			$this->_backup->logMessage = $error;
+
+			Backup::$app->backups->saveBackup($this->_backup);
+
+			Backup::error($error);
 		}
 
 		return $result;

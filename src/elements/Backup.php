@@ -39,7 +39,7 @@ class Backup extends Element
 	public $templateSize;
 	public $pluginFileName;
 	public $pluginSize;
-	public $status = BackupStatus::Running;
+	public $status = BackupStatus::RUNNING;
 	public $aws = 0;
 	public $dropbox = 0;
 	public $rsync = 0;
@@ -230,14 +230,21 @@ class Backup extends Element
 			}
 			case 'status':
 			{
-				$message = '';
-				if ($this->status)
+				$message = $this->status == BackupStatus::STARTED ?
+					Backup::t('Started') :
+					Backup::t('Not defined');
+
+				if ($this->status == BackupStatus::FINISHED)
 				{
 					$message = '<i class="fa fa-check-square-o" aria-hidden="true"></i> Finished';
 				}
-				else
+				else if ($this->status == BackupStatus::RUNNING)
 				{
 					$message = '<i class="fa fa-circle-o-notch fa-spin fa fa-fw"></i><span class="sr-only">Loading...</span> Running';
+				}
+				else if ($this->status == BackupStatus::ERROR)
+				{
+					$message = '<i class="fa fa-times" aria-hidden="true"></i> Error';
 				}
 				return $message;
 			}
