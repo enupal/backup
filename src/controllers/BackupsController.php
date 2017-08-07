@@ -79,7 +79,7 @@ class BackupsController extends BaseController
 			'type' => CreateBackup::class
 		]);
 
-		$tasksService->runPendingTasks();
+		##$tasksService->runPendingTasks();
 
 		Craft::dd('Runing');
 	}

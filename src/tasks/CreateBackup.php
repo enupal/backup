@@ -70,7 +70,7 @@ class CreateBackup extends Task
 
 		} catch (\Throwable $e)
 		{
-			$error = '02 - Could not create Enupal Backup: '.$e->getMessage();
+			$error = '02 - Could not create Enupal Backup: '.$e->getMessage().' --Trace: '.json_encode($e->getTrace());
 			$this->_backup->status = BackupStatus::ERROR;
 			$this->_backup->logMessage = $error;
 

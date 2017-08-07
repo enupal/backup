@@ -112,7 +112,6 @@ class Backups extends Component
 		// This may make take a while so..
 		CraftApp::maxPowerCaptain();
 
-		$base       = Craft::getAlias('@enupal/backup/');
 		$phpbuPath  = Craft::getAlias('@enupal/backup/resources');
 		$pieces     = explode('_', $backup->backupId);
 		$date       = $pieces[0] ?? date('Y-m-d-His');
@@ -453,7 +452,7 @@ class Backups extends Component
 				'type' => 'dropbox',
 				'options' => [
 					'token' => $settings->dropboxToken,
-					'path'  => trim($settings->dropboxPath.$date)
+					'path'  => trim($settings->dropboxPath.'/'.$date)
 				]
 			];
 
@@ -463,14 +462,14 @@ class Backups extends Component
 		if ($settings->enableAmazon)
 		{
 			$amazon = [
-				'type' => 's3',
+				'type' => 'amazons3',
 				'options' => [
-					'amazonKey'    => $settings->amazonKey,
-					'amazonSecret' => $settings->amazonSecret,
-					'amazonBucket' => $settings->amazonBucket,
-					'amazonRegion' => $settings->amazonRegion,
-					'amazonPath'   => $settings->amazonPath.$backupId,
-					'amazonUseMultiPartUpload' => $settings->amazonUseMultiPartUpload
+					'key'    => $settings->amazonKey,
+					'secret' => $settings->amazonSecret,
+					'bucket' => $settings->amazonBucket,
+					'region' => $settings->amazonRegion,
+					'path'   => trim($settings->amazonPath.'/'.$date),
+					'useMultiPartUpload' => $settings->amazonUseMultiPartUpload
 				]
 			];
 
