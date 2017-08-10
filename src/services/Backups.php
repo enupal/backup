@@ -17,6 +17,7 @@ use craft\helpers\App as CraftApp;
 use mikehaertl\shellcommand\Command as ShellCommand;
 use yii\base\Exception;
 use craft\helpers\Path;
+use craft\helpers\UrlHelper;
 
 class Backups extends Component
 {
@@ -50,10 +51,21 @@ class Backups extends Component
 		$query = BackupElement::find();
 		$query->id($id);
 		$query->siteId($siteId);
-		// @todo - research next function
-		#$query->enabledForSite(false);
 
 		return $query->one();
+	}
+
+	/**
+	 * Returns all the Pending backups
+	 *
+	 * @return null|BackupElement[]
+	 */
+	public function getPendingBackups()
+	{
+		$query = BackupElement::find();
+		$query->status(BackupStatus::RUNNING);
+
+		return $query->all();
 	}
 
 	/**
@@ -110,7 +122,7 @@ class Backups extends Component
 	public function enupalBackup(BackupElement $backup)
 	{
 		// This may make take a while so..
-		CraftApp::maxPowerCaptain();
+		#CraftApp::maxPowerCaptain();
 
 		$phpbuPath  = Craft::getAlias('@enupal/backup/resources');
 		$pieces     = explode('_', $backup->backupId);
@@ -133,9 +145,10 @@ class Backups extends Component
 		$shellCommand = new ShellCommand();
 		$command = 'cd'.
 				' '.$phpbuPath.
-				' && php phpbu.phar'.
+				' && php phpbu5.phar'.
 				' --configuration='.$configFile.
-				' --debug';
+				' --debug'.
+				' &';
 
 		$shellCommand->setCommand($command);
 
@@ -152,7 +165,8 @@ class Backups extends Component
 			throw ShellCommandException::createFromCommand($shellCommand);
 		}
 
-		$this->updateBackupOnComplete($backup);
+		// moved to the webhook
+		#$this->updateBackupOnComplete($backup);
 
 		return $success;
 	}
@@ -204,82 +218,92 @@ class Backups extends Component
 		return number_format($size / pow(1024, $power), 2, '.', ',') . ' ' . $units[$power];
 	}
 
-	private function updateBackupOnComplete(BackupElement $backup)
+	/**
+	 * Check if the log file has content, if so the backup is finished
+	*/
+	public function updateBackupOnComplete(BackupElement $backup)
 	{
-		// let's update the filenames
-		if (!is_file($backup->getDatabaseFile()))
-		{
-			$backup->databaseFileName = null;
-		}
-		else
-		{
-			$backup->databaseSize = filesize($backup->getDatabaseFile());
-		}
-
-		if (!is_file($backup->getTemplateFile()))
-		{
-			$backup->templateFileName = null;
-		}
-		else
-		{
-			$backup->templateSize = filesize($backup->getTemplateFile());
-		}
-
-		if (!is_file($backup->getPluginFile()))
-		{
-			$backup->pluginFileName = null;
-		}
-		else
-		{
-			$backup->pluginSize = filesize($backup->getPluginFile());
-		}
-
-		if (!is_file($backup->getAssetFile()))
-		{
-			$backup->assetFileName = null;
-		}
-		else
-		{
-			$backup->assetSize = filesize($backup->getAssetFile());
-		}
-
+		// If the log have infomartion the backup is finished
 		$logPath = $this->getLogPath($backup->backupId);
 		$log     = file_get_contents($logPath);
-		// Save the log
-		$backup->logMessage = $log;
 
-		$backupLog = json_decode($log, true);
-		// Backup succesfully
-		$backup->status = BackupStatus::FINISHED;
-		// @todo depending of the settings
-		$backup->dropbox = 1;
-		$backup->aws = 1;
-		$backup->rsync = 1;
-		$backup->ftp = 1;
-		$backup->softlayer = 1;
-
-		if (isset($backupLog['timestamp']))
+		if ($log)
 		{
-			$backup->time = $backupLog['timestamp'];
-		}
+			// Save the log
+			$backup->logMessage = $log;
 
-		// Try to figure out if any sync fails
-		if (isset($backupLog['errors']) && $backupLog['errors'])
-		{
-			foreach ($backupLog['errors'] as $error)
+			// let's update the filenames
+			if (!is_file($backup->getDatabaseFile()))
 			{
-				if (isset($error['msg']))
+				$backup->databaseFileName = null;
+			}
+			else
+			{
+				$backup->databaseSize = filesize($backup->getDatabaseFile());
+			}
+
+			if (!is_file($backup->getTemplateFile()))
+			{
+				$backup->templateFileName = null;
+			}
+			else
+			{
+				$backup->templateSize = filesize($backup->getTemplateFile());
+			}
+
+			if (!is_file($backup->getPluginFile()))
+			{
+				$backup->pluginFileName = null;
+			}
+			else
+			{
+				$backup->pluginSize = filesize($backup->getPluginFile());
+			}
+
+			if (!is_file($backup->getAssetFile()))
+			{
+				$backup->assetFileName = null;
+			}
+			else
+			{
+				$backup->assetSize = filesize($backup->getAssetFile());
+			}
+
+			$backupLog = json_decode($log, true);
+			// Backup succesfully
+			$backup->status = BackupStatus::FINISHED;
+			// @todo depending of the settings
+			$backup->dropbox = 1;
+			$backup->aws = 1;
+			$backup->rsync = 1;
+			$backup->ftp = 1;
+			$backup->softlayer = 1;
+
+			if (isset($backupLog['timestamp']))
+			{
+				$backup->time = $backupLog['timestamp'];
+			}
+
+			// Try to figure out if any sync fails
+			if (isset($backupLog['errors']) && $backupLog['errors'])
+			{
+				foreach ($backupLog['errors'] as $error)
 				{
-					// Dropbox
-					if (strpos(strtolower($error['msg']), 'dropbox') !== false)
+					if (isset($error['msg']))
 					{
-						$backup->dropbox = 0;
+						// Dropbox
+						if (strpos(strtolower($error['msg']), 'dropbox') !== false)
+						{
+							$backup->dropbox = 0;
+						}
 					}
 				}
 			}
+
+			return $this->saveBackup($backup);
 		}
 
-		$this->saveBackup($backup);
+		return false;
 	}
 
 	/**
@@ -291,13 +315,19 @@ class Backups extends Component
 	{
 		$logPath  = $this->getLogPath($backup->backupId);
 		$settings = Backup::$app->settings->getSettings();
-
+		// @todo add a setting to override the webhook url
 		$config  = [
 			'verbose' => true,
 			'logging' => [
 				[
 					'type'   => 'json',
 					'target' => $logPath
+				],
+				[
+					'type'    => 'webhook',
+					'options' => [
+						'uri'  => UrlHelper::siteUrl('enupal-backup/finished')
+					]
 				]
 			],
 			'backups' => []

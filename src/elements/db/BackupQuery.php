@@ -16,6 +16,7 @@ class BackupQuery extends ElementQuery
 	// =========================================================================
 	public $id;
 	public $dateCreated;
+	public $status;
 
 	/**
 	 * @inheritdoc
@@ -72,6 +73,12 @@ class BackupQuery extends ElementQuery
 		if ($this->dateCreated) {
 			$this->subQuery->andWhere(Db::parseParam(
 				'enupalbackup_backups.dateCreated', $this->dateCreated)
+			);
+		}
+
+		if ($this->status != null) {
+			$this->subQuery->andWhere(Db::parseParam(
+				'enupalbackup_backups.status', $this->status)
 			);
 		}
 

@@ -15,6 +15,9 @@ use yii\base\Exception;
 use enupal\backup\tasks\CreateBackup;
 use enupal\backup\Backup;
 
+use mikehaertl\shellcommand\Command as ShellCommand;
+use craft\errors\ShellCommandException;
+
 class BackupsController extends BaseController
 {
 	/*
@@ -73,15 +76,36 @@ class BackupsController extends BaseController
 	public function actionRun()
 	{
 		#$result = Backup::$app->backups->enupalBackup();
-		$tasksService = Craft::$app->getTasks();
+		#$tasksService = Craft::$app->getTasks();
 
-		$tasksService->queueTask([
-			'type' => CreateBackup::class
-		]);
+		#$tasksService->queueTask([
+		#	'type' => CreateBackup::class
+		#]);
 
 		##$tasksService->runPendingTasks();
 
-		Craft::dd('Runing');
+		// NEW METHOD using webhook
+		try
+		{
+			$backup = Backup::$app->backups->initializeBackup();
+			// try to finish up
+			if ($backup->id)
+			{
+				$result = Backup::$app->backups->enupalBackup($backup);
+			}
+		}
+		catch (\Throwable $e)
+		{
+			$error = '02 - Could not create Enupal Backup: '.$e->getMessage().' --Trace: '.json_encode($e->getTrace());
+			$backup->status = BackupStatus::ERROR;
+			$backup->logMessage = $error;
+
+			Backup::$app->backups->saveBackup($backup);
+
+			Backup::error($error);
+		}
+
+		Craft::dd('Runing'.$backup->id);
 	}
 
 	/**
