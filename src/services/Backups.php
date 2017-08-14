@@ -142,13 +142,16 @@ class Backups extends Component
 		}
 
 		// Create the shell command
+		// We have a webhook so don't wait
+		// linux > /dev/null &
+		// windows > NUL
 		$shellCommand = new ShellCommand();
 		$command = 'cd'.
 				' '.$phpbuPath.
 				' && php phpbu5.phar'.
 				' --configuration='.$configFile.
 				' --debug'.
-				' &';
+				' > NUL';
 
 		$shellCommand->setCommand($command);
 
@@ -295,6 +298,15 @@ class Backups extends Component
 						if (strpos(strtolower($error['msg']), 'dropbox') !== false)
 						{
 							$backup->dropbox = 0;
+						}
+					}
+
+					if (isset($error['message']))
+					{
+						// Dropbox
+						if (strpos(strtolower($error['message']), 'amazon') !== false)
+						{
+							$backup->amazon = 0;
 						}
 					}
 				}

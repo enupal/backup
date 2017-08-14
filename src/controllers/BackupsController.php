@@ -13,6 +13,7 @@ use craft\helpers\Template as TemplateHelper;
 use yii\base\Exception;
 
 use enupal\backup\tasks\CreateBackup;
+use enupal\backup\enums\BackupStatus;
 use enupal\backup\Backup;
 
 use mikehaertl\shellcommand\Command as ShellCommand;
@@ -75,6 +76,7 @@ class BackupsController extends BaseController
 
 	public function actionRun()
 	{
+		Craft::dd(php_uname());
 		#$result = Backup::$app->backups->enupalBackup();
 		#$tasksService = Craft::$app->getTasks();
 
@@ -124,6 +126,11 @@ class BackupsController extends BaseController
 		if (!$backup)
 		{
 			throw new NotFoundHttpException(Backup::t('Backup not found'));
+		}
+
+		if ($backup->status == BackupStatus::RUNNING)
+		{
+			Backup::$app->backups->updateBackupOnComplete($backup);
 		}
 
 		if (!is_file($backup->getDatabaseFile()))
