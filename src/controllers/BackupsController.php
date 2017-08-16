@@ -76,7 +76,6 @@ class BackupsController extends BaseController
 
 	public function actionRun()
 	{
-		Craft::dd(php_uname());
 		#$result = Backup::$app->backups->enupalBackup();
 		#$tasksService = Craft::$app->getTasks();
 

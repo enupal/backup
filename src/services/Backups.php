@@ -142,16 +142,24 @@ class Backups extends Component
 		}
 
 		// Create the shell command
-		// We have a webhook so don't wait
-		// linux > /dev/null &
-		// windows > NUL
 		$shellCommand = new ShellCommand();
 		$command = 'cd'.
 				' '.$phpbuPath.
 				' && php phpbu5.phar'.
 				' --configuration='.$configFile.
-				' --debug'.
-				' > NUL';
+				' --debug';
+
+		/*// We have a webhook so don't wait
+		if (substr(php_uname(), 0, 7) == "Windows")
+		{
+			// windows does not work
+			//$command .= ' > NUL';
+			pclose(popen("start /B ". $command, "r"));
+		}
+		else
+		{
+			$command .= ' > /dev/null &';
+		}*/
 
 		$shellCommand->setCommand($command);
 
