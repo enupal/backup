@@ -92,15 +92,13 @@ class BackupsController extends BaseController
 					' '.$craftPath.
 					' && php craft'.
 					' queue/run';
-
-			$command .= ' > /dev/null &';
+			//> /dev/null &
+			$command .= ' > /dev/null 2&1 &';
 			$shellCommand->setCommand($command);
 
 			// If we don't have proc_open, maybe we've got exec
-			if (!function_exists('proc_open') && function_exists('exec'))
-			{
-				$shellCommand->useExec = true;
-			}
+			//@todo requiere this in the docs
+			$shellCommand->useExec = true;
 
 			$success = $shellCommand->execute();
 

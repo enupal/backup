@@ -360,7 +360,9 @@ class Backups extends Component
 		$assetName      = 'backup-assets-'.$backupId.$compress;
 		$templateName   = 'backup-templates-'.$backupId.$compress;
 		$pluginName     = 'backup-plugins-'.$backupId.$compress;
-		$pathToTar      = $this->getPathToTar();
+		// @todo add setting
+		#$pathToTar      = $this->getPathToTar();
+		$pathToTar = null;
 		$assetsCleanups = $this->getAssetsCleanup();
 		$backups        = [];
 
@@ -485,6 +487,10 @@ class Backups extends Component
 		$config['backups'] = $backups;
 
 		$configFile = $this->getConfigPath();
+		if (!file_exists($this->getBasePath())) 
+		{
+			mkdir($this->getBasePath(), 0777, true);
+		}
 		file_put_contents($configFile, json_encode($config));
 
 		return $configFile;
