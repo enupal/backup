@@ -9,11 +9,6 @@
     }
   },
   "minimum-stability": "dev",
-  "require": {
-    "aws/aws-sdk-php": "2.7.*",
-    "dropbox/dropbox-sdk":"1.1.*",
-    "phpseclib/phpseclib": "2.0.*@dev"
-  },
   "authors": [
     {
       "name": "Enupal",

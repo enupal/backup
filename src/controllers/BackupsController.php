@@ -12,7 +12,7 @@ use craft\helpers\Json;
 use craft\helpers\Template as TemplateHelper;
 use yii\base\Exception;
 
-use enupal\backup\tasks\CreateBackup;
+use enupal\backup\jobs\CreateBackup;
 use enupal\backup\enums\BackupStatus;
 use enupal\backup\Backup;
 
@@ -76,15 +76,40 @@ class BackupsController extends BaseController
 
 	public function actionRun()
 	{
-		#$result = Backup::$app->backups->enupalBackup();
-		#$tasksService = Craft::$app->getTasks();
+		// let's add the job if is linux we can run it in background
+		Craft::$app->queue->push(new CreateBackup());
+		// We have a webhook so don't wait
+		$success = false;
+		if (substr(php_uname(), 0, 7) != "Windows")
+		{
+			// listen by console
+			// @todo we may need to add a settign to save the php path
+			$shellCommand = new ShellCommand();
+			// this is ok?
+			$craftPath = CRAFT_BASE_PATH;
 
-		#$tasksService->queueTask([
-		#	'type' => CreateBackup::class
-		#]);
+			$command = 'cd'.
+					' '.$craftPath.
+					' && php craft'.
+					' queue/run';
 
-		##$tasksService->runPendingTasks();
+			$command .= ' > /dev/null &';
+			$shellCommand->setCommand($command);
 
+			// If we don't have proc_open, maybe we've got exec
+			if (!function_exists('proc_open') && function_exists('exec'))
+			{
+				$shellCommand->useExec = true;
+			}
+
+			$success = $shellCommand->execute();
+
+			// windows does not work
+			//$command .= ' 1>> NUL 2>&1';
+			//$success = pclose(popen("start /B ". $command, "w"));
+		}
+
+		/*
 		// NEW METHOD using webhook
 		try
 		{
@@ -105,8 +130,8 @@ class BackupsController extends BaseController
 
 			Backup::error($error);
 		}
-
-		Craft::dd('Runing'.$backup->id);
+		*/
+		Craft::dd('Runing: ');
 	}
 
 	/**
