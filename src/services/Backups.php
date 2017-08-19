@@ -508,7 +508,7 @@ class Backups extends Component
 				'type' => 'dropbox',
 				'options' => [
 					'token' => $settings->dropboxToken,
-					'path'  => trim($settings->dropboxPath.'/'.$date)
+					'path'  => trim($settings->dropboxPath.$date)
 				]
 			];
 
