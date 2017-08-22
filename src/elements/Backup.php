@@ -16,7 +16,7 @@ use DateTime;
 use enupal\backup\elements\db\BackupQuery;
 use enupal\backup\records\Backup as BackupRecord;
 use enupal\backup\enums\BackupStatus;
-use enupal\backup\Backup;
+use enupal\backup\Backup as BackupPlugin;
 
 /**
  * Backup represents a entry element.
@@ -65,7 +65,7 @@ class Backup extends Element
 	 */
 	public static function displayName(): string
 	{
-		return Backup::t('Backups');
+		return BackupPlugin::t('Backups');
 	}
 
 	/**
@@ -153,7 +153,7 @@ class Backup extends Element
 		$sources = [
 			[
 			'key'   => '*',
-			'label' => Backup::t('All Backups'),
+			'label' => BackupPlugin::t('All Backups'),
 			]
 		];
 
@@ -170,8 +170,8 @@ class Backup extends Element
 		// Delete
 		$actions[] = Craft::$app->getElements()->createAction([
 			'type' => Delete::class,
-			'confirmationMessage' => Backup::t('Are you sure you want to delete the selected backups?'),
-			'successMessage' => Backup::t('Backups deleted.'),
+			'confirmationMessage' => BackupPlugin::t('Are you sure you want to delete the selected backups?'),
+			'successMessage' => BackupPlugin::t('Backups deleted.'),
 		]);
 
 		return $actions;
@@ -191,7 +191,7 @@ class Backup extends Element
 	protected static function defineSortOptions(): array
 	{
 		$attributes = [
-			'elements.dateCreated'  => Backup::t('Date Created')
+			'elements.dateCreated'  => BackupPlugin::t('Date Created')
 		];
 
 		return $attributes;
@@ -202,10 +202,10 @@ class Backup extends Element
 	 */
 	protected static function defineTableAttributes(): array
 	{
-		$attributes['dateCreated'] = ['label' => Backup::t('Backup Date')];
-		$attributes['status']      = ['label' => Backup::t('Status')];
-		$attributes['download']    = ['label' => Backup::t('Data')];
-		$attributes['actions']     = ['label' => Backup::t('Actions')];
+		$attributes['dateCreated'] = ['label' => BackupPlugin::t('Backup Date')];
+		$attributes['status']      = ['label' => BackupPlugin::t('Status')];
+		$attributes['download']    = ['label' => BackupPlugin::t('Data')];
+		$attributes['actions']     = ['label' => BackupPlugin::t('Actions')];
 
 		return $attributes;
 	}
@@ -231,8 +231,8 @@ class Backup extends Element
 			case 'status':
 			{
 				$message = $this->status == BackupStatus::STARTED ?
-					Backup::t('Started') :
-					Backup::t('Not defined');
+					BackupPlugin::t('Started') :
+					BackupPlugin::t('Not defined');
 
 				if ($this->status == BackupStatus::FINISHED)
 				{
@@ -263,28 +263,28 @@ class Backup extends Element
 
 	public function getDatabaseFile()
 	{
-		$base = Backup::$app->backups->getDatabasePath();
+		$base = BackupPlugin::$app->backups->getDatabasePath();
 
 		return $base.$this->databaseFileName;
 	}
 
 	public function getTemplateFile()
 	{
-		$base = Backup::$app->backups->getTemplatesPath();
+		$base = BackupPlugin::$app->backups->getTemplatesPath();
 
 		return $base.$this->templateFileName;
 	}
 
 	public function getPluginFile()
 	{
-		$base = Backup::$app->backups->getPluginsPath();
+		$base = BackupPlugin::$app->backups->getPluginsPath();
 
 		return $base.$this->pluginFileName;
 	}
 
 	public function getAssetFile()
 	{
-		$base = Backup::$app->backups->getAssetsPath();
+		$base = BackupPlugin::$app->backups->getAssetsPath();
 
 		return $base.$this->assetFileName;
 	}

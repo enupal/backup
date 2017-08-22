@@ -34,6 +34,11 @@ class Backup extends \craft\base\Plugin
 			}
 		);
 
+		Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_SITE_URL_RULES, function(RegisterUrlRulesEvent $event) {
+				$event->rules = array_merge($event->rules, $this->getSiteUrlRules());
+			}
+		);
+
 		Event::on(
 			CraftVariable::class,
 			CraftVariable::EVENT_DEFINE_COMPONENTS,
@@ -110,6 +115,17 @@ class Backup extends \craft\base\Plugin
 
 			'enupal-backup/backup/view/<backupId:\d+>' =>
 			'enupal-backup/backups/view-backup',
+		];
+	}
+
+	/**
+	 * @return array
+	 */
+	private function getSiteUrlRules()
+	{
+		return [
+			'enupal-backup/finished' =>
+			'enupal-backup/webhook/finished'
 		];
 	}
 }

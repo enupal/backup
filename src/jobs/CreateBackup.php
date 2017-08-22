@@ -1,17 +1,17 @@
 <?php
 
-namespace enupal\backup\tasks;
+namespace enupal\backup\jobs;
 
 use enupal\backup\Backup;
-use craft\base\Task;
+use craft\queue\BaseJob;
 use Craft;
 
 use enupal\backup\enums\BackupStatus;
 
 /**
- * CreateBackup task
+ * CreateBackup job
  */
-class CreateBackup extends Task
+class CreateBackup extends BaseJob
 {
 	/**
 	 * @var BackupElement|null
@@ -19,7 +19,7 @@ class CreateBackup extends Task
 	private $_backup;
 
 	/**
-	 * Returns the default description for this task.
+	 * Returns the default description for this job.
 	 *
 	 * @return string
 	 */
@@ -28,34 +28,22 @@ class CreateBackup extends Task
 		return Backup::t('Creating backup');
 	}
 
-	/**
-	 * Gets the total number of steps for this task.
-	 *
-	 * @return int
-	 */
-	public function getTotalSteps(): int
-	{
-		$this->_backup = Backup::$app->backups->initializeBackup();
-		// one step
-		return 1;
-	}
-
-	/**
-	 * Runs a task step.
-	 *
-	 * @param int $step
-	 *
-	 * @return bool
-	 */
-	public function runStep(int $step)
+	public function execute($queue)
 	{
 		$result = false;
+		$totalSteps = 2;
+		$this->_backup = Backup::$app->backups->initializeBackup();
+
+		$step = 1;
+		$this->setProgress($queue, $step / $totalSteps);
 
 		try
 		{
 			if ($this->_backup->id)
 			{
 				$result = Backup::$app->backups->enupalBackup($this->_backup);
+				$step = 2;
+				$this->setProgress($queue, $step / $totalSteps);
 			}
 			else
 			{

@@ -12,8 +12,12 @@ use craft\helpers\Json;
 use craft\helpers\Template as TemplateHelper;
 use yii\base\Exception;
 
-use enupal\backup\tasks\CreateBackup;
+use enupal\backup\jobs\CreateBackup;
+use enupal\backup\enums\BackupStatus;
 use enupal\backup\Backup;
+
+use mikehaertl\shellcommand\Command as ShellCommand;
+use craft\errors\ShellCommandException;
 
 class BackupsController extends BaseController
 {
@@ -72,16 +76,61 @@ class BackupsController extends BaseController
 
 	public function actionRun()
 	{
-		#$result = Backup::$app->backups->enupalBackup();
-		$tasksService = Craft::$app->getTasks();
+		// let's add the job if is linux we can run it in background
+		Craft::$app->queue->push(new CreateBackup());
+		// We have a webhook so don't wait
+		$success = false;
 
-		$tasksService->queueTask([
-			'type' => CreateBackup::class
-		]);
+		if (substr(php_uname(), 0, 7) != "Windows")
+		{
+			// listen by console
+			// @todo we may need to add a settign to save the php path
+			$shellCommand = new ShellCommand();
+			// this is ok?
+			$craftPath = CRAFT_BASE_PATH;
 
-		##$tasksService->runPendingTasks();
+			$command = 'cd'.
+					' '.$craftPath.
+					' && php craft'.
+					' queue/run';
+			//> /dev/null &
+			$command .= ' > /dev/null 2&1 &';
+			$shellCommand->setCommand($command);
 
-		Craft::dd('Runing');
+			// If we don't have proc_open, maybe we've got exec
+			//@todo requiere this in the docs
+			$shellCommand->useExec = true;
+
+			$success = $shellCommand->execute();
+
+			// windows does not work
+			//$command .= ' 1>> NUL 2>&1';
+			//$success = pclose(popen("start /B ". $command, "w"));
+		}
+
+		/*
+		// NEW METHOD using webhook
+		try
+		{
+			$backup = Backup::$app->backups->initializeBackup();
+			// try to finish up
+			if ($backup->id)
+			{
+				$result = Backup::$app->backups->enupalBackup($backup);
+			}
+		}
+		catch (\Throwable $e)
+		{
+			$error = '02 - Could not create Enupal Backup: '.$e->getMessage().' --Trace: '.json_encode($e->getTrace());
+			$backup->status = BackupStatus::ERROR;
+			$backup->logMessage = $error;
+
+			Backup::$app->backups->saveBackup($backup);
+
+			Backup::error($error);
+		}
+		*/
+		Craft::dd('Runing: ');
 	}
 
 	/**
@@ -100,6 +149,11 @@ class BackupsController extends BaseController
 		if (!$backup)
 		{
 			throw new NotFoundHttpException(Backup::t('Backup not found'));
+		}
+
+		if ($backup->status == BackupStatus::RUNNING)
+		{
+			Backup::$app->backups->updateBackupOnComplete($backup);
 		}
 
 		if (!is_file($backup->getDatabaseFile()))
