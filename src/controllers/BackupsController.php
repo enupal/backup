@@ -80,6 +80,7 @@ class BackupsController extends BaseController
 		Craft::$app->queue->push(new CreateBackup());
 		// We have a webhook so don't wait
 		$success = false;
+
 		if (substr(php_uname(), 0, 7) != "Windows")
 		{
 			// listen by console

@@ -335,7 +335,7 @@ class Backups extends Component
 	{
 		$logPath  = $this->getLogPath($backup->backupId);
 		$settings = Backup::$app->settings->getSettings();
-		// @todo add a setting to override the webhook url
+		// @todo add security steps for webhook
 		$config  = [
 			'verbose' => true,
 			'logging' => [
@@ -360,9 +360,7 @@ class Backups extends Component
 		$assetName      = 'backup-assets-'.$backupId.$compress;
 		$templateName   = 'backup-templates-'.$backupId.$compress;
 		$pluginName     = 'backup-plugins-'.$backupId.$compress;
-		// @todo add setting
-		#$pathToTar      = $this->getPathToTar();
-		$pathToTar = null;
+		$pathToTar      = $this->getPathToTar();
 		$assetsCleanups = $this->getAssetsCleanup();
 		$backups        = [];
 
@@ -487,10 +485,12 @@ class Backups extends Component
 		$config['backups'] = $backups;
 
 		$configFile = $this->getConfigPath();
-		if (!file_exists($this->getBasePath())) 
+
+		if (!file_exists($this->getBasePath()))
 		{
 			mkdir($this->getBasePath(), 0777, true);
 		}
+
 		file_put_contents($configFile, json_encode($config));
 
 		return $configFile;
@@ -561,12 +561,12 @@ class Backups extends Component
 
 	private function getPathToTar()
 	{
-		// @todo - add path to tar
+		$settings  = Backup::$app->settings->getSettings();
 		$pathToTar = null;
 
-		if (true)
+		if ($settings->enablePathToTar)
 		{
-			$pathToTar = "C:\\cygwin64\\bin";
+			$pathToTar = $settings->pathToTar;
 		}
 
 		return $pathToTar;

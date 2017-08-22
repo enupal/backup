@@ -39,4 +39,12 @@ class Settings extends \craft\base\Model
 	public $sosHost      = '';
 	public $sosContainer = '';
 	public $sosPath      = '/enupalbackup/';
+	// Advanced
+	public $enablePathToTar = 0;
+	public $pathToTar       = '';
+	public $enablePathToPhp = '';
+	public $pathToPhp = '';
+	// Webhook
+	public $webhookUrl = '';
+	public $webhookSecretKey = '';
 }
