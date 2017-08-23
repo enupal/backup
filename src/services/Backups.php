@@ -362,10 +362,10 @@ class Backups extends Component
 		$backupId       = $backup->backupId;
 		$compress       = $this->getCompressType();
 		$syncs          = $this->getSyncs($date);
-		$dbName         = 'backup-db-'.$backupId.$compress;
-		$assetName      = 'backup-assets-'.$backupId.$compress;
-		$templateName   = 'backup-templates-'.$backupId.$compress;
-		$pluginName     = 'backup-plugins-'.$backupId.$compress;
+		$dbName         = 'database-'.$backupId.$compress;
+		$assetName      = 'assets-'.$backupId.$compress;
+		$templateName   = 'templates-'.$backupId.$compress;
+		$pluginName     = 'plugins-'.$backupId.$compress;
 		$pathToTar      = $this->getPathToTar();
 		$assetsCleanups = $this->getAssetsCleanup();
 		$backups        = [];

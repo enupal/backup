@@ -129,7 +129,7 @@ class Backup extends Element
 		try
 		{
 			// @todo - For some reason the Title returns null possible Craft3 bug
-			return $this->dateCreated->format(DateTime::RFC1123);
+			return $this->backupId;
 		} catch (\Exception $e) {
 			ErrorHandler::convertExceptionToError($e);
 		}
@@ -226,17 +226,17 @@ class Backup extends Element
 	 */
 	protected static function defineTableAttributes(): array
 	{
-		$attributes['dateCreated'] = ['label' => BackupPlugin::t('Backup Date')];
+		$attributes['backupId'] = ['label' => BackupPlugin::t('Backup Id')];
+		$attributes['size']     = ['label' => BackupPlugin::t('Size')];
+		$attributes['dateCreated'] = ['label' => BackupPlugin::t('Date')];
 		$attributes['status']      = ['label' => BackupPlugin::t('Status')];
-		$attributes['download']    = ['label' => BackupPlugin::t('Data')];
-		$attributes['actions']     = ['label' => BackupPlugin::t('Actions')];
 
 		return $attributes;
 	}
 
 	protected static function defineDefaultTableAttributes(string $source): array
 	{
-		$attributes = ['dateCreated', 'status', 'download', 'actions'];
+		$attributes = ['backupId', 'size', 'dateCreated','status'];
 
 		return $attributes;
 	}
@@ -248,9 +248,31 @@ class Backup extends Element
 	{
 		switch ($attribute)
 		{
-			case 'download':
+			case 'size':
 			{
-				return 'Download links ;D';
+				$total = 0;
+
+				if ($this->assetSize)
+				{
+					$total += $this->assetSize;
+				}
+
+				if ($this->templateSize)
+				{
+					$total += $this->templateSize;
+				}
+
+				if ($this->databaseSize)
+				{
+					$total += $this->databaseSize;
+				}
+
+				if ($total == 0)
+				{
+					return "";
+				}
+
+				return BackupPlugin::$app->backups->getSizeFormatted($total);
 			}
 			case 'status':
 			{
@@ -272,13 +294,9 @@ class Backup extends Element
 				}
 				return $message;
 			}
-			case 'actions':
-			{
-				return 'Links ;D';
-			}
 			case 'dateCreated':
 			{
-				return "Tests";
+				return $this->dateCreated->format("Y-m-d H:i");;
 			}
 		}
 
