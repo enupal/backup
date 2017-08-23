@@ -22,7 +22,7 @@ use craft\errors\ShellCommandException;
 class BackupsController extends BaseController
 {
 	/*
-	 * Redirect to sliders index page
+	 * Redirect to backups index page
 	*/
 	public function actionIndex()
 	{
@@ -76,7 +76,7 @@ class BackupsController extends BaseController
 
 	public function actionRun()
 	{
-		// let's add the job if is linux we can run it in background
+		// let's add the job if it's linux we can run it in background
 		Craft::$app->queue->push(new CreateBackup());
 		// We have a webhook so don't wait
 		$success = false;
@@ -182,7 +182,7 @@ class BackupsController extends BaseController
 	}
 
 	/**
-	 * Delete a slider.
+	 * Delete a backup.
 	 *
 	 * @return void
 	 */
