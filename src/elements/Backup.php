@@ -374,4 +374,32 @@ class Backup extends Element
 
 		parent::afterSave($isNew);
 	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function beforeDelete(): bool
+	{
+		// Let's delete all the info
+		$files = [];
+		$files[] = $this->getDatabaseFile();
+		$files[] = $this->getTemplateFile();
+		$files[] = $this->getAssetFile();
+		$files[] = BackupPlugin::$app->backups->getLogPath($this->backupId);
+
+		foreach ($files as $file)
+		{
+			if (file_exists($file))
+			{
+				unlink($file);
+			}
+			else
+			{
+				// File not found.
+				BackupPlugin::error(BackupPlugin::t('Unable to delete the file: '.$file));
+			}
+		}
+
+		return true;
+	}
 }

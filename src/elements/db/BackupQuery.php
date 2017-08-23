@@ -49,7 +49,6 @@ class BackupQuery extends ElementQuery
 	protected function beforePrepare(): bool
 	{
 		$this->joinElementTable('enupalbackup_backups');
-		$test ="AS";
 
 		$this->query->select([
 			'enupalbackup_backups.backupId',
