@@ -16,7 +16,7 @@ class BackupQuery extends ElementQuery
 	// =========================================================================
 	public $id;
 	public $dateCreated;
-	public $status;
+	public $statusId;
 
 	/**
 	 * @inheritdoc
@@ -49,6 +49,7 @@ class BackupQuery extends ElementQuery
 	protected function beforePrepare(): bool
 	{
 		$this->joinElementTable('enupalbackup_backups');
+		$test ="AS";
 
 		$this->query->select([
 			'enupalbackup_backups.backupId',
@@ -76,9 +77,9 @@ class BackupQuery extends ElementQuery
 			);
 		}
 
-		if ($this->status != null) {
+		if ($this->statusId) {
 			$this->subQuery->andWhere(Db::parseParam(
-				'enupalbackup_backups.status', $this->status)
+				'enupalbackup_backups.status', $this->statusId)
 			);
 		}
 

@@ -157,6 +157,30 @@ class Backup extends Element
 			]
 		];
 
+		$statuses = BackupStatus::getConstants();
+
+		$colors = [
+			BackupStatus::FINISHED => 'green',
+			BackupStatus::RUNNING  => 'blue',
+			BackupStatus::ERROR  => 'red',
+		];
+
+		$sources[] = ['heading' => BackupPlugin::t("Backup Status")];
+
+		foreach ($statuses as $code => $status)
+		{
+			if ($status != BackupStatus::STARTED)
+			{
+				$key = 'status:' . $status;
+				$sources[] = [
+					'status'   => $colors[$status],
+					'key'      => $key,
+					'label'    => ucwords(strtolower($code)),
+					'criteria' => ['statusId' => $status]
+				];
+			}
+		}
+
 		return $sources;
 	}
 
@@ -182,7 +206,7 @@ class Backup extends Element
 	 */
 	protected static function defineSearchableAttributes(): array
 	{
-		return ['backupId'];
+		return ['backupId', 'enupalbackup_backups.status', 'title'];
 	}
 
 	/**

@@ -204,12 +204,18 @@ class Backups extends Component
 	public function initializeBackup()
 	{
 		$info      = Craft::$app->getInfo();
-		$systemName = FileHelper::sanitizeFilename($info->name, ['asciiOnly' => true]);
-		$siteName  = $systemName ?? '';
+		$systemName = FileHelper::sanitizeFilename(
+			$info->name,
+			[
+				'asciiOnly' => true,
+				'separator' => '_'
+			]
+		);
+		$siteName  = $systemName ?? 'backup';
 		$randomStr = $this->getRandomStr();
-		$date      = date('Y-m-d-His');
+		$date      = date('YmdHis');
 
-		$backupId         = strtolower($date.'_'.$siteName.'_'.$randomStr);
+		$backupId         = strtolower($siteName.'_'.$date.'_'.$randomStr);
 		$backup           = new BackupElement();
 		$backup->backupId = $backupId;
 		$backup->status   = BackupStatus::STARTED;
@@ -422,7 +428,7 @@ class Backups extends Component
 
 					if ($pathToTar)
 					{
-						$assetBackup['source']['options']['pathToTar'] = "C:\\cygwin64\\bin";
+						$assetBackup['source']['options']['pathToTar'] = $pathToTar;
 					}
 
 					if ($syncs)
@@ -466,7 +472,7 @@ class Backups extends Component
 
 			if ($pathToTar)
 			{
-				$templateBackup['source']['options']['pathToTar'] = "C:\\cygwin64\\bin";
+				$templateBackup['source']['options']['pathToTar'] = $pathToTar;
 			}
 
 			if ($syncs)

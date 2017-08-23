@@ -32,7 +32,7 @@
 					<div class="container-fluid">
 						<div class="row">
 							<div class="col-sm-9 col-md-10  main">
-								<h3 class="page-header">{% if backup.status == 2 %} {{"Download Section"|t('enupal-backup')}} {% elseif backup.status == 1 %}  <i class="fa fa-circle-o-notch fa-spin fa fa-fw"></i> {{"Backup it's still running, but you can download local files"}} {% else %}  <i class="fa fa-times" aria-hidden="true"></i> {{"An error occurred during Backup:"}} {% endif %} </h3>
+								<h3 class="page-header">{% if backup.status == 2 %} {{"Download Section"|t('enupal-backup')}} {% elseif backup.status == 1 %}  <i class="fa fa-circle-o-notch fa-spin fa fa-fw"></i> {{"Backup it's still running, but you can download local files"}} {% elseif backup.status == 3  %}  <i class="fa fa-times" aria-hidden="true"></i> {{"An error occurred during Backup:"}} {% endif %} </h3>
 								<div class="row placeholders">
 								{% if backup.status != 3 %}
 									{% if backup.databaseFileName %}
@@ -105,6 +105,14 @@
 									{% endif %}
 								{% else %}
 									<span class="error">{{backup.logMessage}}</span>
+									<br><br>
+									<a href="#log" data-toggle="collapse">Show log</a>
+									<br>
+									<div id="log" class="collapse">
+										<span class="warning">{{log}}</span>
+									</div>
+									<br>
+									<br>
 								{% endif %}
 
 								</div>

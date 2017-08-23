@@ -9,8 +9,8 @@ abstract class BackupStatus extends BaseEnum
 	// Constants
 	// =========================================================================
 
+	const FINISHED = 2;
 	const STARTED  = 0;
 	const RUNNING  = 1;
-	const FINISHED = 2;
 	const ERROR    = 3;
 }
