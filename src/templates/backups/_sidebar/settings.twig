@@ -21,7 +21,7 @@
 				value: backup.dateCreated,
 				disabled: true
 			}) }}
-			{% if backup.status %}
+			{% if backup.backupStatusId %}
 				{{ forms.dateTimeField({
 					label: "Finished at"|t('enupal-backup'),
 					id: 'dateUpdated',

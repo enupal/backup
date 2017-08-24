@@ -32,9 +32,9 @@
 					<div class="container-fluid">
 						<div class="row">
 							<div class="col-sm-9 col-md-10  main">
-								<h3 class="page-header">{% if backup.status == 2 %} {{"Download Section"|t('enupal-backup')}} {% elseif backup.status == 1 %}  <i class="fa fa-circle-o-notch fa-spin fa fa-fw"></i> {{"Backup it's still running, but you can download local files"}} {% elseif backup.status == 3  %}  <i class="fa fa-times" aria-hidden="true"></i> {{"An error occurred during Backup:"}} {% endif %} </h3>
+								<h3 class="page-header">{% if backup.backupStatusId == 2 %} {{"Download Section"|t('enupal-backup')}} {% elseif backup.backupStatusId == 1 %}  <i class="fa fa-circle-o-notch fa-spin fa fa-fw"></i> {{"Backup it's still running, but you can download local files"}} {% elseif backup.backupStatusId == 3  %}  <i class="fa fa-times" aria-hidden="true"></i> {{"An error occurred during Backup:"}} {% endif %} </h3>
 								<div class="row placeholders">
-								{% if backup.status != 3 %}
+								{% if backup.backupStatusId != 3 %}
 									{% if backup.databaseFileName %}
 										<div class="col-xs-12 col-md-3 placeholder">
 											<form id="database-template" method="post" accept-charset="UTF-8">
@@ -46,7 +46,7 @@
 													<i class="fa fa-cloud-download fa-lg"></i> <b>Dabase</b>
 												</button>
 											</form>
-											{% if backup.status %}
+											{% if backup.backupStatusId %}
 												<h4><span class="label label-info">Size: {{craft.enupalbackup.getSizeFormatted(backup.databaseSize)}}</span></h4>
 											{% endif %}
 											<span class="text-muted"><a href="">delete</a></span>
@@ -63,7 +63,7 @@
 													<i class="fa fa-cloud-download fa-lg"></i> <b>Templates</b>
 												</button>
 											</form>
-											{% if backup.status %}
+											{% if backup.backupStatusId %}
 												<h4><span class="label label-info">Size: {{craft.enupalbackup.getSizeFormatted(backup.templateSize)}}</span></h4>
 											{% endif %}
 											<span class="text-muted"><a href="">delete</a></span>
@@ -80,7 +80,7 @@
 													<i class="fa fa-cloud-download fa-lg"></i> <b>Plugins</b>
 												</button>
 											</form>
-											{% if backup.status %}
+											{% if backup.backupStatusId %}
 												<h4><span class="label label-info">Size: {{craft.enupalbackup.getSizeFormatted(backup.pluginSize)}}</span></h4>
 											{% endif %}
 											<span class="text-muted"><a href="">delete</a></span>
@@ -97,7 +97,7 @@
 													<i class="fa fa-cloud-download fa-lg"></i> <b>Assets</b>
 												</button>
 											</form>
-											{% if backup.status %}
+											{% if backup.backupStatusId %}
 												<h4><span class="label label-info">Size: {{craft.enupalbackup.getSizeFormatted(backup.assetSize)}}</span></h4>
 											{% endif %}
 											<span class="text-muted"><a href="">delete</a></span>

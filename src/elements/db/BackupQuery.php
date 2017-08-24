@@ -16,7 +16,7 @@ class BackupQuery extends ElementQuery
 	// =========================================================================
 	public $id;
 	public $dateCreated;
-	public $statusId;
+	public $backupStatusId;
 
 	/**
 	 * @inheritdoc
@@ -61,7 +61,7 @@ class BackupQuery extends ElementQuery
 			'enupalbackup_backups.templateSize',
 			'enupalbackup_backups.pluginFileName',
 			'enupalbackup_backups.pluginSize',
-			'enupalbackup_backups.status',
+			'enupalbackup_backups.backupStatusId',
 			'enupalbackup_backups.aws',
 			'enupalbackup_backups.dropbox',
 			'enupalbackup_backups.rsync',
@@ -76,9 +76,9 @@ class BackupQuery extends ElementQuery
 			);
 		}
 
-		if ($this->statusId) {
+		if ($this->backupStatusId) {
 			$this->subQuery->andWhere(Db::parseParam(
-				'enupalbackup_backups.status', $this->statusId)
+				'enupalbackup_backups.backupStatusId', $this->backupStatusId)
 			);
 		}
 

@@ -80,6 +80,7 @@ class BackupsController extends BaseController
 		Craft::$app->queue->push(new CreateBackup());
 		// We have a webhook so don't wait
 		$success = false;
+		$response = [];
 
 		if (substr(php_uname(), 0, 7) != "Windows")
 		{
@@ -93,44 +94,39 @@ class BackupsController extends BaseController
 					' '.$craftPath.
 					' && php craft'.
 					' queue/run';
-			//> /dev/null &
+			// linux
 			$command .= ' > /dev/null 2&1 &';
+			// windows does not work
+			//$command .= ' 1>> NUL 2>&1';
 			$shellCommand->setCommand($command);
 
-			// If we don't have proc_open, maybe we've got exec
 			//@todo requiere this in the docs
 			$shellCommand->useExec = true;
 
 			$success = $shellCommand->execute();
-
-			// windows does not work
-			//$command .= ' 1>> NUL 2>&1';
-			//$success = pclose(popen("start /B ". $command, "w"));
+			$response = [
+				'success' => $success,
+				'message' => 'running'
+			];
 		}
-
-		/*
-		// NEW METHOD using webhook
-		try
+		else
 		{
-			$backup = Backup::$app->backups->initializeBackup();
-			// try to finish up
-			if ($backup->id)
-			{
-				$result = Backup::$app->backups->enupalBackup($backup);
-			}
+			$response = [
+				'success' => true,
+				'message' => 'queued'
+			];
 		}
-		catch (\Throwable $e)
+
+		$request = Craft::$app->getRequest();
+
+		if ($request->getIsCpRequest())
 		{
-			$error = '02 - Could not create Enupal Backup: '.$e->getMessage().' --Trace: '.json_encode($e->getTrace());
-			$backup->status = BackupStatus::ERROR;
-			$backup->logMessage = $error;
+			Craft::$app->getSession()->setNotice(Backup::t('Backup: '.$response['message']));
 
-			Backup::$app->backups->saveBackup($backup);
-
-			Backup::error($error);
+			return $this->redirect('enupal-backup/backups');
 		}
-		*/
-		Craft::dd('Runing: ');
+
+		return $this->asJson($response);
 	}
 
 	/**
@@ -151,7 +147,7 @@ class BackupsController extends BaseController
 			throw new NotFoundHttpException(Backup::t('Backup not found'));
 		}
 
-		if ($backup->status == BackupStatus::RUNNING)
+		if ($backup->backupStatusId == BackupStatus::RUNNING)
 		{
 			Backup::$app->backups->updateBackupOnComplete($backup);
 		}

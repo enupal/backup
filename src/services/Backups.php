@@ -63,7 +63,7 @@ class Backups extends Component
 	public function getPendingBackups()
 	{
 		$query = BackupElement::find();
-		$query->status(BackupStatus::RUNNING);
+		$query->backupStatusId = BackupStatus::RUNNING;
 
 		return $query->all();
 	}
@@ -129,7 +129,7 @@ class Backups extends Component
 		$date       = $pieces[0] ?? date('Y-m-d-His');
 		$configFile = Backup::$app->backups->getConfigJson($backup, $date);
 		// update the the backup to running
-		$backup->status = BackupStatus::RUNNING;
+		$backup->backupStatusId = BackupStatus::RUNNING;
 
 		if (!$this->saveBackup($backup))
 		{
@@ -148,18 +148,6 @@ class Backups extends Component
 				' && php phpbu5.phar'.
 				' --configuration='.$configFile.
 				' --debug';
-
-		/*// We have a webhook so don't wait
-		if (substr(php_uname(), 0, 7) == "Windows")
-		{
-			// windows does not work
-			//$command .= ' > NUL';
-			pclose(popen("start /B ". $command, "r"));
-		}
-		else
-		{
-			$command .= ' > /dev/null &';
-		}*/
 
 		$shellCommand->setCommand($command);
 
@@ -218,7 +206,7 @@ class Backups extends Component
 		$backupId         = strtolower($siteName.'_'.$date.'_'.$randomStr);
 		$backup           = new BackupElement();
 		$backup->backupId = $backupId;
-		$backup->status   = BackupStatus::STARTED;
+		$backup->backupStatusId   = BackupStatus::STARTED;
 
 		if (!$this->saveBackup($backup))
 		{
@@ -288,7 +276,7 @@ class Backups extends Component
 
 			$backupLog = json_decode($log, true);
 			// Backup succesfully
-			$backup->status = BackupStatus::FINISHED;
+			$backup->backupStatusId = BackupStatus::FINISHED;
 			// @todo depending of the settings
 			$backup->dropbox = 1;
 			$backup->aws = 1;

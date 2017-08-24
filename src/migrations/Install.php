@@ -48,7 +48,7 @@ class Install extends Migration
 			'templateSize'     => $this->string(),
 			'pluginFileName'   => $this->string(),
 			'pluginSize'       => $this->string(),
-			'status'           => $this->integer(),
+			'backupStatusId'   => $this->integer(),
 			'aws'              => $this->boolean(),
 			'dropbox'          => $this->boolean(),
 			'rsync'            => $this->boolean(),

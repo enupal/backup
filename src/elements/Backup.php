@@ -39,7 +39,7 @@ class Backup extends Element
 	public $templateSize;
 	public $pluginFileName;
 	public $pluginSize;
-	public $status = BackupStatus::RUNNING;
+	public $backupStatusId = BackupStatus::RUNNING;
 	public $aws = 0;
 	public $dropbox = 0;
 	public $rsync = 0;
@@ -171,12 +171,12 @@ class Backup extends Element
 		{
 			if ($status != BackupStatus::STARTED)
 			{
-				$key = 'status:' . $status;
+				$key = 'backupStatusId:' . $status;
 				$sources[] = [
 					'status'   => $colors[$status],
 					'key'      => $key,
 					'label'    => ucwords(strtolower($code)),
-					'criteria' => ['statusId' => $status]
+					'criteria' => ['backupStatusId' => $status]
 				];
 			}
 		}
@@ -206,7 +206,7 @@ class Backup extends Element
 	 */
 	protected static function defineSearchableAttributes(): array
 	{
-		return ['backupId', 'enupalbackup_backups.status', 'title'];
+		return ['backupId'];
 	}
 
 	/**
@@ -276,19 +276,19 @@ class Backup extends Element
 			}
 			case 'status':
 			{
-				$message = $this->status == BackupStatus::STARTED ?
+				$message = $this->backupStatusId == BackupStatus::STARTED ?
 					BackupPlugin::t('Started') :
 					BackupPlugin::t('Not defined');
 
-				if ($this->status == BackupStatus::FINISHED)
+				if ($this->backupStatusId == BackupStatus::FINISHED)
 				{
 					$message = '<i class="fa fa-check-square-o" aria-hidden="true"></i> Finished';
 				}
-				else if ($this->status == BackupStatus::RUNNING)
+				else if ($this->backupStatusId == BackupStatus::RUNNING)
 				{
 					$message = '<i class="fa fa-circle-o-notch fa-spin fa fa-fw"></i><span class="sr-only">Loading...</span> Running';
 				}
-				else if ($this->status == BackupStatus::ERROR)
+				else if ($this->backupStatusId == BackupStatus::ERROR)
 				{
 					$message = '<i class="fa fa-times" aria-hidden="true"></i> Error';
 				}
@@ -362,7 +362,7 @@ class Backup extends Element
 		$record->templateSize     = $this->templateSize;
 		$record->pluginFileName   = $this->pluginFileName;
 		$record->pluginSize       = $this->pluginSize;
-		$record->status           = $this->status;
+		$record->backupStatusId   = $this->backupStatusId;
 		$record->aws              = $this->aws;
 		$record->dropbox          = $this->dropbox;
 		$record->rsync            = $this->rsync;

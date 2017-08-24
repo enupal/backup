@@ -4,7 +4,7 @@
 {% do view.registerAssetBundle("enupal\\backup\\assetbundles\\FontAwesomeAsset") %}
 {% set extraPageHeaderHtml %}
 	<div class="buttons">
-		<a class="btn submit add icon" href="{{ url('enupal-backup/backup/now') }}">{{ "Backup Now"|t('enupalbackup') }}</a>
-		<a class="btn submit add icon" href="{{ url('enupal-backup/backup/restore') }}">{{ "Restore"|t('enupalbackup') }}</a>
+		<a class="btn submit add icon" href="{{ url('enupal-backup/run') }}">{{ "Backup Now"|t('enupal-backup') }}</a>
+		{#<a class="btn submit add icon" href="{{ url('enupal-backup/backup/restore') }}">{{ "Restore"|t('enupalbackup') }}</a>#}
 	</div>
 {% endset %}
