@@ -372,8 +372,14 @@ class Backups extends Component
 		}
 
 		// DATABASE
+		$dbConfig = Craft::$app->getConfig()->getDb();
 		$tempPath = $this->getTempDatabasePath();
 		$tempDatabase = $tempPath.$dbFileName;
+
+		if (!file_exists($tempPath))
+		{
+			mkdir($tempPath, 0777, true);
+		}
 
 		try
 		{
@@ -395,8 +401,7 @@ class Backups extends Component
 				'type' => 'tar',
 				'options' => [
 					"path" => $tempPath,
-					"forceLocal" => true,
-					'removeSourceDir' => true
+					"forceLocal" => true
 				]
 			],
 			'target' => [
