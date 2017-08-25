@@ -351,6 +351,7 @@ class Backups extends Component
 		$compress       = $this->getCompressType();
 		$syncs          = $this->getSyncs($date);
 		$dbName         = 'database-'.$backupId.$compress;
+		$dbFileName     = 'database-'.$backupId.'.sql';
 		$assetName      = 'assets-'.$backupId.$compress;
 		$templateName   = 'templates-'.$backupId.$compress;
 		$pluginName     = 'plugins-'.$backupId.$compress;
@@ -369,6 +370,59 @@ class Backups extends Component
 			throw new Exception('Unable to create the element record for the Backup: '.$backupId.
 				' Errors: '.json_encode($backup->getErrors()));
 		}
+
+		// DATABASE
+		$tempPath = $this->getTempDatabasePath();
+		$tempDatabase = $tempPath.$dbFileName;
+
+		try
+		{
+			Craft::$app->getDb()->backupTo($tempDatabase);
+		} catch (\Throwable $e)
+		{
+			throw new Exception('Could not create backup: '.$e->getMessage());
+		}
+
+		if (!is_file($tempDatabase))
+		{
+			throw new Exception("Could not create backup: the backup file doesn't exist.");
+		}
+		// raname the backup to our folder
+
+		$databaseBackup = [
+			'name'   => 'Database',
+			'source' => [
+				'type' => 'tar',
+				'options' => [
+					"path" => $tempPath,
+					"forceLocal" => true,
+					'removeSourceDir' => true
+				]
+			],
+			'target' => [
+				'dirname' => $this->getTemplatesPath(),
+				'filename' => $dbName
+			]
+		];
+
+		if ($pathToTar)
+		{
+			$databaseBackup['source']['options']['pathToTar'] = $pathToTar;
+		}
+
+		if ($syncs)
+		{
+			$databaseBackup['syncs'] = $syncs;
+		}
+
+		if ($assetsCleanups)
+		{
+			$databaseBackup['cleanup'] = $assetsCleanups;
+		}
+
+		$backups[] = $databaseBackup;
+
+		// END DATABASE
 
 		// ASSETS
 		$assets = [];
@@ -593,6 +647,10 @@ class Backups extends Component
 	public function getBasePath()
 	{
 		return Craft::$app->getPath()->getStoragePath().DIRECTORY_SEPARATOR.'enupalbackup'.DIRECTORY_SEPARATOR;
+	}
+	public function getTempDatabasePath()
+	{
+		return Craft::$app->getPath()->getStoragePath().DIRECTORY_SEPARATOR.'enupalbackuptemp'.DIRECTORY_SEPARATOR;
 	}
 
 	public function getAssetsPath()

@@ -106,13 +106,15 @@
 								{% else %}
 									<span class="error">{{backup.logMessage}}</span>
 									<br><br>
-									<a href="#log" data-toggle="collapse">Show log</a>
-									<br>
-									<div id="log" class="collapse">
-										<span class="warning">{{log}}</span>
-									</div>
-									<br>
-									<br>
+									{% if log is defined %}
+										<a href="#log" data-toggle="collapse">Show log</a>
+										<br>
+										<div id="log" class="collapse">
+											<span class="warning">{{log}}</span>
+										</div>
+										<br>
+										<br>
+									{% endif %}
 								{% endif %}
 
 								</div>

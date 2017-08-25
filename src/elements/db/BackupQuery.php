@@ -16,6 +16,7 @@ class BackupQuery extends ElementQuery
 	// =========================================================================
 	public $id;
 	public $dateCreated;
+	public $backupId;
 	public $backupStatusId;
 
 	/**
@@ -70,9 +71,9 @@ class BackupQuery extends ElementQuery
 			'enupalbackup_backups.logMessage',
 		]);
 
-		if ($this->dateCreated) {
+		if ($this->backupId) {
 			$this->subQuery->andWhere(Db::parseParam(
-				'enupalbackup_backups.dateCreated', $this->dateCreated)
+				'enupalbackup_backups.backupId', $this->backupId)
 			);
 		}
 

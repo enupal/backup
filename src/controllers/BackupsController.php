@@ -175,8 +175,12 @@ class BackupsController extends BaseController
 		$variables['backup'] = $backup;
 
 		$logPath = Backup::$app->backups->getLogPath($backup->backupId);
-		$log     = file_get_contents($logPath);
-		$variables['log'] = $log;
+
+		if (is_file($logPath))
+		{
+			$log  = file_get_contents($logPath);
+			$variables['log'] = $log;
+		}
 
 		return $this->renderTemplate('enupal-backup/backups/_viewBackup', $variables);
 	}
