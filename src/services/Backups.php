@@ -372,7 +372,7 @@ class Backups extends Component
 		}
 
 		// DATABASE
-		/*$dbConfig = Craft::$app->getConfig()->getDb();
+		$dbConfig = Craft::$app->getConfig()->getDb();
 
 		if ($dbConfig->driver == 'mysql')
 		{
