@@ -372,57 +372,32 @@ class Backups extends Component
 		}
 
 		// DATABASE
-		$dbConfig = Craft::$app->getConfig()->getDb();
-		$tempPath = $this->getTempDatabasePath();
-		$tempDatabase = $tempPath.$dbFileName;
+		/*$dbConfig = Craft::$app->getConfig()->getDb();
 
-		if (!file_exists($tempPath))
+		if ($dbConfig->driver == 'mysql')
 		{
-			mkdir($tempPath, 0777, true);
-		}
-
-		try
-		{
-			Craft::$app->getDb()->backupTo($tempDatabase);
-		} catch (\Throwable $e)
-		{
-			throw new Exception('Could not create backup: '.$e->getMessage());
-		}
-
-		if (!is_file($tempDatabase))
-		{
-			throw new Exception("Could not create backup: the backup file doesn't exist.");
-		}
-		// raname the backup to our folder
-
-		$databaseBackup = [
-			'name'   => 'Database',
-			'source' => [
-				'type' => 'tar',
-				'options' => [
-					"path" => $tempPath,
-					"forceLocal" => true
+			$databaseBackup = [
+				'name'   => 'Database',
+				'source' => [
+					'type'   => 'mysqldump',
+					'options'       => [
+						'databases'     => $dbConfig->database,
+						'user'          => $dbConfig->user,
+						'password'      => $dbConfig->password
+						//'ignoreTable'   => 'tableFoo,tableBar',
+						//'structureOnly' => 'logTable1,logTable2'
+					]
+				],
+				'target' => [
+					'dirname' => $this->getDatabasePath(),
+					'filename' => $dbFileName
 				]
-			],
-			'target' => [
-				'dirname' => $this->getTemplatesPath(),
-				'filename' => $dbName
-			]
-		];
-
-		if ($pathToTar)
-		{
-			$databaseBackup['source']['options']['pathToTar'] = $pathToTar;
+			];
 		}
 
 		if ($syncs)
 		{
 			$databaseBackup['syncs'] = $syncs;
-		}
-
-		if ($assetsCleanups)
-		{
-			$databaseBackup['cleanup'] = $assetsCleanups;
 		}
 
 		$backups[] = $databaseBackup;
