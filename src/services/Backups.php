@@ -350,7 +350,6 @@ class Backups extends Component
 		$backupId       = $backup->backupId;
 		$compress       = $this->getCompressType();
 		$syncs          = $this->getSyncs($date);
-		$dbName         = 'database-'.$backupId.$compress;
 		$dbFileName     = 'database-'.$backupId.'.sql';
 		$assetName      = 'assets-'.$backupId.$compress;
 		$templateName   = 'templates-'.$backupId.$compress;
@@ -360,7 +359,7 @@ class Backups extends Component
 		$backups        = [];
 
 		// let's create the Backup Element
-		$backup->databaseFileName = $dbName;
+		$backup->databaseFileName = $dbFileName;
 		$backup->assetFileName    = $assetName;
 		$backup->templateFileName = $templateName;
 		$backup->pluginFileName   = $pluginName;
