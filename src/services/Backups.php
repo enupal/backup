@@ -125,9 +125,7 @@ class Backups extends Component
 		#CraftApp::maxPowerCaptain();
 		$settings   = Backup::$app->settings->getSettings();
 		$phpbuPath  = Craft::getAlias('@enupal/backup/resources');
-		$pieces     = explode('_', $backup->backupId);
-		$date       = $pieces[0] ?? date('Y-m-d-His');
-		$configFile = Backup::$app->backups->getConfigJson($backup, $date);
+		$configFile = Backup::$app->backups->getConfigJson($backup);
 		// update the the backup to running
 		$backup->backupStatusId = BackupStatus::RUNNING;
 
@@ -334,7 +332,7 @@ class Backups extends Component
 	 * Generetates the config file and create the backup element entry
 	 *
 	*/
-	private function getConfigJson(BackupElement $backup, $date)
+	private function getConfigJson(BackupElement $backup)
 	{
 		$logPath  = $this->getLogPath($backup->backupId);
 		$settings = Backup::$app->settings->getSettings();
@@ -358,7 +356,7 @@ class Backups extends Component
 
 		$backupId       = $backup->backupId;
 		$compress       = $this->getCompressType();
-		$syncs          = $this->getSyncs($date);
+		$syncs          = $this->getSyncs($backupId);
 		$dbFileName     = 'database-'.$backupId.'.sql';
 		$assetName      = 'assets-'.$backupId.$compress;
 		$templateName   = 'templates-'.$backupId.$compress;
@@ -537,7 +535,7 @@ class Backups extends Component
 		return $configFile;
 	}
 
-	private function getSyncs($date)
+	private function getSyncs($backupId)
 	{
 		$syncs = [];
 		$settings = Backup::$app->settings->getSettings();
@@ -549,7 +547,7 @@ class Backups extends Component
 				'type' => 'dropbox',
 				'options' => [
 					'token' => $settings->dropboxToken,
-					'path'  => trim($settings->dropboxPath.$date)
+					'path'  => trim($settings->dropboxPath.$backupId)
 				]
 			];
 
@@ -565,7 +563,7 @@ class Backups extends Component
 					'secret' => $settings->amazonSecret,
 					'bucket' => $settings->amazonBucket,
 					'region' => $settings->amazonRegion,
-					'path'   => trim($settings->amazonPath.'/'.$date),
+					'path'   => trim($settings->amazonPath.'/'.$backupId),
 					'useMultiPartUpload' => $settings->amazonUseMultiPartUpload
 				]
 			];
@@ -584,9 +582,9 @@ class Backups extends Component
 		if (true)
 		{
 			$cleanup = [
-				'type' => 'capacity',
+				//'type' => 'capacity',
 				'options' => [
-					'size' => '30M'
+					'size' => '5M'
 				]
 			];
 		}

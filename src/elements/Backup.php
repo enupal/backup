@@ -318,7 +318,7 @@ class Backup extends Element
 	public function getTemplateFile()
 	{
 		$base = BackupPlugin::$app->backups->getTemplatesPath();
-		
+
 		if (!$this->templateFileName)
 		{
 			return null;
