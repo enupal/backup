@@ -307,12 +307,22 @@ class Backup extends Element
 	{
 		$base = BackupPlugin::$app->backups->getDatabasePath();
 
+		if (!$this->databaseFileName)
+		{
+			return null;
+		}
+
 		return $base.$this->databaseFileName;
 	}
 
 	public function getTemplateFile()
 	{
 		$base = BackupPlugin::$app->backups->getTemplatesPath();
+		
+		if (!$this->templateFileName)
+		{
+			return null;
+		}
 
 		return $base.$this->templateFileName;
 	}
@@ -327,6 +337,11 @@ class Backup extends Element
 	public function getAssetFile()
 	{
 		$base = BackupPlugin::$app->backups->getAssetsPath();
+
+		if (!$this->assetFileName)
+		{
+			return null;
+		}
 
 		return $base.$this->assetFileName;
 	}
