@@ -123,7 +123,7 @@ class Backups extends Component
 	{
 		// This may make take a while so..
 		#CraftApp::maxPowerCaptain();
-
+		$settings   = Backup::$app->settings->getSettings();
 		$phpbuPath  = Craft::getAlias('@enupal/backup/resources');
 		$pieces     = explode('_', $backup->backupId);
 		$date       = $pieces[0] ?? date('Y-m-d-His');
@@ -144,9 +144,18 @@ class Backups extends Component
 		// Create the shell command
 		$shellCommand = new ShellCommand();
 		$command = 'cd'.
-				' '.$phpbuPath.
-				' && php phpbu5.phar'.
-				' --configuration='.$configFile.
+				' '.$phpbuPath;
+
+		if ($settings->enablePathToPhp && $settings->pathToPhp)
+		{
+			$command .= ' && '.$settings->pathToPhp.' phpbu5.phar';
+		}
+		else
+		{
+			$command .= ' && php phpbu5.phar';
+		}
+
+		$command .= ' --configuration='.$configFile.
 				' --debug';
 
 		$shellCommand->setCommand($command);
@@ -380,6 +389,7 @@ class Backups extends Component
 				'source' => [
 					'type'   => 'mysqldump',
 					'options'       => [
+						'host'          => $dbConfig->server,
 						'databases'     => $dbConfig->database,
 						'user'          => $dbConfig->user,
 						'password'      => $dbConfig->password
@@ -392,15 +402,19 @@ class Backups extends Component
 					'filename' => $dbFileName
 				]
 			];
+
+			if ($settings->enablePathToMysqldump && $settings->pathToMysqldump)
+			{
+				$databaseBackup['source']['options']['pathToMysqldump'] = $settings->pathToMysqldump;
+			}
+
+			if ($syncs)
+			{
+				$databaseBackup['syncs'] = $syncs;
+			}
+
+			$backups[] = $databaseBackup;
 		}
-
-		if ($syncs)
-		{
-			$databaseBackup['syncs'] = $syncs;
-		}
-
-		$backups[] = $databaseBackup;
-
 		// END DATABASE
 
 		// ASSETS

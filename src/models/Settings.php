@@ -44,6 +44,10 @@ class Settings extends \craft\base\Model
 	public $pathToTar       = '';
 	public $enablePathToPhp = '';
 	public $pathToPhp = '';
+	public $enablePathToMysqldump = '';
+	public $pathToMysqldump = '';
+	public $enablePathToPgdump = '';
+	public $pathToPgdump = '';
 	// Webhook
 	public $webhookUrl = '';
 	public $webhookSecretKey = '';

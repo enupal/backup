@@ -69,6 +69,52 @@
 					errors: ''
 				}) }}
 			</div>
+			<hr>
+			{{ forms.lightswitchField({
+				label: "MySqlDump"|t('enupal-backup'),
+				id: 'enablePathToMysqldump',
+				name: 'enablePathToMysqldump',
+				on: settings.enablePathToMysqldump,
+				toggle: 'settings-enablePathToMysqldump',
+				onLabel: "On"|t('enupal-backup'),
+				offLabel: "Off"|t('enupal-backup')
+			}) }}
+
+			<div id="settings-enablePathToMysqldump" class="{% if not settings.enablePathToMysqldump %}hidden{% endif %}">
+				{{ forms.textField({
+					label: "MysqlDump Path"|t('enupal-backup'),
+					instructions: "Path where the MySqlDump lives"|t('enupal-backup'),
+					id: 'pathToMysqldump',
+					name: 'pathToMysqldump',
+					value: settings.pathToMysqldump,
+					autofocus: true,
+					first: true,
+					errors: ''
+				}) }}
+			</div>
+			<hr>
+			{{ forms.lightswitchField({
+				label: "PgDump"|t('enupal-backup'),
+				id: 'enablePathToPgdump',
+				name: 'enablePathToPgdump',
+				on: settings.enablePathToPgdump,
+				toggle: 'settings-enablePathToPgdump',
+				onLabel: "On"|t('enupal-backup'),
+				offLabel: "Off"|t('enupal-backup')
+			}) }}
+
+			<div id="settings-enablePathToPgdump" class="{% if not settings.enablePathToPgdump %}hidden{% endif %}">
+				{{ forms.textField({
+					label: "PgDump Path"|t('enupal-backup'),
+					instructions: "Path where the PgDump lives"|t('enupal-backup'),
+					id: 'pathToPgdump',
+					name: 'pathToPgdump',
+					value: settings.pathToPgdump,
+					autofocus: true,
+					first: true,
+					errors: ''
+				}) }}
+			</div>
 		{% endnamespace %}
 
 	</div>
