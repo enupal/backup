@@ -155,8 +155,8 @@ class Backups extends Component
 			$command .= ' && php phpbu5.phar';
 		}
 
-		$command .= ' --configuration='.$configFile.
-				' --debug';
+		$command .= ' --configuration='.$configFile;
+				//' --debug';
 
 		$shellCommand->setCommand($command);
 

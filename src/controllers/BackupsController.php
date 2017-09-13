@@ -22,14 +22,6 @@ use craft\errors\ShellCommandException;
 class BackupsController extends BaseController
 {
 	/*
-	 * Redirect to backups index page
-	*/
-	public function actionIndex()
-	{
-		return $this->renderTemplate('enupal-backup/backups/index');
-	}
-
-	/*
 	 * Download backup
 	*/
 	public function actionDownload()
@@ -123,7 +115,8 @@ class BackupsController extends BaseController
 		{
 			Craft::$app->getSession()->setNotice(Backup::t('Backup: '.$response['message']));
 
-			return $this->redirect('enupal-backup/backups');
+			#return $this->redirect(['enupal-backup']);
+			return $this->renderTemplate('enupal-backup/backups/index');
 		}
 
 		return $this->asJson($response);
