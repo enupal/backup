@@ -104,7 +104,17 @@
 										</div>
 									{% endif %}
 								{% else %}
-									<span class="error">{{backup.logMessage}}</span>
+									<div id="error1" class="modal">
+										<div id="modal" class="body" style="height: 100%;">
+											<header class="header">
+												<h2>Error</h2>
+											</header>
+											<div style="padding: 15px; width: 100%;  overflow: auto; height: calc(100% - 66px); position: absolute; top: 66px; left: 0;" class="error">
+												{{backup.logMessage}}
+											</div>
+										</div>
+									</div>
+									<a id="showError1" href="#erro1">Show Error</a>
 									<br><br>
 									{% if log is defined %}
 										<a href="#log" data-toggle="collapse">Show log</a>
