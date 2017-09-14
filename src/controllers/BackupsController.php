@@ -109,15 +109,6 @@ class BackupsController extends BaseController
 			];
 		}
 
-		$request = Craft::$app->getRequest();
-
-		if ($request->getIsCpRequest())
-		{
-			Craft::$app->getSession()->setNotice(Backup::t('Backup: '.$response['message']));
-
-			return $this->redirectToPostedUrl();
-		}
-
 		return $this->asJson($response);
 	}
 
