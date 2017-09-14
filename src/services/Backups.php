@@ -337,8 +337,9 @@ class Backups extends Component
 		$logPath  = $this->getLogPath($backup->backupId);
 		$settings = Backup::$app->settings->getSettings();
 		// @todo add security steps for webhook
+		// verbose shows user and password
 		$config  = [
-			'verbose' => true,
+			'verbose' => false,
 			'logging' => [
 				[
 					'type'   => 'json',
@@ -533,6 +534,66 @@ class Backups extends Component
 		file_put_contents($configFile, json_encode($config));
 
 		return $configFile;
+	}
+
+	/**
+	 * Performs a review to check the backups amount allowed
+	 * @todo should we move this to a job?
+	*/
+	public function checkBackupsAmount()
+	{
+		// Amount of backups to keep
+		$settings  = Backup::$app->settings->getSettings();
+		// @todo we need to delete the ERROR backup's?
+		$condition = 'backupStatusId =:finished';
+		$params    = [
+			':finished' => BackupStatus::FINISHED
+		];
+
+		try
+		{
+			$count = BackupElement::find()->where($condition, $params)->count();
+
+			$totalToDelete = 0;
+
+			if ($count > $settings['backupsAmount'])
+			{
+				$totalToDelete = $count - $settings['backupsAmount'];
+
+				if ($totalToDelete)
+				{
+					$backups = BackupElement::find()
+						->where($condition, $params)
+						->limit($totalToDelete)
+						->orderBy(['enupalbackup_backups.dateCreated' => SORT_ASC])
+						->all();
+
+					foreach ($backups as $key => $backup)
+					{
+						$response = Craft::$app->elements->deleteElementById($backup->id);
+
+						if ($response)
+						{
+							Backup::info('EnupalBackup has deleted the backup Id: '.$backup->backupId);
+						}
+						else
+						{
+							Backup::error('EnupalBackup has failed to delete the backup Id: '.$backup->backupId);
+						}
+
+					}
+				}
+			}
+
+		} catch (\Throwable $e)
+		{
+			$error = 'Enupal Backup Could not execute the checkBackupsAmount function: '.$e->getMessage().' --Trace: '.json_encode($e->getTrace());
+
+			Backup::error($error);
+			return false;
+		}
+
+		return true;
 	}
 
 	private function getSyncs($backupId)

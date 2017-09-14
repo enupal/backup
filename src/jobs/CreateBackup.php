@@ -52,6 +52,7 @@ class CreateBackup extends BaseJob
 				$this->_backup->logMessage = $error;
 
 				Backup::$app->backups->saveBackup($this->_backup);
+				Backup::$app->backups->checkBackupsAmount();
 
 				Backup::error($error);
 			}
@@ -63,6 +64,7 @@ class CreateBackup extends BaseJob
 			$this->_backup->logMessage = $error;
 
 			Backup::$app->backups->saveBackup($this->_backup);
+			Backup::$app->backups->checkBackupsAmount();
 
 			Backup::error($error);
 		}

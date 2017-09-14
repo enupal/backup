@@ -3,7 +3,10 @@ namespace enupal\backup\models;
 
 class Settings extends \craft\base\Model
 {
+	// General
 	public $pluginNameOverride = '';
+	public $backupsAmount = 50;
+	public $deleteLocalBackupAfterUpload = 0;
 	// Plugins
 	public $enablePlugins  = 0;
 	public $plugins = '';
@@ -51,4 +54,14 @@ class Settings extends \craft\base\Model
 	// Webhook
 	public $webhookUrl = '';
 	public $webhookSecretKey = '';
+
+	/**
+	 * @inheritdoc
+	 */
+	public function rules()
+	{
+		return [
+			['backupsAmount', 'integer', 'min' => 1]
+		];
+	}
 }

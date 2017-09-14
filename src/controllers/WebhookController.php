@@ -23,6 +23,8 @@ class WebhookController extends BaseController
 			Backup::$app->backups->updateBackupOnComplete($pendingBackup);
 		}
 
+		Backup::$app->backups->checkBackupsAmount();
+
 		return $this->asJson(['success'=>true]);
 	}
 }

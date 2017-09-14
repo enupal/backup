@@ -115,8 +115,7 @@ class BackupsController extends BaseController
 		{
 			Craft::$app->getSession()->setNotice(Backup::t('Backup: '.$response['message']));
 
-			#return $this->redirect(['enupal-backup']);
-			return $this->renderTemplate('enupal-backup/backups/index');
+			return $this->redirectToPostedUrl();
 		}
 
 		return $this->asJson($response);

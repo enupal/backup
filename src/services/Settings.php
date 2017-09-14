@@ -33,12 +33,6 @@ class Settings extends Component
 	public function getSettings()
 	{
 		$backupPlugin = $this->getPlugin();
-		/*
-		if ($settings->dropboxToken)
-		{
-			$settings->dropboxToken = Craft::$app->getSecurity()->hashData($settings->dropboxToken);
-		}
-		*/
 
 		return $backupPlugin->getSettings();
 	}
