@@ -363,7 +363,6 @@ class Backups extends Component
 		$templateName   = 'templates-'.$backupId.$compress;
 		$pluginName     = 'plugins-'.$backupId.$compress;
 		$pathToTar      = $this->getPathToTar();
-		$assetsCleanups = $this->getAssetsCleanup();
 		$backups        = [];
 
 		// let's create the Backup Element
@@ -470,11 +469,6 @@ class Backups extends Component
 						$assetBackup['syncs'] = $syncs;
 					}
 
-					if ($assetsCleanups)
-					{
-						$assetBackup['cleanup'] = $assetsCleanups;
-					}
-
 					$backups[] = $assetBackup;
 				}
 				else
@@ -512,11 +506,6 @@ class Backups extends Component
 			if ($syncs)
 			{
 				$templateBackup['syncs'] = $syncs;
-			}
-
-			if ($assetsCleanups)
-			{
-				$templateBackup['cleanup'] = $assetsCleanups;
 			}
 
 			$backups[] = $templateBackup;
@@ -633,24 +622,6 @@ class Backups extends Component
 		}
 
 		return $syncs;
-	}
-
-	private function getAssetsCleanup()
-	{
-		// @todo - cleanups Capacity- Outdated - quantity
-		$cleanup = [];
-
-		if (true)
-		{
-			$cleanup = [
-				//'type' => 'capacity',
-				'options' => [
-					'size' => '5M'
-				]
-			];
-		}
-
-		return $cleanup;
 	}
 
 	private function getCompressType()
