@@ -105,7 +105,7 @@ class Backup extends Element
 	 */
 	public static function hasStatuses(): bool
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -146,6 +146,19 @@ class Backup extends Element
 	}
 
 	/**
+	 *
+	 * @return string|null
+	 */
+	public function getStatus()
+	{
+		$statusId = $this->backupStatusId;
+
+		$colors = BackupPlugin::$app->backups->getColorStatuses();
+
+		return $colors[$statusId];
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	protected static function defineSources(string $context = null): array
@@ -159,11 +172,7 @@ class Backup extends Element
 
 		$statuses = BackupStatus::getConstants();
 
-		$colors = [
-			BackupStatus::FINISHED => 'green',
-			BackupStatus::RUNNING  => 'blue',
-			BackupStatus::ERROR  => 'red',
-		];
+		$colors = BackupPlugin::$app->backups->getColorStatuses();
 
 		$sources[] = ['heading' => BackupPlugin::t("Backup Status")];
 

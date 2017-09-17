@@ -718,4 +718,16 @@ class Backups extends Component
 		return $phpPath;
 	}
 
+	public function getColorStatuses()
+	{
+		$colors = [
+			BackupStatus::STARTED  => 'white',
+			BackupStatus::FINISHED => 'green',
+			BackupStatus::RUNNING  => 'blue',
+			BackupStatus::ERROR    => 'red',
+		];
+
+		return $colors;
+	}
+
 }
