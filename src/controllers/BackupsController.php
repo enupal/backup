@@ -72,7 +72,10 @@ class BackupsController extends BaseController
 		Craft::$app->queue->push(new CreateBackup());
 		// We have a webhook so don't wait
 		$success = false;
-		$response = [];
+		$response = [
+			'success' => true,
+			'message' => 'queued'
+		];
 
 		if (substr(php_uname(), 0, 7) != "Windows")
 		{
@@ -81,10 +84,10 @@ class BackupsController extends BaseController
 			$shellCommand = new ShellCommand();
 			// this is ok?
 			$craftPath = CRAFT_BASE_PATH;
+			$phpPath   = Backup::$app->backups->getPhpPath();
 
-			$command = 'cd'.
-					' '.$craftPath.
-					' && php craft'.
+			$command = $phpPath.
+					' craft'.
 					' queue/run';
 			// linux
 			$command .= ' > /dev/null 2&1 &';
@@ -99,13 +102,6 @@ class BackupsController extends BaseController
 			$response = [
 				'success' => $success,
 				'message' => 'running'
-			];
-		}
-		else
-		{
-			$response = [
-				'success' => true,
-				'message' => 'queued'
 			];
 		}
 

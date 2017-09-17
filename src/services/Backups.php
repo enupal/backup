@@ -144,15 +144,9 @@ class Backups extends Component
 		$command = 'cd'.
 				' '.$phpbuPath;
 
-		if ($settings->enablePathToPhp && $settings->pathToPhp)
-		{
-			$command .= ' && '.$settings->pathToPhp.' phpbu5.phar';
-		}
-		else
-		{
-			$command .= ' && php phpbu5.phar';
-		}
+		$phpPath = $this->getPhpPath();
 
+		$command .= ' && '.$phpPath.' phpbu5.phar';
 		$command .= ' --configuration='.$configFile;
 				//' --debug';
 
@@ -709,6 +703,19 @@ class Backups extends Component
 		$configFile = $base.'config.json';
 
 		return $configFile;
+	}
+
+	public function getPhpPath()
+	{
+		$settings = Backup::$app->settings->getSettings();
+		$phpPath  = 'php';
+
+		if ($settings->enablePathToPhp && $settings->pathToPhp)
+		{
+			$phpPath = $settings->pathToPhp;
+		}
+
+		return $phpPath;
 	}
 
 }
