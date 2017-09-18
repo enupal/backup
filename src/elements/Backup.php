@@ -291,15 +291,15 @@ class Backup extends Element
 
 				if ($this->backupStatusId == BackupStatus::FINISHED)
 				{
-					$message = '<i class="fa fa-check-square-o" aria-hidden="true"></i> Finished';
+					$message = '<i class="fa fa-check-square-o" aria-hidden="true"></i>';
 				}
 				else if ($this->backupStatusId == BackupStatus::RUNNING)
 				{
-					$message = '<i class="fa fa-circle-o-notch fa-spin fa fa-fw"></i><span class="sr-only">Loading...</span> Running';
+					$message = '<i class="fa fa-circle-o-notch fa-spin fa fa-fw"></i><span class="sr-only">Loading...</span>';
 				}
 				else if ($this->backupStatusId == BackupStatus::ERROR)
 				{
-					$message = '<i class="fa fa-times" aria-hidden="true"></i> Error';
+					$message = '<i class="fa fa-times" aria-hidden="true"></i>';
 				}
 				return $message;
 			}
