@@ -19,7 +19,11 @@
 {% set fullPageForm = true %}
 
 {% block saveButton %}
-
+	{% if backup.backupStatusId == 2 %}
+		<input type="hidden" name="action" value="enupal-slider/backups/download-all">
+		{{ redirectInput('enupal-backup/backup/view/'~backup.id) }}
+		<input type="hidden" id="backupId" name="id" value="{{ backup.id is defined ? backup.id : '' }}">
+	{%endif%}
 {% endblock %}
 
 {% block main %}
@@ -31,19 +35,20 @@
 				<div class="bootstrap-iso downloads-content">
 					<div class="container-fluid">
 						<div class="row">
+						{% set titleHeader = "<i class='fa fa-check-square-o' aria-hidden='true'></i> "~"Download Section"|t('enupal-backup') %}
 
+						{% if backup.backupStatusId == 1 %} {% set titleHeader = "<i class='fa fa-circle-o-notch fa-spin fa fa-fw'></i> Backup it's still running, but you can download local files" %} {% elseif backup.backupStatusId == 3  %} {% set titleHeader =  "<i class='fa fa-times' aria-hidden='true'></i> An error occurred during Backup: "%} {% endif %}
+
+						<div class="field">
+							<div class="heading">
+								<label>
+									{{titleHeader|markdown}}
+								</label>
+							</div>
+						</div>
 						<section class="cards-section text-center">
-							<div class="container   col-md-12">
-								<h2 class="title text-left">{% if backup.backupStatusId == 2 %} {{"Download Section"|t('enupal-backup')}} {% elseif backup.backupStatusId == 1 %}  <i class="fa fa-circle-o-notch fa-spin fa fa-fw"></i> {{"Backup it's still running, but you can download local files"}} {% elseif backup.backupStatusId == 3  %}  <i class="fa fa-times" aria-hidden="true"></i> {{"An error occurred during Backup:"}} {% endif %}</h2>
-								{% if backup.backupStatusId == 2 %}
-									<div class="intro text-left">
-										<p>You can download all the files on just one file:</p>
-										<div class="cta-container">
-											<a class="btn btn-primary btn-cta" href="http://themes.3rdwavemedia.com/" target="_blank"><i class="fa fa-cloud-download"></i> Download All Now</a>
-										</div><!--//cta-container-->
-									</div><!--//intro-->
-								{%endif%}
-								<div id="cards-wrapper" class="cards-wrapper row">
+							<div class="container">
+								<div id="cards-wrapper" class="cards-wrapper row  col-md-12">
 									{% if backup.backupStatusId != 3 %}
 										{% if backup.databaseFileName %}
 											<div class="item item-green col-md-4 col-sm-12">
@@ -69,7 +74,7 @@
 										{% endif %}
 										{% if backup.templateFileName %}
 											{# TEMPLATES #}
-											<div class="item item-pink col-md-4 col-sm-12">
+											<div class="item item-primary col-md-4 col-sm-12">
 												<div class="item-inner">
 													<div class="icon-holder">
 														<i class="fa fa-files-o fa-2x" aria-hidden="true"></i>
@@ -145,16 +150,25 @@
 												</div>
 											</div>
 										</div>
+
+										<div id="log1" class="modal">
+											<div id="modal" class="body" style="height: 100%;">
+												<header class="header">
+													<h2>Log</h2>
+												</header>
+												<div style="padding: 15px; width: 100%;  overflow: auto; height: calc(100% - 66px); position: absolute; top: 66px; left: 0;" class="warning">
+													{% if log is defined %}
+														{{log}}
+													{% endif %}
+												</div>
+											</div>
+										</div>
 										<br><br>
 										<ul class="text-left">
 											<li><a id="showError1" href="#erro1">Show Error</a></li>
 											<li>
 												{% if log is defined %}
-													<a href="#log" data-toggle="collapse">Show log</a>
-													<br>
-													<div id="log" class="collapse">
-														<span class="warning">{{log}}</span>
-													</div>
+													<a id="loginfo" href="#loginfo">Show log</a>
 													<br>
 													<br>
 												{% endif %}

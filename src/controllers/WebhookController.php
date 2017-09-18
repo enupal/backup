@@ -18,6 +18,8 @@ class WebhookController extends BaseController
 	{
 		$pendingBackups = Backup::$app->backups->getPendingBackups();
 
+		Backup::error("ENUPALBACKUP: ".json_encode($_POST));
+
 		foreach ($pendingBackups as $key => $pendingBackup)
 		{
 			Backup::$app->backups->updateBackupOnComplete($pendingBackup);
