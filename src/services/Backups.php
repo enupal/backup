@@ -384,7 +384,8 @@ class Backups extends Component
 						'host'          => $dbConfig->server,
 						'databases'     => $dbConfig->database,
 						'user'          => $dbConfig->user,
-						'password'      => $dbConfig->password
+						'password'      => $dbConfig->password,
+						'port'          => $dbConfig->port
 						//'ignoreTable'   => 'tableFoo,tableBar',
 						//'structureOnly' => 'logTable1,logTable2'
 					]
