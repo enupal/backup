@@ -426,4 +426,13 @@ class Backup extends Element
 
 		return true;
 	}
+
+	public function getStatusName()
+	{
+		$statuses = BackupStatus::getConstants();
+
+		$statuses = array_flip($statuses);
+
+		return ucwords(strtolower($statuses[$this->backupStatusId]));
+	}
 }

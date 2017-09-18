@@ -13,7 +13,7 @@
 
 <div>
 	<div class="{{ tab != 1 ? 'hidden' : '' }} meta" id="tab-enupalbackup-settings">
-		<div class="field enupal-field-heading">{{'Backup Info'|t('enupal-backup')}}</div>
+		<div class="field enupal-field-heading"><i class="fa fa-info-circle" aria-hidden="true"> {{'Backup Info'|t('enupal-backup')}}</i></div>
 			{{ forms.dateTimeField({
 				label: "Started at"|t('enupal-backup'),
 				id: 'dateCreated',
@@ -29,6 +29,60 @@
 					value: backup.dateUpdated,
 					disabled: true
 				}) }}
+			{% endif %}
+
+			{{ forms.textField({
+				label: "Status"|t('enupal-backup'),
+				id: 'status',
+				name: 'status',
+				value: backup.getStatusName(),
+				disabled: true
+			}) }}
+
+		<div class="field enupal-field-heading"><i class="fa fa-cloud" aria-hidden="true"> {{'Cloud'|t('enupal-backup')}}</i></div>
+
+			{% if backup.dropbox %}
+				<div class="field">
+					<div class="heading">
+						<label>{{"Uploaded to"|t('enupal-backup')}}</label>
+					</div>
+					<div class="input ltr">
+						<i title="Dropbox" class="fa fa-dropbox fa-fw" aria-hidden="true"></i>
+					</div>
+				</div>
+			{% endif %}
+
+			{% if backup.aws %}
+				<div class="field">
+					<div class="heading">
+						<label>{{"Uploaded to"|t('enupal-backup')}}</label>
+					</div>
+					<div class="input ltr">
+						<i title="Dropbox" class="fa fa-amazon fa-fw" aria-hidden="true"></i>
+					</div>
+				</div>
+			{% endif %}
+
+			{% if backup.dropbox %}
+				<div class="field">
+					<div class="heading">
+						<label>{{"Uploaded to"|t('enupal-backup')}}</label>
+					</div>
+					<div class="input ltr">
+						<i title="Dropbox" class="fa fa-dropbox fa-fw" aria-hidden="true"></i>
+					</div>
+				</div>
+			{% endif %}
+
+			{% if backup.dropbox %}
+				<div class="field">
+					<div class="heading">
+						<label>{{"Uploaded to"|t('enupal-backup')}}</label>
+					</div>
+					<div class="input ltr">
+						<i title="Dropbox" class="fa fa-dropbox fa-fw" aria-hidden="true"></i>
+					</div>
+				</div>
 			{% endif %}
 	</div><!-- settings div -->
 
