@@ -40,50 +40,25 @@
 			}) }}
 
 		<div class="field enupal-field-heading"><i class="fa fa-cloud" aria-hidden="true"> {{'Cloud'|t('enupal-backup')}}</i></div>
-
-			{% if backup.dropbox %}
-				<div class="field">
-					<div class="heading">
-						<label>{{"Uploaded to"|t('enupal-backup')}}</label>
-					</div>
-					<div class="input ltr">
-						<i title="Dropbox" class="fa fa-dropbox fa-fw" aria-hidden="true"></i>
-					</div>
+			<div class="field">
+				<div class="heading">
+					<label>{{"Uploaded to"|t('enupal-backup')}}</label>
 				</div>
-			{% endif %}
-
-			{% if backup.aws %}
-				<div class="field">
-					<div class="heading">
-						<label>{{"Uploaded to"|t('enupal-backup')}}</label>
-					</div>
-					<div class="input ltr">
-						<i title="Dropbox" class="fa fa-amazon fa-fw" aria-hidden="true"></i>
-					</div>
+				<div class="input ltr">
+					{% if backup.dropbox %}
+							<i title="Dropbox" class="fa fa-dropbox fa-fw" aria-hidden="true"></i>
+					{% endif %}
+					{% if backup.aws %}
+						<i title="Amazon S3" class="fa fa-amazon fa-fw" aria-hidden="true"></i>
+					{% endif %}
+					{% if backup.ftp %}
+						<i title="FTP" class="fa fa-folder-open fa-fw" aria-hidden="true"></i>
+					{% endif %}
+					{% if backup.ftp %}
+						<i title="Softlayer Object Storage" class="fa fa-cloud fa-fw" aria-hidden="true"></i>
+					{% endif %}
 				</div>
-			{% endif %}
-
-			{% if backup.dropbox %}
-				<div class="field">
-					<div class="heading">
-						<label>{{"Uploaded to"|t('enupal-backup')}}</label>
-					</div>
-					<div class="input ltr">
-						<i title="Dropbox" class="fa fa-dropbox fa-fw" aria-hidden="true"></i>
-					</div>
-				</div>
-			{% endif %}
-
-			{% if backup.dropbox %}
-				<div class="field">
-					<div class="heading">
-						<label>{{"Uploaded to"|t('enupal-backup')}}</label>
-					</div>
-					<div class="input ltr">
-						<i title="Dropbox" class="fa fa-dropbox fa-fw" aria-hidden="true"></i>
-					</div>
-				</div>
-			{% endif %}
+			</div>
 	</div><!-- settings div -->
 
 </div>

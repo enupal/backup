@@ -30,6 +30,23 @@ class BackupQuery extends ElementQuery
 	/**
 	 * @inheritdoc
 	 */
+	public function backupId($value)
+	{
+		$this->backupId = $value;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getBackupId()
+	{
+		return $this->backupId;
+	}
+
+
+	/**
+	 * @inheritdoc
+	 */
 	public function __construct($elementType, array $config = [])
 	{
 		// Default orderBy

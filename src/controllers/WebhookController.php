@@ -8,24 +8,35 @@ use enupal\backup\Backup;
 
 class WebhookController extends BaseController
 {
-	public $allowAnonymous = array('finished');
+	protected $allowAnonymous = array('actionFinished');
 
 	/**
 	 * Webhook to listen when a backup process finish up
+	 * @param $backupId
 	 *
 	*/
 	public function actionFinished()
 	{
-		$pendingBackups = Backup::$app->backups->getPendingBackups();
+		$backupId = Craft::$app->request->getParam('backupId');
+		$backup   = Backup::$app->backups->getBackupByBackupId($backupId);
 
-		Backup::error("ENUPALBACKUP: ".json_encode($_POST));
-
-		foreach ($pendingBackups as $key => $pendingBackup)
+		if ($backup)
 		{
-			Backup::$app->backups->updateBackupOnComplete($pendingBackup);
-		}
+			// we could check just this backup but let's check all pending backups
+			$pendingBackups = Backup::$app->backups->getPendingBackups();
 
-		Backup::$app->backups->checkBackupsAmount();
+			foreach ($pendingBackups as $key => $pendingBackup)
+			{
+				Backup::$app->backups->updateBackupOnComplete($pendingBackup);
+				Backup::info("EnupalBackup webhook has updated: ".$backupId);
+			}
+
+			Backup::$app->backups->checkBackupsAmount();
+		}
+		else
+		{
+			Backup::error("Unable to finish the webhook backup for: ".$backupId);
+		}
 
 		return $this->asJson(['success'=>true]);
 	}

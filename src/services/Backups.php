@@ -56,6 +56,23 @@ class Backups extends Component
 	}
 
 	/**
+	 * Returns a Backup model if one is found in the database by backupId
+	 *
+	 * @param string $backupId
+	 * @param int $siteId
+	 *
+	 * @return null|BackupElement
+	 */
+	public function getBackupByBackupId(string $backupId, int $siteId = null)
+	{
+		$query = BackupElement::find();
+		$query->backupId($backupId);
+		$query->siteId($siteId);
+
+		return $query->one();
+	}
+
+	/**
 	 * Returns all the Pending backups
 	 *
 	 * @return null|BackupElement[]
@@ -342,7 +359,7 @@ class Backups extends Component
 				[
 					'type'    => 'webhook',
 					'options' => [
-						'uri'  => UrlHelper::siteUrl('enupal-backup/finished')
+						'uri'      => UrlHelper::siteUrl('enupal-backup/finished?backupId='.$backup->backupId)
 					]
 				]
 			],
