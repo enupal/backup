@@ -139,8 +139,8 @@ class Backups extends Component
 	public function enupalBackup(BackupElement $backup)
 	{
 		// This may make take a while so..
-		#CraftApp::maxPowerCaptain();
-		$settings   = Backup::$app->settings->getSettings();
+		CraftApp::maxPowerCaptain();
+
 		$phpbuPath  = Craft::getAlias('@enupal/backup/resources');
 		$configFile = Backup::$app->backups->getConfigJson($backup);
 		// update the the backup to running
@@ -247,47 +247,36 @@ class Backups extends Component
 	public function updateBackupOnComplete(BackupElement $backup)
 	{
 		// If the log have infomartion the backup is finished
-		$logPath = $this->getLogPath($backup->backupId);
-		$log     = file_get_contents($logPath);
+		$logPath  = $this->getLogPath($backup->backupId);
+		$log      = file_get_contents($logPath);
+		$settings = Backup::$app->settings->getSettings();
 
 		if ($log)
 		{
 			// Save the log
-			$backup->logMessage = $log;
+			$backup->logMessage       = $log;
+			$backup->databaseFileName = null;
+			$backup->templateFileName = null;
+			$backup->pluginFileName   = null;
+			$backup->assetFileName    = null;
 
 			// let's update the filenames
-			if (!is_file($backup->getDatabaseFile()))
-			{
-				$backup->databaseFileName = null;
-			}
-			else
+			if (is_file($backup->getDatabaseFile()))
 			{
 				$backup->databaseSize = filesize($backup->getDatabaseFile());
 			}
 
-			if (!is_file($backup->getTemplateFile()))
-			{
-				$backup->templateFileName = null;
-			}
-			else
+			if (is_file($backup->getTemplateFile()))
 			{
 				$backup->templateSize = filesize($backup->getTemplateFile());
 			}
 
-			if (!is_file($backup->getPluginFile()))
-			{
-				$backup->pluginFileName = null;
-			}
-			else
+			if (is_file($backup->getPluginFile()))
 			{
 				$backup->pluginSize = filesize($backup->getPluginFile());
 			}
 
-			if (!is_file($backup->getAssetFile()))
-			{
-				$backup->assetFileName = null;
-			}
-			else
+			if (is_file($backup->getAssetFile()))
 			{
 				$backup->assetSize = filesize($backup->getAssetFile());
 			}
@@ -295,12 +284,13 @@ class Backups extends Component
 			$backupLog = json_decode($log, true);
 			// Backup succesfully
 			$backup->backupStatusId = BackupStatus::FINISHED;
-			// @todo depending of the settings
-			$backup->dropbox = 1;
-			$backup->aws = 1;
-			$backup->rsync = 1;
-			$backup->ftp = 1;
-			$backup->softlayer = 1;
+			/*
+			 * We could validate by each backup but let's keep globally for now
+			*/
+			$backup->dropbox   = $settings->enableDropbox;
+			$backup->aws       = $settings->enableAmazon;
+			$backup->ftp       = $settings->enableFtp;
+			$backup->softlayer = $settings->enableSos;
 
 			if (isset($backupLog['timestamp']))
 			{
@@ -323,7 +313,7 @@ class Backups extends Component
 
 					if (isset($error['message']))
 					{
-						// Dropbox
+						// Amazon
 						if (strpos(strtolower($error['message']), 'amazon') !== false)
 						{
 							$backup->amazon = 0;

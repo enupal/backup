@@ -51,7 +51,7 @@
 								<div id="cards-wrapper" class="cards-wrapper row  col-md-12">
 									{% if backup.backupStatusId != 3 %}
 										{% if backup.databaseFileName %}
-											<div class="item item-green col-md-4 col-sm-12">
+											<div class="item item-green col-md-3 col-sm-12">
 												<div class="item-inner">
 													<div class="icon-holder">
 														<i class="fa fa-database fa-2x" aria-hidden="true"></i>
@@ -74,7 +74,7 @@
 										{% endif %}
 										{% if backup.templateFileName %}
 											{# TEMPLATES #}
-											<div class="item item-primary col-md-4 col-sm-12">
+											<div class="item item-primary col-md-3 col-sm-12">
 												<div class="item-inner">
 													<div class="icon-holder">
 														<i class="fa fa-files-o fa-2x" aria-hidden="true"></i>
@@ -96,7 +96,7 @@
 											</div><!--//item-->
 										{% endif %}
 										{% if backup.pluginFileName %}
-											<div class="item item-blue col-md-4 col-sm-12">
+											<div class="item item-blue col-md-3 col-sm-12">
 												<div class="item-inner">
 													<div class="icon-holder">
 														<i class="fa fa-files-o fa-2x" aria-hidden="true"></i>
@@ -118,10 +118,10 @@
 											</div><!--//item-->
 										{% endif %}
 										{% if backup.assetFileName %}
-											<div class="item item-purple col-md-4 col-sm-12">
+											<div class="item item-purple col-md-3 col-sm-12">
 												<div class="item-inner">
 													<div class="icon-holder">
-														<i class="fa fa-files-o fa-2x" aria-hidden="true"></i>
+														<i class="fa fa-picture-o fa-2x" aria-hidden="true"></i>
 													</div><!--//icon-holder-->
 													<h3 class="title">Assets</h3>
 													<form id="database-template" method="post" accept-charset="UTF-8">
