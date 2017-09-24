@@ -165,7 +165,7 @@ class Backups extends Component
 
 		$command .= ' && '.$phpPath.' phpbu5.phar';
 		$command .= ' --configuration='.$configFile;
-				//' --debug';
+		$command .= ' --debug';
 
 		$shellCommand->setCommand($command);
 
@@ -236,6 +236,14 @@ class Backups extends Component
 
 	public function getSizeFormatted($size)
 	{
+		/*
+		 * When is php 32bit on Windows for files larger thant 2GB returns negative number
+		*/
+		if ($size < 0)
+		{
+			return '> 2 GB';
+		}
+
 		$units = array( 'B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
 		$power = $size > 0 ? floor(log($size, 1024)) : 0;
 		return number_format($size / pow(1024, $power), 2, '.', ',') . ' ' . $units[$power];
@@ -315,6 +323,15 @@ class Backups extends Component
 							$backup->amazon = 0;
 						}
 					}
+
+					if (isset($error['file']))
+					{
+						// FTP
+						if (strpos(strtolower($error['file']), 'ftp') !== false)
+						{
+							$backup->ftp = 0;
+						}
+					}
 				}
 			}
 
@@ -333,10 +350,9 @@ class Backups extends Component
 	{
 		$logPath  = $this->getLogPath($backup->backupId);
 		$settings = Backup::$app->settings->getSettings();
-		// @todo add security steps for webhook
-		// verbose shows user and password
+
 		$config  = [
-			'verbose' => false,
+			'verbose' => true,
 			'logging' => [
 				[
 					'type'   => 'json',
@@ -617,6 +633,22 @@ class Backups extends Component
 			];
 
 			$syncs[] = $amazon;
+		}
+
+		// FTP
+		if ($settings->enableFtp)
+		{
+			$ftp = [
+				'type' => $settings->ftpType,
+				'options' => [
+					'host'     => $settings->ftpHost,
+					'user'     => $settings->ftpUser,
+					'password' => $settings->ftpPassword,
+					'path'     => trim($settings->ftpPath.'/'.$backupId)
+				]
+			];
+
+			$syncs[] = $ftp;
 		}
 
 		return $syncs;

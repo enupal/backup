@@ -34,7 +34,7 @@ class Settings extends \craft\base\Model
 	public $ftpHost     = '';
 	public $ftpUser     = '';
 	public $ftpPassword = '';
-	public $ftpPath     = '/enupalbackup/';
+	public $ftpPath     = 'enupalbackup/';
 	// Softlayer Object Storage
 	public $enableSos    = 0;
 	public $sosUser      = '';
