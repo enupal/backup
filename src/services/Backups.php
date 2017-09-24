@@ -254,11 +254,7 @@ class Backups extends Component
 		if ($log)
 		{
 			// Save the log
-			$backup->logMessage       = $log;
-			$backup->databaseFileName = null;
-			$backup->templateFileName = null;
-			$backup->pluginFileName   = null;
-			$backup->assetFileName    = null;
+			$backup->logMessage = $log;
 
 			// let's update the filenames
 			if (is_file($backup->getDatabaseFile()))
@@ -368,9 +364,9 @@ class Backups extends Component
 
 		// let's create the Backup Element
 		$backup->databaseFileName = $dbFileName;
-		$backup->assetFileName    = $assetName;
-		$backup->templateFileName = $templateName;
-		$backup->pluginFileName   = $pluginName;
+		$backup->assetFileName    = $settings->enableLocalVolumes ? $assetName : null;
+		$backup->templateFileName = $settings->enableTemplates ? $templateName : null;
+		$backup->pluginFileName   = $settings->enablePlugins ? $pluginName : null;
 
 		if (!$this->saveBackup($backup))
 		{
