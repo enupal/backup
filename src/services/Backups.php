@@ -332,6 +332,15 @@ class Backups extends Component
 							$backup->ftp = 0;
 						}
 					}
+
+					if (isset($error['file']))
+					{
+						// SOFTLAYER
+						if (strpos(strtolower($error['file']), 'softlayer') !== false)
+						{
+							$backup->softlayer = 0;
+						}
+					}
 				}
 			}
 
@@ -649,6 +658,23 @@ class Backups extends Component
 			];
 
 			$syncs[] = $ftp;
+		}
+
+		// SOFTLAYER
+		if ($settings->enableSos)
+		{
+			$softlayer = [
+				'type' => 'softlayer',
+				'options' => [
+					'host'      => $settings->sosHost,
+					'user'      => $settings->sosUser,
+					'secret'    => $settings->sosSecret,
+					'container' => $settings->sosContainer,
+					'path'      => trim($settings->sosPath.'/'.$backupId)
+				]
+			];
+
+			$syncs[] = $softlayer;
 		}
 
 		return $syncs;
