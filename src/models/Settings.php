@@ -49,11 +49,16 @@ class Settings extends \craft\base\Model
 	public $pathToPhp = '';
 	public $enablePathToMysqldump = '';
 	public $pathToMysqldump = '';
+	public $enablePathToOpenssl = '';
+	public $pathToOpenssl = '';
 	public $enablePathToPgdump = '';
 	public $pathToPgdump = '';
 	// Webhook
 	public $webhookUrl = '';
 	public $webhookSecretKey = '';
+	// security
+	public $enableOpenssl   = 0;
+	public $opensslPassword = '';
 
 	/**
 	 * @inheritdoc

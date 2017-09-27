@@ -380,6 +380,7 @@ class Backups extends Component
 		$backupId       = $backup->backupId;
 		$compress       = $this->getCompressType();
 		$syncs          = $this->getSyncs($backupId);
+		// ADD OPENSSL HERE
 		$dbFileName     = 'database-'.$backupId.'.sql';
 		$assetName      = 'assets-'.$backupId.$compress;
 		$templateName   = 'templates-'.$backupId.$compress;
@@ -464,7 +465,7 @@ class Backups extends Component
 			if (get_class($asset) == Local::class)
 			{
 				// Check if the path exists
-				// @todo - research and test this looks to easy :D
+				// @todo - research and test this looks too easy :D
 				if (is_dir($asset->path))
 				{
 					$assetBackup = [
@@ -549,6 +550,24 @@ class Backups extends Component
 	}
 
 	/**
+	 * Delete config file for security reasons
+	*/
+	public function deleteConfigFile()
+	{
+		$file = $this->getConfigPath();
+
+		if (file_exists($file))
+		{
+			unlink($file);
+		}
+		else
+		{
+			// File not found.
+			BackupPlugin::error(BackupPlugin::t('Unable to delete the config file'));
+		}
+	}
+
+	/**
 	 * Performs a review to check the backups amount allowed
 	 * @todo should we move this to a job?
 	*/
@@ -556,7 +575,7 @@ class Backups extends Component
 	{
 		// Amount of backups to keep
 		$settings  = Backup::$app->settings->getSettings();
-		// @todo we need to delete the ERROR backup's?
+
 		$condition = 'backupStatusId =:finished';
 		$params    = [
 			':finished' => BackupStatus::FINISHED

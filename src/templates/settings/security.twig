@@ -1,0 +1,53 @@
+{% extends "enupal-backup/_layouts/settings" %}
+{% import "_includes/forms" as forms %}
+
+{% set settings = craft.enupalbackup.getSettings() %}
+{% set fullPageForm = true %}
+{% set saveShortcutRedirect = 'enupal-backup/settings/security' %}
+
+{% set saveButton %}
+	<div class="buttons">
+		<input class="btn submit" type="submit" value="{{ 'Save'|t }}">
+	</div>
+{% endset %}
+
+{% set content %}
+
+	<input type="hidden" name="action" value="enupal-backup/settings/save-settings">
+
+	<div id="settings-cp">
+
+		{% namespace 'settings' %}
+			{{ forms.field({
+				label: "Security settings"|t('enupal-backup')|upper,
+				instructions: 'Enupal Backup can encrypt your backup using openssl'
+			}, null) }}
+			<hr>
+
+			{{ forms.lightswitchField({
+				label: "Enable Encryption"|t('enupal-backup'),
+				id: 'enableOpenssl',
+				name: 'enableOpenssl',
+				on: settings.enableOpenssl,
+				onLabel: "On"|t('enupal-backup'),
+				offLabel: "Off"|t('enupal-backup')
+			}) }}
+
+			{{ forms.textField({
+				label: "Password"|t('enupal-backup'),
+				id: 'opensslPassword',
+				name: 'opensslPassword',
+				instructions: "Secure password to encrypt with openssl"|t('enupal-backup'),
+				value: settings.opensslPassword,
+				type: "password",
+				required: true,
+				autofocus: true,
+				first: true,
+				errors: ''
+			}) }}
+
+		{% endnamespace %}
+
+	</div>
+
+{% endset %}

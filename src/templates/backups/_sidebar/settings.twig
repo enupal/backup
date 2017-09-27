@@ -38,8 +38,8 @@
 				value: backup.getStatusName(),
 				disabled: true
 			}) }}
-
-		<div class="field enupal-field-heading"><i class="fa fa-cloud" aria-hidden="true"> {{'Cloud'|t('enupal-backup')}}</i></div>
+		{% if backup.dropbox or backup.aws or backup.ftp or backup.softlayer %}
+			<div class="field enupal-field-heading"><i class="fa fa-cloud" aria-hidden="true"> {{'Cloud'|t('enupal-backup')}}</i></div>
 			<div class="field">
 				<div class="heading">
 					<label>{{"Uploaded to"|t('enupal-backup')}}</label>
@@ -59,6 +59,7 @@
 					{% endif %}
 				</div>
 			</div>
+		{% endif %}
 	</div><!-- settings div -->
 
 </div>
