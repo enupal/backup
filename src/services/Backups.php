@@ -389,10 +389,13 @@ class Backups extends Component
 		$backups        = [];
 
 		// let's create the Backup Element
-		$backup->databaseFileName = $dbFileName;
+		$backup->databaseFileName = $this->isEncrypt($encrypt, $dbFileName);
 		$backup->assetFileName    = $settings->enableLocalVolumes ? $assetName : null;
+		$backup->assetFileName    = $this->isEncrypt($encrypt, $backup->assetFileName);
 		$backup->templateFileName = $settings->enableTemplates ? $templateName : null;
+		$backup->templateFileName = $this->isEncrypt($encrypt, $backup->templateFileName);
 		$backup->pluginFileName   = $settings->enablePlugins ? $pluginName : null;
+		$backup->pluginFileName   = $this->isEncrypt($encrypt, $backup->pluginFileName);
 
 		if (!$this->saveBackup($backup))
 		{
