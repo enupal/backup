@@ -380,7 +380,7 @@ class Backups extends Component
 		$backupId       = $backup->backupId;
 		$compress       = $this->getCompressType();
 		$syncs          = $this->getSyncs($backupId);
-		// ADD OPENSSL HERE
+		$encrypt        = $this->getEncrypt();
 		$dbFileName     = 'database-'.$backupId.'.sql';
 		$assetName      = 'assets-'.$backupId.$compress;
 		$templateName   = 'templates-'.$backupId.$compress;
@@ -433,6 +433,11 @@ class Backups extends Component
 			if ($syncs)
 			{
 				$databaseBackup['syncs'] = $syncs;
+			}
+
+			if ($encrypt)
+			{
+				$databaseBackup['crypt'] = $encrypt;
 			}
 
 			$backups[] = $databaseBackup;
@@ -493,6 +498,11 @@ class Backups extends Component
 						$assetBackup['syncs'] = $syncs;
 					}
 
+					if ($encrypt)
+					{
+						$assetBackup['crypt'] = $encrypt;
+					}
+
 					$backups[] = $assetBackup;
 				}
 				else
@@ -530,6 +540,11 @@ class Backups extends Component
 			if ($syncs)
 			{
 				$templateBackup['syncs'] = $syncs;
+			}
+
+			if ($encrypt)
+			{
+				$templateBackup['crypt'] = $encrypt;
 			}
 
 			$backups[] = $templateBackup;
@@ -625,6 +640,36 @@ class Backups extends Component
 		}
 
 		return true;
+	}
+
+	private function isEncrypt($encrypt, $fileName)
+	{
+		$enc = $encrypt ? '.enc' : '';
+		return $fileName.$enc;
+	}
+
+	private function getEncrypt()
+	{
+		$encrypt  = [];
+		$settings = Backup::$app->settings->getSettings();
+
+		if ($settings->enableOpenssl)
+		{
+			$encrypt = [
+				'type' => 'openssl',
+				'options' => [
+					'password'  => $settings->opensslPassword,
+					'algorithm' => 'aes-256-cbc'
+				]
+			];
+
+			if ($settings->enablePathToOpenssl && $settings->pathToOpenssl)
+			{
+				$encrypt['options']['pathToOpenSSL'] = $settings->pathToOpenssl;
+			}
+		}
+
+		return $encrypt;
 	}
 
 	private function getSyncs($backupId)
