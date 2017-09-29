@@ -169,8 +169,8 @@ class Backups extends Component
 
 		$shellCommand->setCommand($command);
 
-		// If we don't have proc_open, maybe we've got exec
-		if (!function_exists('proc_open') && function_exists('exec'))
+		// We have better error messages with exec
+		if (function_exists('exec'))
 		{
 			$shellCommand->useExec = true;
 		}
@@ -670,6 +670,13 @@ class Backups extends Component
 			{
 				$encrypt['options']['pathToOpenSSL'] = $settings->pathToOpenssl;
 			}
+
+			if (Backup::$app->settings->isWindows())
+			{
+				// @todo report bug on phpbu, error on windows when try to delete
+				$encrypt['options']['keepUncrypted'] = true;
+			}
+
 		}
 
 		return $encrypt;

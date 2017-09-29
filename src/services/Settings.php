@@ -92,4 +92,9 @@ class Settings extends Component
 	{
 		return Craft::$app->getPlugins()->getPlugin('enupal-backup');
 	}
+
+	public function isWindows()
+	{
+		return defined('PHP_WINDOWS_VERSION_BUILD');
+	}
 }

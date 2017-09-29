@@ -77,14 +77,12 @@ class BackupsController extends BaseController
 			'message' => 'queued'
 		];
 
-		if (substr(php_uname(), 0, 7) != "Windows")
+		if (!Backup::$app->settings->isWindows())
 		{
 			// listen by console
-			// @todo we may need to add a settign to save the php path
 			$shellCommand = new ShellCommand();
-			// this is ok?
-			$craftPath = CRAFT_BASE_PATH;
-			$phpPath   = Backup::$app->backups->getPhpPath();
+			$craftPath    = CRAFT_BASE_PATH;
+			$phpPath      = Backup::$app->backups->getPhpPath();
 
 			$command = $phpPath.
 					' craft'.
