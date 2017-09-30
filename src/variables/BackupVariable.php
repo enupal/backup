@@ -56,5 +56,28 @@ class BackupVariable
 		return Backup::$app->settings->getSettings();
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getSizeFormatted($size)
+	{
+		return Backup::$app->backups->getSizeFormatted($size);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getAllPlugins()
+	{
+		return Backup::$app->settings->getAllPlugins();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getAllLocalVolumes()
+	{
+		return Backup::$app->settings->getAllLocalVolumes();
+	}
 }
 

@@ -18,26 +18,22 @@
 	<div id="settings-cp">
 
 		{% namespace 'settings' %}
-			<div class="field heading">{{'Include in files backup:'|t('enupal-backup')}}</div>
+			{{ forms.field({
+				label: "General settings"|t('enupal-backup')|upper
+			}, null) }}
+			<hr>
 
-			{{ forms.lightswitchField({
-				label: "Plugins"|t('enupal-backup'),
-				id: 'enablePlugins',
-				name: 'enablePlugins',
-				on: settings.enablePlugins,
-				onLabel: "On"|t('enupal-backup'),
-				offLabel: "Off"|t('enupal-backup')
+			{{ forms.textField({
+				label: "Amount of backups to keep locally"|t('enupal-backup'),
+				id: 'backupsAmount',
+				instructions: 'Keep only a configured amount of backups with status Finished'|t('enupal-backup'),
+				name: 'backupsAmount',
+				value: settings.backupsAmount,
+				size: 10,
+				autofocus: true,
+				first: true,
+				errors: ''
 			}) }}
-
-			{{ forms.lightswitchField({
-				label: "Templates"|t('enupal-backup'),
-				id: 'enableTemplates',
-				name: 'enableTemplates',
-				on: settings.enableTemplates,
-				onLabel: "On"|t('enupal-backup'),
-				offLabel: "Off"|t('enupal-backup')
-			}) }}
-
 
 		{% endnamespace %}
 

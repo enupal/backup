@@ -1,0 +1,146 @@
+{% extends "enupal-backup/_layouts/settings" %}
+{% import "_includes/forms" as forms %}
+
+{% set settings = craft.enupalbackup.getSettings() %}
+{% set fullPageForm = true %}
+{% set saveShortcutRedirect = 'enupal-backup/settings/advanced' %}
+
+{% set saveButton %}
+	<div class="buttons">
+		<input class="btn submit" type="submit" value="{{ 'Save'|t }}">
+	</div>
+{% endset %}
+
+{% set content %}
+
+	<input type="hidden" name="action" value="enupal-backup/settings/save-settings">
+
+	<div id="settings-cp">
+
+		{% namespace 'settings' %}
+			{{ forms.field({
+				label: "Paths"|t('enupal-backup')|upper,
+				instructions: ""|t('enupal-backup'),
+			}, null) }}
+			<hr>
+
+			{{ forms.lightswitchField({
+				label: "Tar"|t('enupal-backup'),
+				id: 'enablePathToTar',
+				name: 'enablePathToTar',
+				on: settings.enablePathToTar,
+				toggle: 'settings-enablePathToTar',
+				onLabel: "On"|t('enupal-backup'),
+				offLabel: "Off"|t('enupal-backup')
+			}) }}
+
+			<div id="settings-enablePathToTar" class="{% if not settings.enablePathToTar %}hidden{% endif %}">
+				{{ forms.textField({
+					label: "TAR path"|t('enupal-backup'),
+					instructions: "Path where the TAR lives"|t('enupal-backup'),
+					id: 'pathToTar',
+					name: 'pathToTar',
+					value: settings.pathToTar,
+					autofocus: true,
+					first: true,
+					errors: ''
+				}) }}
+			</div>
+			<hr>
+			{{ forms.lightswitchField({
+				label: "PHP"|t('enupal-backup'),
+				id: 'enablePathToPhp',
+				name: 'enablePathToPhp',
+				on: settings.enablePathToPhp,
+				toggle: 'settings-enablePathToPhp',
+				onLabel: "On"|t('enupal-backup'),
+				offLabel: "Off"|t('enupal-backup')
+			}) }}
+
+			<div id="settings-enablePathToPhp" class="{% if not settings.enablePathToPhp %}hidden{% endif %}">
+				{{ forms.textField({
+					label: "PHP Path"|t('enupal-backup'),
+					instructions: "Path where the PHP lives"|t('enupal-backup'),
+					id: 'pathToPhp',
+					name: 'pathToPhp',
+					value: settings.pathToPhp,
+					autofocus: true,
+					first: true,
+					errors: ''
+				}) }}
+			</div>
+			<hr>
+			{{ forms.lightswitchField({
+				label: "Openssl"|t('enupal-backup'),
+				id: 'enablePathToOpenssl',
+				name: 'enablePathToOpenssl',
+				on: settings.enablePathToOpenssl,
+				toggle: 'settings-enablePathToOpenssl',
+				onLabel: "On"|t('enupal-backup'),
+				offLabel: "Off"|t('enupal-backup')
+			}) }}
+
+			<div id="settings-enablePathToOpenssl" class="{% if not settings.enablePathToOpenssl %}hidden{% endif %}">
+				{{ forms.textField({
+					label: "Openssl Path"|t('enupal-backup'),
+					instructions: "Path where the Openssl lives"|t('enupal-backup'),
+					id: 'pathToOpenssl',
+					name: 'pathToOpenssl',
+					value: settings.pathToOpenssl,
+					autofocus: true,
+					first: true,
+					errors: ''
+				}) }}
+			</div>
+			<hr>
+			{{ forms.lightswitchField({
+				label: "MySqlDump"|t('enupal-backup'),
+				id: 'enablePathToMysqldump',
+				name: 'enablePathToMysqldump',
+				on: settings.enablePathToMysqldump,
+				toggle: 'settings-enablePathToMysqldump',
+				onLabel: "On"|t('enupal-backup'),
+				offLabel: "Off"|t('enupal-backup')
+			}) }}
+
+			<div id="settings-enablePathToMysqldump" class="{% if not settings.enablePathToMysqldump %}hidden{% endif %}">
+				{{ forms.textField({
+					label: "MysqlDump Path"|t('enupal-backup'),
+					instructions: "Path where the MySqlDump lives"|t('enupal-backup'),
+					id: 'pathToMysqldump',
+					name: 'pathToMysqldump',
+					value: settings.pathToMysqldump,
+					autofocus: true,
+					first: true,
+					errors: ''
+				}) }}
+			</div>
+			<hr>
+			{{ forms.lightswitchField({
+				label: "PgDump"|t('enupal-backup'),
+				id: 'enablePathToPgdump',
+				name: 'enablePathToPgdump',
+				on: settings.enablePathToPgdump,
+				toggle: 'settings-enablePathToPgdump',
+				onLabel: "On"|t('enupal-backup'),
+				offLabel: "Off"|t('enupal-backup')
+			}) }}
+
+			<div id="settings-enablePathToPgdump" class="{% if not settings.enablePathToPgdump %}hidden{% endif %}">
+				{{ forms.textField({
+					label: "PgDump Path"|t('enupal-backup'),
+					instructions: "Path where the PgDump lives"|t('enupal-backup'),
+					id: 'pathToPgdump',
+					name: 'pathToPgdump',
+					value: settings.pathToPgdump,
+					autofocus: true,
+					first: true,
+					errors: ''
+				}) }}
+			</div>
+
+		{% endnamespace %}
+
+	</div>
+
+{% endset %}

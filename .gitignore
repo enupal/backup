@@ -7,7 +7,7 @@
 Build/*
 *.sass-cache
 node_modules/
-vendor/
 /composer.lock
+/vendor
 haters
 .DS_Store

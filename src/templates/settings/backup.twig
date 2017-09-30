@@ -1,0 +1,97 @@
+{% extends "enupal-backup/_layouts/settings" %}
+{% import "_includes/forms" as forms %}
+
+{% set settings = craft.enupalbackup.getSettings() %}
+{% set fullPageForm = true %}
+{% set saveShortcutRedirect = 'enupal-backup/settings/general' %}
+
+{% set saveButton %}
+	<div class="buttons">
+		<input class="btn submit" type="submit" value="{{ 'Save'|t }}">
+	</div>
+{% endset %}
+
+{% set content %}
+
+	<input type="hidden" name="action" value="enupal-backup/settings/save-settings">
+
+	<div id="settings-cp">
+
+		{% namespace 'settings' %}
+			{{ forms.field({
+				label: "Include in files backup"|t('enupal-backup')|upper,
+				instructions: "Enupal Backup provides you with powerful control over which files you want to include on your backup besides the database."|t('enupal-backup'),
+			}, null) }}
+			<hr>
+
+			{{ forms.lightswitchField({
+				label: "Plugins"|t('enupal-backup'),
+				id: 'enablePlugins',
+				name: 'enablePlugins',
+				on: settings.enablePlugins,
+				toggle: 'settings-enablePlugins',
+				onLabel: "On"|t('enupal-backup'),
+				offLabel: "Off"|t('enupal-backup')
+			}) }}
+
+			<div id="settings-enablePlugins" class="{% if not settings.enablePlugins %}hidden{% endif %}">
+				{% set plugins = craft.enupalbackup.getAllPlugins() %}
+
+				{{ forms.checkboxSelect({
+					name: 'plugins',
+					options: plugins,
+					showAllOption: true,
+					values: settings.plugins,
+				}) }}
+			</div>
+			<hr>
+			{{ forms.lightswitchField({
+				label: "Templates"|t('enupal-backup'),
+				id: 'enableTemplates',
+				name: 'enableTemplates',
+				on: settings.enableTemplates,
+				toggle: 'settings-enableTemplates',
+				onLabel: "On"|t('enupal-backup'),
+				offLabel: "Off"|t('enupal-backup')
+			}) }}
+
+			<div id="settings-enableTemplates" class="{% if not settings.enableTemplates %}hidden{% endif %}">
+				{{ forms.textField({
+					label: "Exclude Files"|t('enupal-backup'),
+					instructions: "Comma separated list of paths to exclude."|t('enupal-backup'),
+					id: 'excludeTemplates',
+					name: 'excludeTemplates',
+					value: settings.excludeTemplates,
+					autofocus: true,
+					first: true,
+					errors: ''
+				}) }}
+			</div>
+			<hr>
+			{{ forms.lightswitchField({
+				label: "Assets"|t('enupal-backup'),
+				instructions: 'Just local volumes are supported',
+				id: 'enableLocalVolumes',
+				name: 'enableLocalVolumes',
+				on: settings.enableLocalVolumes,
+				toggle: 'settings-enableAssets',
+				onLabel: "On"|t('enupal-backup'),
+				offLabel: "Off"|t('enupal-backup')
+			}) }}
+
+			<div id="settings-enableAssets" class="{% if not settings.enableLocalVolumes %}hidden{% endif %}">
+				{% set volumes = craft.enupalbackup.getAllLocalVolumes() %}
+
+				{{ forms.checkboxSelect({
+					name: 'volumes',
+					options: volumes,
+					showAllOption: true,
+					values: settings.volumes,
+				}) }}
+			</div>
+
+		{% endnamespace %}
+
+	</div>
+
+{% endset %}

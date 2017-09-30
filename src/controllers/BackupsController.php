@@ -10,217 +10,161 @@ use craft\helpers\ArrayHelper;
 use craft\elements\Asset;
 use craft\helpers\Json;
 use craft\helpers\Template as TemplateHelper;
+use yii\base\Exception;
 
-use enupal\slider\Backup;
-use phpbu\App\Cmd;
-use phpbu\App\Util\Cli;
+use enupal\backup\jobs\CreateBackup;
+use enupal\backup\enums\BackupStatus;
+use enupal\backup\Backup;
+
+use mikehaertl\shellcommand\Command as ShellCommand;
+use craft\errors\ShellCommandException;
 
 class BackupsController extends BaseController
 {
 	/*
-	 * Redirect to sliders index page
+	 * Download backup
 	*/
-	public function actionIndex()
-	{
-		return $this->renderTemplate('enupal-backup/backups/index');
-	}
-
-	public function actionRun()
-	{
-		/*//'\"C:\\Program Files (x86)\\Git\\bin\"'*/
-		// windows needed
-		$base = Craft::getAlias('@enupal/backup/');
-		$path = escapeshellarg('C:\\Program Files (x86)\\Git\\bin');
-		#Craft::dd($path);
-		//Cli::addCommandLocation('tar',$path);
-		$cmd = new Cmd();
-		$configFile = $base.'backup/config.json';
-		$response = $cmd->run([
-				'--configuration='.$configFile
-				//'--debug'
-		]);
-		$logPath = $base.'backup/json.log';
-		$str = file_get_contents($logPath);
-		$json = json_decode($str, true);
-		echo "AS";
-		echo "---------------------";
-		print_r($json);
-		die();
-
-		// create new archive
-		/*$zipFile = new \PhpZip\ZipFile();
-		$zipFile
-				->addDir('C:/MAMP/htdocs/craft3.personal/web/', "enupalslider")
-				->saveAsFile("enupalbackup__232232323")
-				->close();*/
-	}
-
-	/**
-	 * Save a slider
-	 */
-	public function actionSaveBackup()
+	public function actionDownload()
 	{
 		$this->requirePostRequest();
+		$backupId = Craft::$app->getRequest()->getRequiredBodyParam('backupId');
+		$type     = Craft::$app->getRequest()->getRequiredBodyParam('type');
+		$backup   = Backup::$app->backups->getBackupById($backupId);
 
-		/*$request = Craft::$app->getRequest();
-		$slider  = new SliderElement;
-
-		$sliderId = $request->getBodyParam('sliderId');
-		$isNew    = true;
-
-		if ($sliderId)
+		if ($backup && $type)
 		{
-			$slider = Backup::$app->backups->getSliderById($sliderId);
+			$filePath = null;
 
-			if ($slider)
+			switch ($type)
 			{
-				$isNew = false;
+				case 'database':
+					$filePath = $backup->getDatabaseFile();
+					break;
+				case 'template':
+					$filePath = $backup->getTemplateFile();
+					break;
+				case 'plugin':
+					$filePath = $backup->getPluginFile();
+					break;
+				case 'asset':
+					$filePath = $backup->getAssetFile();
+					break;
 			}
-		}
 
-		//$slider->groupId     = $request->getBodyParam('groupId');
-		$oldHandle              = $slider->handle;
-		$newHandle              = $request->getBodyParam('handle');
-		$slider->name           = $request->getBodyParam('name');
-		$slider->handle         = $newHandle;
-		$slider                 = Backup::$app->backups->populateSliderFromPost($slider);
-
-		// Save it
-		if (!Backup::$app->backups->saveSlider($slider))
-		{
-			Craft::$app->getSession()->setError(Backup::t('Coubackupsave slider.'));
-
-			Craft::$app->getUrlManager()->setRouteParams([
-					'slider'               => $slider
-				]
-			);
-
-			return null;
-		}
-
-		//lets update the subfolder
-		if (!$isNew && $oldHandle != $newHandle)
-		{
-			if (!Backup::$app->backups->updateSubfolder($slider, $oldHandle))
+			if (!is_file($filePath))
 			{
-				Backup::log("Ubackupto rename subfolder {$oldHandle} to {$slider->handle}", 'error');
-			}
-		}
-
-		Craft::$app->getSession()->setNotice(Backup::t('Slibackupved.'));
-
-		#$_POST['redirect'] = str_replace('{id}', $form->id, $_POST['redirect']);
-
-		return $this->redirectToPostedUrl($slider);
-		*/
-	}
-
-	/**
-	 * Edit a Backup.
-	 *
-	 * @param int|null  $slierId The backup's ID, if editing an existing slider.
-	 *
-	 * @throws HttpException
-	 * @throws Exception
-	 */
-	public function actionEditBackup(int $backupId = null)
-	{
-		// Immediately create a new Form
-		/*if ($sliderId === null)
-		{
-			$slider = Backup::$app->backups->createNewSlider();
-
-			if ($slider->id)
-			{
-				$url = UrlHelper::cpUrl('enupalslider/slider/edit/' . $slider->id);
-				return $this->redirect($url);
-			}
-			else
-			{
-				throw new Exception(Craft::t('Error creating Slider'));
+				throw new NotFoundHttpException(Backup::t('Invalid backup name: {filename}', [
+					'filename' => $filePath
+				]));
 			}
 		}
 		else
 		{
-			if ($sliderId !== null)
-			{
-				if ($slider === null)
-				{
-					$variables['groups']  = Backup::$app->backup->getAllSlidersGroups();
-					$variables['groupId'] = "";
-
-					// Get the Slider
-					$slider = Backup::$app->backups->getSliderById($sliderId);
-
-					if (!$slider)
-					{
-						throw new NotFoundHttpException(Backup::t('Slibackupt found'));
-					}
-				}
-			}
+			throw new NotFoundHttpException(Backup::t('Invalid backup parameters'));
 		}
 
-		$sources = Backup::$app->backups->getVolumeFolder($slider);
+		return Craft::$app->getResponse()->sendFile($filePath);
+	}
 
-		$variables['sources']  = $sources;
-		$variables['sliderId'] = $sliderId;
-		$variables['slider']   = $slider;
-		$variables['name']     = $slider->name;
-		$variables['groupId']  = $slider->groupId;
-		$variables['elementType'] = Asset::class;
+	public function actionRun()
+	{
+		// let's add the job if it's linux we can run it in background
+		Craft::$app->queue->push(new CreateBackup());
+		// We have a webhook so don't wait
+		$success = false;
+		$response = [
+			'success' => true,
+			'message' => 'queued'
+		];
 
-		$variables['slidesElements']  = null;
-
-		if ($slider->slides)
+		if (!Backup::$app->settings->isWindows())
 		{
-			$slides = $slider->slides;
-			if (is_string($slides))
-			{
-				$slides = json_decode($slider->slides);
-			}
+			// listen by console
+			$shellCommand = new ShellCommand();
+			$craftPath    = CRAFT_BASE_PATH;
+			$phpPath      = Backup::$app->backups->getPhpPath();
 
-			$slidesElements = [];
+			$command = $phpPath.
+					' craft'.
+					' queue/run';
+			// linux
+			$command .= ' > /dev/null 2&1 &';
+			// windows does not work
+			//$command .= ' 1>> NUL 2>&1';
+			$shellCommand->setCommand($command);
 
-			if (count($slides))
-			{
-				foreach ($slides as $key => $slideId)
-				{
-					$slide = Craft::$app->elements->getElementById($slideId);
-					array_push($slidesElements, $slide);
-				}
+			//@todo requiere this in the docs
+			$shellCommand->useExec = true;
 
-				$variables['slidesElements'] = $slidesElements;
-			}
+			$success = $shellCommand->execute();
+			$response = [
+				'success' => $success,
+				'message' => 'running'
+			];
 		}
 
-		$variables['showPreviewBtn'] = false;
-		// Enable Live Preview?
-		if (!Craft::$app->getRequest()->isMobileBrowser(true))
-		{
-
-			//#title-field, #fields > div > div > .field
-			$this->getView()->registerJs('Craft.LivePreview.init('.Json::encode([
-					'fields' => '.field',
-					'previewAction' => 'enupalslider/sliders/live-preview',
-					'previewParams' => [
-						'sliderId' => $slider->id
-					]
-				]).');');
-
-			$variables['showPreviewBtn'] = true;
-		}
-
-		// Set the "Continue Editing" URL
-		$variables['continueEditingUrl'] = 'enupalslider/slider/edit/{id}';
-
-		$variables['settings'] = Craft::$app->plugins->getPlugin('enupalslider')->getSettings();
-
-		return $this->renderTemplate('enupalslider/sliders/_editSlider', $variables);
-		*/
+		return $this->asJson($response);
 	}
 
 	/**
-	 * Delete a slider.
+	 * View a Backup.
+	 *
+	 * @param int|null  $backupId The backup's ID
+	 *
+	 * @throws HttpException
+	 * @throws Exception
+	 */
+	public function actionViewBackup(int $backupId = null)
+	{
+		// Get the Backup
+		$backup = Backup::$app->backups->getBackupById($backupId);
+
+		if (!$backup)
+		{
+			throw new NotFoundHttpException(Backup::t('Backup not found'));
+		}
+
+		if ($backup->backupStatusId == BackupStatus::RUNNING)
+		{
+			Backup::$app->backups->updateBackupOnComplete($backup);
+			Backup::$app->backups->checkBackupsAmount();
+		}
+
+		if (!is_file($backup->getDatabaseFile()))
+		{
+			$backup->databaseFileName = null;
+		}
+
+		if (!is_file($backup->getTemplateFile()))
+		{
+			$backup->templateFileName = null;
+		}
+
+		if (!is_file($backup->getPluginFile()))
+		{
+			$backup->pluginFileName = null;
+		}
+
+		if (!is_file($backup->getAssetFile()))
+		{
+			$backup->assetFileName = null;
+		}
+
+		$variables['backup'] = $backup;
+
+		$logPath = Backup::$app->backups->getLogPath($backup->backupId);
+
+		if (is_file($logPath))
+		{
+			$log  = file_get_contents($logPath);
+			$variables['log'] = $log;
+		}
+
+		return $this->renderTemplate('enupal-backup/backups/_viewBackup', $variables);
+	}
+
+	/**
+	 * Delete a backup.
 	 *
 	 * @return void
 	 */

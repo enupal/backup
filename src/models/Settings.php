@@ -3,29 +3,70 @@ namespace enupal\backup\models;
 
 class Settings extends \craft\base\Model
 {
+	// General
 	public $pluginNameOverride = '';
+	public $backupsAmount = 50;
+	public $deleteLocalBackupAfterUpload = 0;
 	// Plugins
 	public $enablePlugins  = 0;
-	public $excludePlugins = '';
+	public $plugins = '';
 	// Templates
 	public $enableTemplates  = 0;
-	public $excludeTemplates = '';
+	public $excludeTemplates = 'cpresources,';
 	// Local Volumes
 	public $enableLocalVolumes = 0;
-	public $excludeVolumes     = '';
+	public $volumes            = '';
 	// Dropbox 	Api
-	public $dopboxToken = '';
-	public $dopboxPath  = '';
+	public $enableDropbox = 0;
+	public $dropboxToken = '';
+	public $dropboxPath  = '/enupalbackup/';
 	// Amazon S3 Api
+	public $enableAmazon = 0;
 	public $amazonKey    = '';
 	public $amazonSecret = '';
 	public $amazonBucket = '';
 	public $amazonRegion = '';
-	public $amazonPath   = '';
+	public $amazonPath   = '/enupalbackup/';
+	public $amazonUseMultiPartUpload   = 0;
 	// FTP or SFTP
-	public $ftpType = 'ftp';
-	public $ftpHost = '';
-	public $ftpUser = '';
+	public $enableFtp   = 0;
+	public $ftpType     = 'ftp';
+	public $ftpHost     = '';
+	public $ftpUser     = '';
 	public $ftpPassword = '';
-	public $ftpPath = '';
+	public $ftpPath     = 'enupalbackup/';
+	// Softlayer Object Storage
+	public $enableSos    = 0;
+	public $sosUser      = '';
+	public $sosSecret    = '';
+	public $sosHost      = '';
+	public $sosContainer = '';
+	public $sosPath      = '/enupalbackup/';
+	// Advanced
+	public $enablePathToTar = 0;
+	public $pathToTar       = '';
+	public $enablePathToPhp = '';
+	public $pathToPhp = '';
+	public $enablePathToMysqldump = '';
+	public $pathToMysqldump = '';
+	public $enablePathToOpenssl = '';
+	public $pathToOpenssl = '';
+	public $enablePathToPgdump = '';
+	public $pathToPgdump = '';
+	// Webhook
+	public $webhookUrl = '';
+	public $webhookSecretKey = '';
+	// security
+	public $enableOpenssl   = 0;
+	public $opensslPassword = '';
+
+	/**
+	 * @inheritdoc
+	 */
+	public function rules()
+	{
+		return [
+			['backupsAmount', 'integer', 'min' => 1]
+		];
+	}
 }

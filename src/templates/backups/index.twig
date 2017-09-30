@@ -1,10 +1,42 @@
 {% extends "enupal-backup/_layouts/elementindex" %}
 {% set title = "Backups"|t %}
 {% set elementType = 'enupal\\backup\\elements\\Backup' %}
-
+{% do view.registerAssetBundle("enupal\\backup\\assetbundles\\FontAwesomeAsset") %}
 {% set extraPageHeaderHtml %}
 	<div class="buttons">
-		<a class="btn submit add icon" href="{{ url('enupal-backup/backup/now') }}">{{ "Backup Now"|t('enupalbackup') }}</a>
-		<a class="btn submit add icon" href="{{ url('enupal-backup/backup/restore') }}">{{ "Restore"|t('enupalbackup') }}</a>
+		<form id="run-backup" method="post">
+			{{ csrfInput() }}
+			{{ redirectInput('enupal-backup/backups') }}
+			<input type="hidden" name="action" value="/enupal-backup/backups/run">
+			<button class="btn submit add icon">{{ "Backup Now"|t('enupal-backup') }}</button>
+		</form>
 	</div>
 {% endset %}
+
+{% js %}
+
+$("#run-backup").submit( function(e) {
+
+	e.preventDefault();
+
+	var data = $(this).serialize();
+
+	$.ajax({
+		method: 'POST',
+		url: '/',
+		data: data,
+		headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+	})
+	.success(function(data) {
+		if (data.message)
+		{
+			Craft.cp.displayNotice(Craft.t('enupal-backup','Enupal Backup: \'{message}\'', { message: data.message }));
+		}
+		location.reload();
+	})
+	.error(function(data) {
+			console.log('error', data);
+	});
+
+});
+{% endjs %}

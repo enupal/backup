@@ -1,45 +1,51 @@
 (function($)
 {
 	/**
-	 * EnupalSlider class
+	 * EnupalBackup class
 	 */
-	var EnupalSlider = Garnish.Base.extend({
+	var EnupalBackup = Garnish.Base.extend({
 
-		cssEasingOptions: null,
-		easingOptions: null,
+		options: null,
+		errorModal: null,
+		logModal: null,
+
 		/**
 		 * The constructor.
-		 * @param - The easing options
 		 */
-		init: function(cssEasingOptions, easingOptions)
+		init: function()
 		{
-			this.easingOptions = easingOptions;
-			this.cssEasingOptions = cssEasingOptions;
-			this.addListener($("#useCss"), 'activate', 'changeOptions');
+			this.addListener($("#showError1"), 'activate', 'showError');
+			this.addListener($("#loginfo"), 'activate', 'showLoginfo');
 		},
 
-		changeOptions: function(option)
+		showLoginfo: function(option)
 		{
-			var option = option.currentTarget;
-			var value = $(option).attr('aria-checked');
-			var $select = $("#easing");
-			$select.empty();
-
-			if (value == 'true')
+			if (this.logModal)
 			{
-				$.each(this.cssEasingOptions, function( index, value ) {
-					$select.append('<option value="'+index+'">'+value+'</option>');
-				});
+				this.logModal.show();
 			}
 			else
 			{
-				$.each(this.easingOptions, function( index, value ) {
-					$select.append('<option value="'+index+'">'+value+'</option>');
-				});
+				var $div = $('#log1');
+				this.logModal = new Garnish.Modal($div);
 			}
 		},
+
+		showError: function(option)
+		{
+			if (this.errorModal)
+			{
+				this.errorModal.show();
+			}
+			else
+			{
+				var $div = $('#error1');
+				this.errorModal = new Garnish.Modal($div);
+			}
+		},
+
 	});
 
-	window.EnupalSlider = EnupalSlider;
+	window.EnupalBackup = EnupalBackup;
 
 })(jQuery);

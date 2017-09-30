@@ -11,10 +11,12 @@ use yii\base\InvalidConfigException;
 use craft\elements\actions\Delete;
 use craft\validators\HandleValidator;
 use craft\validators\UniqueValidator;
+use DateTime;
 
 use enupal\backup\elements\db\BackupQuery;
 use enupal\backup\records\Backup as BackupRecord;
-use enupal\backup\Backup;
+use enupal\backup\enums\BackupStatus;
+use enupal\backup\Backup as BackupPlugin;
 
 /**
  * Backup represents a entry element.
@@ -27,6 +29,23 @@ class Backup extends Element
 	// General - Properties
 	// =========================================================================
 	public $id;
+	public $backupId;
+	public $time;
+	public $databaseFileName;
+	public $databaseSize;
+	public $assetFileName;
+	public $assetSize;
+	public $templateFileName;
+	public $templateSize;
+	public $pluginFileName;
+	public $pluginSize;
+	public $backupStatusId = BackupStatus::RUNNING;
+	public $aws = 0;
+	public $dropbox = 0;
+	public $rsync = 0;
+	public $ftp = 0;
+	public $softlayer = 0;
+	public $logMessage;
 
 	/**
 	 * Returns the field context this element's content uses.
@@ -46,7 +65,7 @@ class Backup extends Element
 	 */
 	public static function displayName(): string
 	{
-		return Backup::t('Backups');
+		return BackupPlugin::t('Backups');
 	}
 
 	/**
@@ -70,7 +89,7 @@ class Backup extends Element
 	 */
 	public static function hasTitles(): bool
 	{
-		return true;
+		return false;
 	}
 
 	/**
@@ -86,7 +105,7 @@ class Backup extends Element
 	 */
 	public static function hasStatuses(): bool
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -95,7 +114,7 @@ class Backup extends Element
 	public function getCpEditUrl()
 	{
 		return UrlHelper::cpUrl(
-			'enupal-backup/backup/edit/'.$this->id
+			'enupal-backup/backup/view/'.$this->id
 		);
 	}
 
@@ -110,7 +129,7 @@ class Backup extends Element
 		try
 		{
 			// @todo - For some reason the Title returns null possible Craft3 bug
-			return $this->dateCreated;
+			return $this->backupId;
 		} catch (\Exception $e) {
 			ErrorHandler::convertExceptionToError($e);
 		}
@@ -127,6 +146,19 @@ class Backup extends Element
 	}
 
 	/**
+	 *
+	 * @return string|null
+	 */
+	public function getStatus()
+	{
+		$statusId = $this->backupStatusId;
+
+		$colors = BackupPlugin::$app->backups->getColorStatuses();
+
+		return $colors[$statusId];
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	protected static function defineSources(string $context = null): array
@@ -134,9 +166,29 @@ class Backup extends Element
 		$sources = [
 			[
 			'key'   => '*',
-			'label' => Backup::t('All Backups'),
+			'label' => BackupPlugin::t('All Backups'),
 			]
 		];
+
+		$statuses = BackupStatus::getConstants();
+
+		$colors = BackupPlugin::$app->backups->getColorStatuses();
+
+		$sources[] = ['heading' => BackupPlugin::t("Backup Status")];
+
+		foreach ($statuses as $code => $status)
+		{
+			if ($status != BackupStatus::STARTED)
+			{
+				$key = 'backupStatusId:' . $status;
+				$sources[] = [
+					'status'   => $colors[$status],
+					'key'      => $key,
+					'label'    => ucwords(strtolower($code)),
+					'criteria' => ['backupStatusId' => $status]
+				];
+			}
+		}
 
 		return $sources;
 	}
@@ -151,8 +203,8 @@ class Backup extends Element
 		// Delete
 		$actions[] = Craft::$app->getElements()->createAction([
 			'type' => Delete::class,
-			'confirmationMessage' => Backup::t('Are you sure you want to delete the selected backups?'),
-			'successMessage' => Backup::t('Backups deleted.'),
+			'confirmationMessage' => BackupPlugin::t('Are you sure you want to delete the selected backups?'),
+			'successMessage' => BackupPlugin::t('Backups deleted.'),
 		]);
 
 		return $actions;
@@ -163,7 +215,7 @@ class Backup extends Element
 	 */
 	protected static function defineSearchableAttributes(): array
 	{
-		return ['dateCreated'];
+		return ['backupId'];
 	}
 
 	/**
@@ -172,7 +224,7 @@ class Backup extends Element
 	protected static function defineSortOptions(): array
 	{
 		$attributes = [
-			'elements.dateCreated'      => Backup::t('Date Created')
+			'elements.dateCreated'  => BackupPlugin::t('Date Created')
 		];
 
 		return $attributes;
@@ -183,16 +235,17 @@ class Backup extends Element
 	 */
 	protected static function defineTableAttributes(): array
 	{
-		$attributes['dateCreated'] = ['label' => Backup::t('Backup Date')];
-		$attributes['download']    = ['label' => Backup::t('Data')];
-		$attributes['actions']     = ['label' => Backup::t('Actions')];
+		$attributes['backupId'] = ['label' => BackupPlugin::t('Backup Id')];
+		$attributes['size']     = ['label' => BackupPlugin::t('Size')];
+		$attributes['dateCreated'] = ['label' => BackupPlugin::t('Date')];
+		$attributes['status']      = ['label' => BackupPlugin::t('Status')];
 
 		return $attributes;
 	}
 
 	protected static function defineDefaultTableAttributes(string $source): array
 	{
-		$attributes = ['dateCreated', 'download', 'actions'];
+		$attributes = ['backupId', 'size', 'dateCreated','status'];
 
 		return $attributes;
 	}
@@ -204,17 +257,102 @@ class Backup extends Element
 	{
 		switch ($attribute)
 		{
-			case 'download':
+			case 'size':
 			{
-				return 'Download links ;D';
+				$total = 0;
+
+				if ($this->assetSize)
+				{
+					$total += $this->assetSize;
+				}
+
+				if ($this->templateSize)
+				{
+					$total += $this->templateSize;
+				}
+
+				if ($this->databaseSize)
+				{
+					$total += $this->databaseSize;
+				}
+
+				if ($total == 0)
+				{
+					return "";
+				}
+
+				return BackupPlugin::$app->backups->getSizeFormatted($total);
 			}
-			case 'actions':
+			case 'status':
 			{
-				return 'Links ;D';
+				$message = $this->backupStatusId == BackupStatus::STARTED ?
+					BackupPlugin::t('Started') :
+					BackupPlugin::t('Not defined');
+
+				if ($this->backupStatusId == BackupStatus::FINISHED)
+				{
+					$message = '<i class="fa fa-check-square-o" aria-hidden="true"></i>';
+				}
+				else if ($this->backupStatusId == BackupStatus::RUNNING)
+				{
+					$message = '<i class="fa fa-circle-o-notch fa-spin fa fa-fw"></i><span class="sr-only">Loading...</span>';
+				}
+				else if ($this->backupStatusId == BackupStatus::ERROR)
+				{
+					$message = '<i class="fa fa-times" aria-hidden="true"></i>';
+				}
+				return $message;
+			}
+			case 'dateCreated':
+			{
+				return $this->dateCreated->format("Y-m-d H:i");;
 			}
 		}
 
 		return parent::tableAttributeHtml($attribute);
+	}
+
+	public function getDatabaseFile()
+	{
+		$base = BackupPlugin::$app->backups->getDatabasePath();
+
+		if (!$this->databaseFileName)
+		{
+			return null;
+		}
+
+		return $base.$this->databaseFileName;
+	}
+
+	public function getTemplateFile()
+	{
+		$base = BackupPlugin::$app->backups->getTemplatesPath();
+
+		if (!$this->templateFileName)
+		{
+			return null;
+		}
+
+		return $base.$this->templateFileName;
+	}
+
+	public function getPluginFile()
+	{
+		$base = BackupPlugin::$app->backups->getPluginsPath();
+
+		return $base.$this->pluginFileName;
+	}
+
+	public function getAssetFile()
+	{
+		$base = BackupPlugin::$app->backups->getAssetsPath();
+
+		if (!$this->assetFileName)
+		{
+			return null;
+		}
+
+		return $base.$this->assetFileName;
 	}
 
 	/**
@@ -238,8 +376,63 @@ class Backup extends Element
 			$record->id = $this->id;
 		}
 
+		$record->backupId         = $this->backupId;
+		$record->time             = $this->time;
+		$record->databaseFileName = $this->databaseFileName;
+		$record->databaseSize     = $this->databaseSize;
+		$record->assetFileName    = $this->assetFileName;
+		$record->assetSize        = $this->assetSize;
+		$record->templateFileName = $this->templateFileName;
+		$record->templateSize     = $this->templateSize;
+		$record->pluginFileName   = $this->pluginFileName;
+		$record->pluginSize       = $this->pluginSize;
+		$record->backupStatusId   = $this->backupStatusId;
+		$record->aws              = $this->aws;
+		$record->dropbox          = $this->dropbox;
+		$record->rsync            = $this->rsync;
+		$record->ftp              = $this->ftp;
+		$record->softlayer        = $this->softlayer;
+		$record->logMessage       = $this->logMessage;
+
 		$record->save(false);
 
 		parent::afterSave($isNew);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function beforeDelete(): bool
+	{
+		// Let's delete all the info
+		$files = [];
+		$files[] = $this->getDatabaseFile();
+		$files[] = $this->getTemplateFile();
+		$files[] = $this->getAssetFile();
+		$files[] = BackupPlugin::$app->backups->getLogPath($this->backupId);
+
+		foreach ($files as $file)
+		{
+			if (file_exists($file))
+			{
+				unlink($file);
+			}
+			else
+			{
+				// File not found.
+				BackupPlugin::error(BackupPlugin::t('Unable to delete the file: '.$file));
+			}
+		}
+
+		return true;
+	}
+
+	public function getStatusName()
+	{
+		$statuses = BackupStatus::getConstants();
+
+		$statuses = array_flip($statuses);
+
+		return ucwords(strtolower($statuses[$this->backupStatusId]));
 	}
 }

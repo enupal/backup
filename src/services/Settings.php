@@ -7,6 +7,7 @@ use yii\base\Component;
 use enupal\backup\Backup;
 use enupal\backup\models\Settings as SettingsModel;
 use yii\db\Query;
+use craft\volumes\Local;
 
 class Settings extends Component
 {
@@ -20,47 +21,80 @@ class Settings extends Component
 	 */
 	public function saveSettings($postSettings): bool
 	{
-		$settings = Backup::$app->sliders->getSettings();
+		$backupPlugin = $this->getPlugin();
 
 		//Craft::$app->getSecurity()->hashData($password);
 
-		if (isset($postSettings['pluginNameOverride']))
-		{
-			$settings['pluginNameOverride'] = $postSettings['pluginNameOverride'];
-		}
+		$success = Craft::$app->getPlugins()->savePluginSettings($backupPlugin, $postSettings);
 
-		$settings = json_encode($settings);
-
-		$affectedRows = Craft::$app->getDb()->createCommand()->update('plugins', [
-			'settings' => $settings
-			],
-			[
-			'handle' => 'enupalbackup'
-			]
-		)->execute();
-
-		return (bool) $affectedRows;
+		return $success;
 	}
 
 	public function getSettings()
 	{
-		$result = (new Query())
-			->select('settings')
-			->from(['{{%plugins}}'])
-			->where(['handle' => 'enupal-backup'])
-			->one();
+		$backupPlugin = $this->getPlugin();
 
-		$arraySettings = json_decode($result['settings'], true);
+		return $backupPlugin->getSettings();
+	}
 
-		$settings = new SettingsModel($arraySettings);
+	public function getAllPlugins()
+	{
+		$plugins  = Craft::$app->getPlugins()->getAllPlugins();
+		$response = [];
 
-		/*
-		if ($settings->dropboxToken)
+		foreach ($plugins as $key => $plugin)
 		{
-			$settings->dropboxToken = Craft::$app->getSecurity()->hashData($settings->dropboxToken);
+			$response[] = [
+				'value' => $plugin->getHandle(),
+				'label' => $plugin->name
+			];
 		}
-		*/
 
-		return $settings;
+		return $response;
+	}
+
+	public function getAllLocalVolumes()
+	{
+		$volumes  = Craft::$app->getVolumes()->getAllVolumes();
+		$response = [];
+
+		foreach ($volumes as $key => $volume)
+		{
+			if (get_class($volume) == Local::class)
+			{
+				$response[] = [
+					'value' => $volume->id,
+					'label' => $volume->name
+				];
+			}
+		}
+
+		return $response;
+	}
+
+	public function getAllLocalVolumesObjects()
+	{
+		$volumes  = Craft::$app->getVolumes()->getAllVolumes();
+		$response = [];
+
+		foreach ($volumes as $key => $volume)
+		{
+			if (get_class($volume) == Local::class)
+			{
+				$response[] = $volume;
+			}
+		}
+
+		return $response;
+	}
+
+	public function getPlugin()
+	{
+		return Craft::$app->getPlugins()->getPlugin('enupal-backup');
+	}
+
+	public function isWindows()
+	{
+		return defined('PHP_WINDOWS_VERSION_BUILD');
 	}
 }
