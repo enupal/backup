@@ -5,10 +5,10 @@ use Craft;
 use craft\events\RegisterUrlRulesEvent;
 use craft\web\UrlManager;
 use yii\base\Event;
-use phpbu\App\Configuration;
-use phpbu\App\Runner;
 use craft\events\DefineComponentsEvent;
 use craft\web\twig\variables\CraftVariable;
+use craft\services\SystemMessages;
+use craft\events\RegisterEmailMessagesEvent;
 
 use enupal\backup\variables\BackupVariable;
 use enupal\backup\models\Settings;
@@ -44,6 +44,20 @@ class Backup extends \craft\base\Plugin
 			CraftVariable::EVENT_DEFINE_COMPONENTS,
 			function (DefineComponentsEvent $event) {
 					$event->components['enupalbackup'] = BackupVariable::class;
+			}
+		);
+
+		Event::on(
+			SystemMessages::class,
+			SystemMessages::EVENT_REGISTER_MESSAGES,
+			function (RegisterEmailMessagesEvent $event) {
+				array_push($event->messages,
+					[
+						'key'     => 'enupal_backup_notification',
+						'subject' => 'Backup process completed',
+						'body'    => 'We are happy to inform you that the backup process has been completed. Backup Id: {{backup.backupId}}'
+					]
+				);
 			}
 		);
 	}

@@ -18,6 +18,9 @@ use mikehaertl\shellcommand\Command as ShellCommand;
 use yii\base\Exception;
 use craft\helpers\Path;
 use craft\helpers\UrlHelper;
+use craft\mail\Message;
+use craft\models\MailSettings;
+use craft\helpers\MailerHelper;
 
 class Backups extends Component
 {
@@ -348,6 +351,52 @@ class Backups extends Component
 		}
 
 		return false;
+	}
+
+	/**
+	 * Enupal Backup send notification service
+	 *
+	 * @param $backup BackupElement
+	*/
+	public function sendNotification(BackupElement $backup)
+	{
+		$settings       = new MailSettings();
+		$backupSettings = Backup::$app->settings->getSettings();
+		$templatePath   = '_enupalBackupNotification/email';
+		$emailSettings  = Craft::$app->getSystemSettings()->getSettings('email');
+
+		$settings->fromEmail = $backupSettings->notificationSenderEmail;
+		$settings->fromName  = $backupSettings->notificationSenderName;
+		$settings->template  = $templatePath;
+		$settings->transportType = $emailSettings['transportType'];
+
+		$mailer  = MailerHelper::createMailer($settings);
+
+		$emails = explode(",", $backupSettings->notificationRecipients);
+
+		try
+		{
+			$emailSent = $mailer
+			->composeFromKey('enupal_backup_notification', ['backup' => $backup])
+			->setTo($emails)
+			->send();
+		}
+		catch (\Throwable $e)
+		{
+			Craft::$app->getErrorHandler()->logException($e);
+			$emailSent = false;
+		}
+
+		if ($emailSent)
+		{
+			Backup::info('Notification Email sent successfully!');
+		}
+		else
+		{
+			Backup::error('There was an error sending the Notification email');
+		}
+
+		return $emailSent;
 	}
 
 	/**

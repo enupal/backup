@@ -35,6 +35,9 @@
 			</li>
 			<li class="heading"><span>{{"Advanced"|t('enupal-backup') }}</span></li>
 			<li>
+				<a href="{{ cpUrl('enupal-backup/settings/notifications') }}" {% if selectedSidebarItem == 'notifications' %} class="sel" {% endif %}><i class="fa fa-envelope fa-fw" aria-hidden="true"></i>&nbsp;{{"Notifications"|t('enupal-backup')}}</a>
+			</li>
+			<li>
 				<a href="{{ cpUrl('enupal-backup/settings/security') }}" {% if selectedSidebarItem == 'security' %} class="sel" {% endif %}><i class="fa  fa-lock fa-fw" aria-hidden="true"></i>&nbsp;{{"Security"|t('enupal-backup')}}</a>
 			</li>
 			<li>
