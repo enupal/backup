@@ -362,7 +362,7 @@ class Backups extends Component
 	{
 		$settings       = new MailSettings();
 		$backupSettings = Backup::$app->settings->getSettings();
-		$templatePath   = Craft::getAlias('@enupal/backup/templates/_notification/email');
+		$templatePath   = '_enupalBackupNotification/email';
 		$emailSettings  = Craft::$app->getSystemSettings()->getSettings('email');
 
 		$settings->fromEmail = $backupSettings->notificationSenderEmail;
@@ -396,6 +396,7 @@ class Backups extends Component
 			Backup::error('There was an error sending the Notification email');
 		}
 
+		return $emailSent;
 	}
 
 	/**

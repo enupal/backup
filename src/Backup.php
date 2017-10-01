@@ -51,8 +51,12 @@ class Backup extends \craft\base\Plugin
 			SystemMessages::class,
 			SystemMessages::EVENT_REGISTER_MESSAGES,
 			function (RegisterEmailMessagesEvent $event) {
-				$event->messages = array_merge($event->messages,
-					['key' => 'enupal_backup_notification']
+				array_push($event->messages,
+					[
+						'key'     => 'enupal_backup_notification',
+						'subject' => 'Backup process completed',
+						'body'    => 'We are happy to inform you that the backup process has been completed. Backup Id: {{backup.backupId}}'
+					]
 				);
 			}
 		);
