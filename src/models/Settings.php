@@ -59,6 +59,13 @@ class Settings extends \craft\base\Model
 	// security
 	public $enableOpenssl   = 0;
 	public $opensslPassword = '';
+	// notification
+	public $enableNotification = '';
+	public $notificationRecipients = '';
+	public $notificationSubject = '';
+	public $notificationSenderName = '';
+	public $notificationSenderEmail = '';
+	public $notificationReplyToEmail = '';
 
 	/**
 	 * @inheritdoc
