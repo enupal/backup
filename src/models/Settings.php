@@ -62,7 +62,6 @@ class Settings extends \craft\base\Model
 	// notification
 	public $enableNotification = '';
 	public $notificationRecipients = '';
-	public $notificationSubject = '';
 	public $notificationSenderName = '';
 	public $notificationSenderEmail = '';
 	public $notificationReplyToEmail = '';

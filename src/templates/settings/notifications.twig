@@ -36,14 +36,6 @@
 	}) }}
 
 	{{ forms.textField({
-		label: "Subject"|t('enupal-backup'),
-		instructions: "The subject line of your notification email."|t('enupal-backup'),
-		name: 'notificationSubject',
-		value: settings.notificationSubject,
-		errors: (settings is defined ? settings.getErrors('notificationSubject') : null)
-	}) }}
-
-	{{ forms.textField({
 		label: "Sender Name"|t('enupal-backup'),
 		instructions: "The name of the sender of your notification email"|t('enupal-backup'),
 		name: 'notificationSenderName',
