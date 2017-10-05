@@ -9,6 +9,7 @@ use enupal\backup\elements\Backup as BackupElement;
 use enupal\backup\records\Backup as BackupRecord;
 use enupal\backup\models\Settings;
 use enupal\backup\enums\BackupStatus;
+use enupal\backup\jobs\CreateBackup;
 
 use craft\helpers\FileHelper;
 use craft\errors\ShellCommandException;
@@ -39,6 +40,52 @@ class Backups extends Component
 		{
 			$this->backupRecord = new BackupRecord();
 		}
+	}
+
+	/**
+	 * Execute Enupal Backup Job from the service layer
+	 * @return array
+	*/
+	public function executeEnupalBackup()
+	{
+		$success = false;
+		$response = [
+			'success' => true,
+			'message' => 'queued'
+		];
+
+		// Add our CreateBackup job to the queue
+		Craft::$app->queue->push(new CreateBackup());
+
+		// if is Linux try to call queue/run in background
+		if (!Backup::$app->settings->isWindows())
+		{
+			// listen by console
+			$shellCommand = new ShellCommand();
+			$craftPath    = CRAFT_BASE_PATH;
+			$phpPath      = Backup::$app->backups->getPhpPath();
+
+			$command = $phpPath.
+					' craft'.
+					' queue/run';
+			// linux
+			$command .= ' > /dev/null 2&1 &';
+			// windows does not work
+			//$command .= ' 1>> NUL 2>&1';
+			$shellCommand->setCommand($command);
+
+			//@todo requiere this in the docs
+			$shellCommand->useExec = true;
+
+			$success = $shellCommand->execute();
+
+			$response = [
+				'success' => $success,
+				'message' => 'running'
+			];
+		}
+
+		return $response;
 	}
 
 	/**
@@ -825,7 +872,7 @@ class Backups extends Component
 	 *                         to select from
 	 * @return string
 	 */
-	private function getRandomStr($length = 10, $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
+	public function getRandomStr($length = 10, $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
 	{
 		$str = '';
 		$max = mb_strlen($keyspace, '8bit') - 1;

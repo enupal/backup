@@ -8,7 +8,7 @@ use enupal\backup\Backup;
 
 class WebhookController extends BaseController
 {
-	protected $allowAnonymous = array('actionFinished');
+	protected $allowAnonymous = ['actionFinished', 'actionSchedule'];
 
 	/**
 	 * Webhook to listen when a backup process finish up
@@ -47,5 +47,37 @@ class WebhookController extends BaseController
 		}
 
 		return $this->asJson(['success'=>true]);
+	}
+
+	/**
+	 * Webhook to listen when a cronjob call EnupalBackup process
+	 * @param $backupId
+	 *
+	*/
+	public function actionSchedule()
+	{
+		$key      = Craft::$app->request->getParam('key');
+		$settings = Backup::$app->settings->getSettings();
+		$response = [
+			'success' => false
+		];
+
+		if ($settings->enableWebhook)
+		{
+			if ($key == $settings->webhookSecretKey && $settings->webhookSecretKey)
+			{
+				$response = Backup::$app->backups->executeEnupalBackup();
+			}
+			else
+			{
+				Backup::error("Wrong webhook key: ".$key);
+			}
+		}
+		else
+		{
+			Backup::error("Webhook is disabled");
+		}
+
+		return $this->asJson($response);
 	}
 }

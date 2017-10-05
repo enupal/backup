@@ -62,7 +62,7 @@ class Settings extends \craft\base\Model
 	public $enablePathToPgdump = '';
 	public $pathToPgdump = '';
 	// Webhook
-	public $webhookUrl = '';
+	public $enableWebhook = 0;
 	public $webhookSecretKey = '';
 	// security
 	public $enableOpenssl   = 0;

@@ -68,40 +68,9 @@ class BackupsController extends BaseController
 
 	public function actionRun()
 	{
-		// let's add the job if it's linux we can run it in background
-		Craft::$app->queue->push(new CreateBackup());
-		// We have a webhook so don't wait
-		$success = false;
-		$response = [
-			'success' => true,
-			'message' => 'queued'
-		];
+		$this->requirePostRequest();
 
-		if (!Backup::$app->settings->isWindows())
-		{
-			// listen by console
-			$shellCommand = new ShellCommand();
-			$craftPath    = CRAFT_BASE_PATH;
-			$phpPath      = Backup::$app->backups->getPhpPath();
-
-			$command = $phpPath.
-					' craft'.
-					' queue/run';
-			// linux
-			$command .= ' > /dev/null 2&1 &';
-			// windows does not work
-			//$command .= ' 1>> NUL 2>&1';
-			$shellCommand->setCommand($command);
-
-			//@todo requiere this in the docs
-			$shellCommand->useExec = true;
-
-			$success = $shellCommand->execute();
-			$response = [
-				'success' => $success,
-				'message' => 'running'
-			];
-		}
+		$response = Backup::$app->backups->executeEnupalBackup();
 
 		return $this->asJson($response);
 	}

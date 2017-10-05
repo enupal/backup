@@ -139,7 +139,10 @@ class Backup extends \craft\base\Plugin
 	{
 		return [
 			'enupal-backup/finished' =>
-			'enupal-backup/webhook/finished'
+			'enupal-backup/webhook/finished',
+
+			'enupal-backup/schedule' =>
+			'enupal-backup/webhook/schedule'
 		];
 	}
 }

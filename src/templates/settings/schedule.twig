@@ -1,0 +1,83 @@
+{% extends "enupal-backup/_layouts/settings" %}
+{% import "_includes/forms" as forms %}
+
+{% set settings = craft.enupalbackup.getSettings() %}
+{% set fullPageForm = true %}
+{% set saveShortcutRedirect = 'enupal-backup/settings/webhook' %}
+
+{% set saveButton %}
+	<div class="buttons">
+		<input class="btn submit" type="submit" value="{{ 'Save'|t }}">
+	</div>
+{% endset %}
+
+{% set content %}
+
+	<input type="hidden" name="action" value="enupal-backup/settings/save-settings">
+
+	<div id="settings-cp">
+
+		{% namespace 'settings' %}
+			{{ forms.field({
+				label: "Webhook"|t('enupal-backup')|upper,
+				instructions: ""|t('enupal-backup'),
+			}, null) }}
+			<hr>
+
+			{{ forms.lightswitchField({
+				label: "Enable Webhook"|t('enupal-backup'),
+				id: 'enableWebhook',
+				name: 'enableWebhook',
+				on: settings.enableWebhook,
+				onLabel: "On"|t('enupal-backup'),
+				offLabel: "Off"|t('enupal-backup'),
+				errors: settings.getErrors('enableWebhook')
+			}) }}
+
+			{{ forms.textField({
+					label: "Secret Key"|t('enupal-backup'),
+					instructions: "Secret key for webhook"|t('enupal-backup'),
+					id: 'webhookSecretKey',
+					name: 'webhookSecretKey',
+					value: settings.webhookSecretKey ? settings.webhookSecretKey :craft.enupalbackup.getSecretKey(),
+					autofocus: true,
+					required: true,
+					first: true,
+					errors: settings.getErrors('webhookSecretKey')
+			}) }}
+
+			<div class="example-contents">
+				<pre class="programlisting">
+# +------------------------- min (0 - 59)
+# |      +-------------------- hour (0 - 23)
+# |      |    +--------------- day of month (1 - 31)
+# |      |    |    +---------- month (1 - 12)
+# |      |    |    |    +----- day of week (0 - 7) (Sunday=0 or 7)
+# |      |    |    |    |
+# *      *    *    *    *
+
+# Enupal Backup Webhook
+10     3    *    *    *  wget {{siteUrl}}enupal-backup/schedule?key={{settings.webhookSecretKey}} >/dev/null 2>&1
+
+				</pre>
+		</div>
+		<br>
+		{% endnamespace %}
+		<hr>
+
+	</div>
+
+{% endset %}
+
+{% css %}
+
+{% endcss %}
+{% do view.registerAssetBundle("enupal\\backup\\assetbundles\\HighlightAsset") %}
+
+{% js %}
+	$(document).ready(function() {
+		$('pre.programlisting').each(function(i, block) {
+			hljs.highlightBlock(block);
+		});
+	});
+{% endjs %}

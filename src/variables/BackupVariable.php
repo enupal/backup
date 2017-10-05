@@ -79,5 +79,13 @@ class BackupVariable
 	{
 		return Backup::$app->settings->getAllLocalVolumes();
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getSecretKey()
+	{
+		return Backup::$app->backups->getRandomStr();
+	}
 }
 
