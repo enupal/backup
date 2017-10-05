@@ -14,6 +14,7 @@
 {% set content %}
 
 	<input type="hidden" name="action" value="enupal-backup/settings/save-settings">
+	<input type="hidden" name="backupScenario" value="encrypt">
 
 	<div id="settings-cp">
 
@@ -41,9 +42,7 @@
 				value: settings.opensslPassword,
 				type: "password",
 				required: true,
-				autofocus: true,
-				first: true,
-				errors: ''
+				errors: settings.getErrors('opensslPassword')
 			}) }}
 
 		{% endnamespace %}

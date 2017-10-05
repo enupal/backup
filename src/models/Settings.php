@@ -121,6 +121,12 @@ class Settings extends \craft\base\Model
 						return $model->enableNotification;
 				}
 			],
+			[
+				['opensslPassword'],
+				'required', 'on' => 'encrypt', 'when' => function($model) {
+						return $model->enableOpenssl;
+				}
+			],
 		];
 	}
 }
