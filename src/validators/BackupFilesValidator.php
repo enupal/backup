@@ -9,6 +9,7 @@ use Craft;
 class BackupFilesValidator extends Validator
 {
 	public $skipOnEmpty = false;
+
 	/**
 	 * At least one need to be enable
 	 */

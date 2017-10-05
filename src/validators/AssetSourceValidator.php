@@ -9,6 +9,7 @@ use Craft;
 class AssetSourceValidator extends Validator
 {
 	public $skipOnEmpty = false;
+
 	/**
 	 * At least one source
 	 */

@@ -3,6 +3,7 @@ namespace enupal\backup\models;
 
 use enupal\backup\validators\BackupFilesValidator;
 use enupal\backup\validators\AssetSourceValidator;
+use enupal\backup\validators\DropboxValidator;
 
 class Settings extends \craft\base\Model
 {
@@ -82,6 +83,10 @@ class Settings extends \craft\base\Model
 			[
 				['enableLocalVolumes'],
 				AssetSourceValidator::class, 'on' => 'backupFiles'
+			],
+			[
+				['dropboxToken'],
+				DropboxValidator::class, 'on' => 'dropbox'
 			],
 		];
 	}
