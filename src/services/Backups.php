@@ -443,8 +443,6 @@ class Backups extends Component
 		$backup->assetFileName    = $this->getEncryptFileName($encrypt, $backup->assetFileName);
 		$backup->templateFileName = $settings->enableTemplates ? $templateName : null;
 		$backup->templateFileName = $this->getEncryptFileName($encrypt, $backup->templateFileName);
-		$backup->pluginFileName   = $settings->enablePlugins ? $pluginName : null;
-		$backup->pluginFileName   = $this->getEncryptFileName($encrypt, $backup->pluginFileName);
 
 		if (!$this->saveBackup($backup))
 		{

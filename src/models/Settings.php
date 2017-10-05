@@ -1,15 +1,17 @@
 <?php
 namespace enupal\backup\models;
 
+use enupal\backup\validators\BackupFilesValidator;
+use enupal\backup\validators\AssetSourceValidator;
+
 class Settings extends \craft\base\Model
 {
 	// General
 	public $pluginNameOverride = '';
 	public $backupsAmount = 50;
 	public $deleteLocalBackupAfterUpload = 0;
-	// Plugins
-	public $enablePlugins  = 0;
-	public $plugins = '';
+	// Database by default
+	public $enableDatabase = 0;
 	// Templates
 	public $enableTemplates  = 0;
 	public $excludeTemplates = 'cpresources,';
@@ -72,7 +74,15 @@ class Settings extends \craft\base\Model
 	public function rules()
 	{
 		return [
-			['backupsAmount', 'integer', 'min' => 1]
+			['backupsAmount', 'integer', 'min' => 1, 'on' => 'general'],
+			[
+				['enableDatabase','enableTemplates', 'enableLocalVolumes'],
+				BackupFilesValidator::class, 'on' => 'backupFiles'
+			],
+			[
+				['enableLocalVolumes'],
+				AssetSourceValidator::class, 'on' => 'backupFiles'
+			],
 		];
 	}
 }
