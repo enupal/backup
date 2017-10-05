@@ -438,13 +438,13 @@ class Backups extends Component
 		$backups        = [];
 
 		// let's create the Backup Element
-		$backup->databaseFileName = $this->isEncrypt($encrypt, $dbFileName);
+		$backup->databaseFileName = $this->getEncryptFileName($encrypt, $dbFileName);
 		$backup->assetFileName    = $settings->enableLocalVolumes ? $assetName : null;
-		$backup->assetFileName    = $this->isEncrypt($encrypt, $backup->assetFileName);
+		$backup->assetFileName    = $this->getEncryptFileName($encrypt, $backup->assetFileName);
 		$backup->templateFileName = $settings->enableTemplates ? $templateName : null;
-		$backup->templateFileName = $this->isEncrypt($encrypt, $backup->templateFileName);
+		$backup->templateFileName = $this->getEncryptFileName($encrypt, $backup->templateFileName);
 		$backup->pluginFileName   = $settings->enablePlugins ? $pluginName : null;
-		$backup->pluginFileName   = $this->isEncrypt($encrypt, $backup->pluginFileName);
+		$backup->pluginFileName   = $this->getEncryptFileName($encrypt, $backup->pluginFileName);
 
 		if (!$this->saveBackup($backup))
 		{
@@ -694,7 +694,7 @@ class Backups extends Component
 		return true;
 	}
 
-	private function isEncrypt($encrypt, $fileName)
+	private function getEncryptFileName($encrypt, $fileName)
 	{
 		$enc = $encrypt ? '.enc' : '';
 		return $fileName.$enc;
@@ -719,13 +719,6 @@ class Backups extends Component
 			{
 				$encrypt['options']['pathToOpenSSL'] = $settings->pathToOpenssl;
 			}
-
-			if (Backup::$app->settings->isWindows())
-			{
-				// @todo report bug on phpbu, error on windows when try to delete
-				$encrypt['options']['keepUncrypted'] = true;
-			}
-
 		}
 
 		return $encrypt;
