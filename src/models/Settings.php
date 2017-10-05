@@ -6,6 +6,7 @@ use enupal\backup\validators\AssetSourceValidator;
 use enupal\backup\validators\DropboxValidator;
 use enupal\backup\validators\AmazonValidator;
 use enupal\backup\validators\FtpValidator;
+use enupal\backup\validators\SoftlayerValidator;
 
 class Settings extends \craft\base\Model
 {
@@ -97,6 +98,10 @@ class Settings extends \craft\base\Model
 			[
 				['enableFtp'],
 				FtpValidator::class, 'on' => 'ftp'
+			],
+			[
+				['enableSos'],
+				SoftlayerValidator::class, 'on' => 'sos'
 			],
 		];
 	}
