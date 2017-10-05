@@ -4,6 +4,7 @@ namespace enupal\backup\models;
 use enupal\backup\validators\BackupFilesValidator;
 use enupal\backup\validators\AssetSourceValidator;
 use enupal\backup\validators\DropboxValidator;
+use enupal\backup\validators\AmazonValidator;
 
 class Settings extends \craft\base\Model
 {
@@ -87,6 +88,10 @@ class Settings extends \craft\base\Model
 			[
 				['dropboxToken'],
 				DropboxValidator::class, 'on' => 'dropbox'
+			],
+			[
+				['enableAmazon'],
+				AmazonValidator::class, 'on' => 'amazon'
 			],
 		];
 	}
