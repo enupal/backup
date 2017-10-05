@@ -13,6 +13,7 @@
 
 {% set content %}
 <input type="hidden" name="action" value="enupal-backup/settings/save-settings">
+<input type="hidden" name="backupScenario" value="notification">
 <div id="settings-cp">
 	{% namespace 'settings' %}
 
@@ -23,7 +24,8 @@
 		name: 'enableNotification',
 		on: settings.enableNotification,
 		onLabel: "Enable",
-		offLabel: "Disable"
+		offLabel: "Disable",
+		errors: settings.getErrors('enableNotification')
 	}) }}
 
 	{{ forms.textField({

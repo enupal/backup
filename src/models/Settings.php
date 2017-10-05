@@ -7,6 +7,8 @@ use enupal\backup\validators\DropboxValidator;
 use enupal\backup\validators\AmazonValidator;
 use enupal\backup\validators\FtpValidator;
 use enupal\backup\validators\SoftlayerValidator;
+use enupal\backup\validators\NotificationValidator;
+use enupal\backup\validators\RecipientsValidator;
 
 class Settings extends \craft\base\Model
 {
@@ -102,6 +104,22 @@ class Settings extends \craft\base\Model
 			[
 				['enableSos'],
 				SoftlayerValidator::class, 'on' => 'sos'
+			],
+			[
+				['enableNotification'],
+				NotificationValidator::class, 'on' => 'notification'
+			],
+			[
+				['notificationSenderEmail', 'notificationReplyToEmail'],
+				'email', 'on' => 'notification', 'when' => function($model) {
+						return $model->enableNotification;
+				}
+			],
+			[
+				['notificationRecipients'],
+				RecipientsValidator::class, 'on' => 'notification', 'when' => function($model) {
+						return $model->enableNotification;
+				}
 			],
 		];
 	}
