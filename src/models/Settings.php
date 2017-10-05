@@ -5,6 +5,7 @@ use enupal\backup\validators\BackupFilesValidator;
 use enupal\backup\validators\AssetSourceValidator;
 use enupal\backup\validators\DropboxValidator;
 use enupal\backup\validators\AmazonValidator;
+use enupal\backup\validators\FtpValidator;
 
 class Settings extends \craft\base\Model
 {
@@ -92,6 +93,10 @@ class Settings extends \craft\base\Model
 			[
 				['enableAmazon'],
 				AmazonValidator::class, 'on' => 'amazon'
+			],
+			[
+				['enableFtp'],
+				FtpValidator::class, 'on' => 'ftp'
 			],
 		];
 	}
