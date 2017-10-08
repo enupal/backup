@@ -17,7 +17,7 @@ class Settings extends \craft\base\Model
 	public $backupsAmount = 50;
 	public $deleteLocalBackupAfterUpload = 0;
 	// Database by default
-	public $enableDatabase = 0;
+	public $enableDatabase = 1;
 	// Templates
 	public $enableTemplates  = 0;
 	public $excludeTemplates = 'cpresources,';

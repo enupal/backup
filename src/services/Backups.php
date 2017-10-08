@@ -515,46 +515,49 @@ class Backups extends Component
 		}
 
 		// DATABASE
-		$dbConfig = Craft::$app->getConfig()->getDb();
-
-		if ($dbConfig->driver == 'mysql')
+		if ($settings->enableDatabase)
 		{
-			$databaseBackup = [
-				'name'   => 'Database',
-				'source' => [
-					'type'   => 'mysqldump',
-					'options'       => [
-						'host'          => $dbConfig->server,
-						'databases'     => $dbConfig->database,
-						'user'          => $dbConfig->user,
-						'password'      => $dbConfig->password,
-						'port'          => $dbConfig->port
-						//'ignoreTable'   => 'tableFoo,tableBar',
-						//'structureOnly' => 'logTable1,logTable2'
+			$dbConfig = Craft::$app->getConfig()->getDb();
+
+			if ($dbConfig->driver == 'mysql')
+			{
+				$databaseBackup = [
+					'name'   => 'Database',
+					'source' => [
+						'type'   => 'mysqldump',
+						'options'       => [
+							'host'          => $dbConfig->server,
+							'databases'     => $dbConfig->database,
+							'user'          => $dbConfig->user,
+							'password'      => $dbConfig->password,
+							'port'          => $dbConfig->port
+							//'ignoreTable'   => 'tableFoo,tableBar',
+							//'structureOnly' => 'logTable1,logTable2'
+						]
+					],
+					'target' => [
+						'dirname' => $this->getDatabasePath(),
+						'filename' => $dbFileName
 					]
-				],
-				'target' => [
-					'dirname' => $this->getDatabasePath(),
-					'filename' => $dbFileName
-				]
-			];
+				];
 
-			if ($settings->enablePathToMysqldump && $settings->pathToMysqldump)
-			{
-				$databaseBackup['source']['options']['pathToMysqldump'] = $settings->pathToMysqldump;
+				if ($settings->enablePathToMysqldump && $settings->pathToMysqldump)
+				{
+					$databaseBackup['source']['options']['pathToMysqldump'] = $settings->pathToMysqldump;
+				}
+
+				if ($syncs)
+				{
+					$databaseBackup['syncs'] = $syncs;
+				}
+
+				if ($encrypt)
+				{
+					$databaseBackup['crypt'] = $encrypt;
+				}
+
+				$backups[] = $databaseBackup;
 			}
-
-			if ($syncs)
-			{
-				$databaseBackup['syncs'] = $syncs;
-			}
-
-			if ($encrypt)
-			{
-				$databaseBackup['crypt'] = $encrypt;
-			}
-
-			$backups[] = $databaseBackup;
 		}
 		// END DATABASE
 
