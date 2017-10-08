@@ -127,6 +127,12 @@ class Settings extends \craft\base\Model
 						return $model->enableOpenssl;
 				}
 			],
+			[
+				['webhookSecretKey'],
+				'required', 'on' => 'schedule', 'when' => function($model) {
+						return $model->enableWebhook;
+				}
+			],
 		];
 	}
 }
