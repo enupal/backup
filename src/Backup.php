@@ -67,6 +67,23 @@ class Backup extends \craft\base\Plugin
 		self::$app->backups->installDefaultValues();
 	}
 
+	/**
+	 * Performs actions before the plugin is Uninstalled.
+	 *
+	 * @return bool Whether the plugin should be Uninstalled
+	 */
+	protected function beforeUninstall(): bool
+	{
+		$backups = self::$app->backups->getAllBackups();
+
+		foreach ($backups as $key => $backup)
+		{
+			Craft::$app->elements->deleteElementById($backup->id);
+		}
+
+		return true;
+	}
+
 	protected function createSettingsModel()
 	{
 		return new Settings();

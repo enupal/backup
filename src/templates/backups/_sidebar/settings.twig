@@ -38,28 +38,39 @@
 				value: backup.getStatusName(),
 				disabled: true
 			}) }}
-		{% if backup.dropbox or backup.aws or backup.ftp or backup.softlayer %}
-			<div class="field enupal-field-heading"><i class="fa fa-cloud" aria-hidden="true"> {{'Cloud'|t('enupal-backup')}}</i></div>
-			<div class="field">
-				<div class="heading">
-					<label>{{"Uploaded to"|t('enupal-backup')}}</label>
+			{% if backup.isEncrypted %}
+
+				<div class="field" id="isEncrypted-field">
+					<div class="heading">
+						<label id="isEncrypted-label" for="isEncrypted">Encrypted</label>
+					</div>
+					<div class="input ltr">
+						<i class="fa fa-check-square-o fa-fw" aria-hidden="true"></i>
+					</div>
 				</div>
-				<div class="input ltr">
-					{% if backup.dropbox %}
-							<i title="Dropbox" class="fa fa-dropbox fa-fw" aria-hidden="true"></i>
-					{% endif %}
-					{% if backup.aws %}
-						<i title="Amazon S3" class="fa fa-amazon fa-fw" aria-hidden="true"></i>
-					{% endif %}
-					{% if backup.ftp %}
-						<i title="FTP" class="fa fa-folder-open fa-fw" aria-hidden="true"></i>
-					{% endif %}
-					{% if backup.softlayer %}
-						<i title="Softlayer Object Storage" class="fa fa-cloud fa-fw" aria-hidden="true"></i>
-					{% endif %}
+			{% endif %}
+			{% if backup.dropbox or backup.aws or backup.ftp or backup.softlayer %}
+				<div class="field enupal-field-heading"><i class="fa fa-cloud" aria-hidden="true"> {{'Cloud'|t('enupal-backup')}}</i></div>
+				<div class="field">
+					<div class="heading">
+						<label>{{"Uploaded to"|t('enupal-backup')}}</label>
+					</div>
+					<div class="input ltr">
+						{% if backup.dropbox %}
+								<i title="Dropbox" class="fa fa-dropbox fa-fw" aria-hidden="true"></i>
+						{% endif %}
+						{% if backup.aws %}
+							<i title="Amazon S3" class="fa fa-amazon fa-fw" aria-hidden="true"></i>
+						{% endif %}
+						{% if backup.ftp %}
+							<i title="FTP" class="fa fa-folder-open fa-fw" aria-hidden="true"></i>
+						{% endif %}
+						{% if backup.softlayer %}
+							<i title="Softlayer Object Storage" class="fa fa-cloud fa-fw" aria-hidden="true"></i>
+						{% endif %}
+					</div>
 				</div>
-			</div>
-		{% endif %}
+			{% endif %}
 	</div><!-- settings div -->
 
 </div>

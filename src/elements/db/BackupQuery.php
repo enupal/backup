@@ -86,6 +86,7 @@ class BackupQuery extends ElementQuery
 			'enupalbackup_backups.ftp',
 			'enupalbackup_backups.softlayer',
 			'enupalbackup_backups.logMessage',
+			'enupalbackup_backups.isEncrypted',
 		]);
 
 		if ($this->backupId) {

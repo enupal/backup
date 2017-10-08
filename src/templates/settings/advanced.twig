@@ -20,7 +20,7 @@
 		{% namespace 'settings' %}
 			{{ forms.field({
 				label: "Paths"|t('enupal-backup')|upper,
-				instructions: ""|t('enupal-backup'),
+				instructions: "Custom executable locations."|t('enupal-backup'),
 			}, null) }}
 			<hr>
 
@@ -37,7 +37,7 @@
 			<div id="settings-enablePathToTar" class="{% if not settings.enablePathToTar %}hidden{% endif %}">
 				{{ forms.textField({
 					label: "TAR path"|t('enupal-backup'),
-					instructions: "Path where the TAR lives"|t('enupal-backup'),
+					instructions: "Custom TAR executable location"|t('enupal-backup'),
 					id: 'pathToTar',
 					name: 'pathToTar',
 					value: settings.pathToTar,
@@ -60,7 +60,7 @@
 			<div id="settings-enablePathToPhp" class="{% if not settings.enablePathToPhp %}hidden{% endif %}">
 				{{ forms.textField({
 					label: "PHP Path"|t('enupal-backup'),
-					instructions: "Path where the PHP lives"|t('enupal-backup'),
+					instructions: "Custom PHP executable location"|t('enupal-backup'),
 					id: 'pathToPhp',
 					name: 'pathToPhp',
 					value: settings.pathToPhp,
@@ -83,7 +83,7 @@
 			<div id="settings-enablePathToOpenssl" class="{% if not settings.enablePathToOpenssl %}hidden{% endif %}">
 				{{ forms.textField({
 					label: "Openssl Path"|t('enupal-backup'),
-					instructions: "Path where the Openssl lives"|t('enupal-backup'),
+					instructions: "Custom Openssl executable location"|t('enupal-backup'),
 					id: 'pathToOpenssl',
 					name: 'pathToOpenssl',
 					value: settings.pathToOpenssl,
@@ -106,7 +106,7 @@
 			<div id="settings-enablePathToMysqldump" class="{% if not settings.enablePathToMysqldump %}hidden{% endif %}">
 				{{ forms.textField({
 					label: "MysqlDump Path"|t('enupal-backup'),
-					instructions: "Path where the MySqlDump lives"|t('enupal-backup'),
+					instructions: "Custom MySqlDump executable location"|t('enupal-backup'),
 					id: 'pathToMysqldump',
 					name: 'pathToMysqldump',
 					value: settings.pathToMysqldump,
@@ -129,7 +129,7 @@
 			<div id="settings-enablePathToPgdump" class="{% if not settings.enablePathToPgdump %}hidden{% endif %}">
 				{{ forms.textField({
 					label: "PgDump Path"|t('enupal-backup'),
-					instructions: "Path where the PgDump lives"|t('enupal-backup'),
+					instructions: "Custom PgDump executable location"|t('enupal-backup'),
 					id: 'pathToPgdump',
 					name: 'pathToPgdump',
 					value: settings.pathToPgdump,

@@ -45,6 +45,7 @@ class Backup extends Element
 	public $rsync = 0;
 	public $ftp = 0;
 	public $softlayer = 0;
+	public $isEncrypted = 0;
 	public $logMessage;
 
 	/**
@@ -289,6 +290,8 @@ class Backup extends Element
 					BackupPlugin::t('Started') :
 					BackupPlugin::t('Not defined');
 
+				$encryted = '&nbsp;<i class="fa fa-lock" aria-hidden="true"></i>';
+
 				if ($this->backupStatusId == BackupStatus::FINISHED)
 				{
 					$message = '<i class="fa fa-check-square-o" aria-hidden="true"></i>';
@@ -301,6 +304,12 @@ class Backup extends Element
 				{
 					$message = '<i class="fa fa-times" aria-hidden="true"></i>';
 				}
+
+				if ($this->isEncrypted)
+				{
+					$message .= $encryted;
+				}
+
 				return $message;
 			}
 			case 'dateCreated':
@@ -392,6 +401,7 @@ class Backup extends Element
 		$record->rsync            = $this->rsync;
 		$record->ftp              = $this->ftp;
 		$record->softlayer        = $this->softlayer;
+		$record->isEncrypted      = $this->isEncrypted;
 		$record->logMessage       = $this->logMessage;
 
 		$record->save(false);

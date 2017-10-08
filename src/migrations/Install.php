@@ -54,6 +54,7 @@ class Install extends Migration
 			'rsync'            => $this->boolean(),
 			'ftp'              => $this->boolean(),
 			'softlayer'        => $this->boolean(),
+			'isEncrypted'      => $this->boolean(),
 			'logMessage'       => $this->text(),
 			//
 			'dateCreated'   => $this->dateTime()->notNull(),

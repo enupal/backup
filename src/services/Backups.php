@@ -123,6 +123,18 @@ class Backups extends Component
 	}
 
 	/**
+	 * Returns all Backups
+	 *
+	 * @return null|BackupElement[]
+	 */
+	public function getAllBackups()
+	{
+		$query = BackupElement::find();
+
+		return $query->all();
+	}
+
+	/**
 	 * Returns all the Pending backups
 	 *
 	 * @return null|BackupElement[]
@@ -306,7 +318,7 @@ class Backups extends Component
 	{
 		// If the log have infomartion the backup is finished
 		$logPath  = $this->getLogPath($backup->backupId);
-		$log      = file_get_contents($logPath);
+		$log      = file_exists($logPath) ? file_get_contents($logPath) : null;
 		$settings = Backup::$app->settings->getSettings();
 
 		if ($log)
@@ -490,6 +502,11 @@ class Backups extends Component
 		$backup->assetFileName    = $this->getEncryptFileName($encrypt, $backup->assetFileName);
 		$backup->templateFileName = $settings->enableTemplates ? $templateName : null;
 		$backup->templateFileName = $this->getEncryptFileName($encrypt, $backup->templateFileName);
+
+		if ($encrypt)
+		{
+			$backup->isEncrypted = 1;
+		}
 
 		if (!$this->saveBackup($backup))
 		{
@@ -742,7 +759,13 @@ class Backups extends Component
 	private function getEncryptFileName($encrypt, $fileName)
 	{
 		$enc = $encrypt ? '.enc' : '';
-		return $fileName.$enc;
+
+		if ($fileName)
+		{
+			$fileName .= $enc;
+		}
+
+		return $fileName;
 	}
 
 	private function getEncrypt()
