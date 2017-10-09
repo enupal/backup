@@ -497,6 +497,10 @@ class Backups extends Component
 		$backups        = [];
 
 		// let's create the Backup Element
+		if (!Backup::$app->settings->isWindows())
+		{
+			$backup->databaseFileName = $dbFileName.'.bz2';
+		}
 		$backup->databaseFileName = $this->getEncryptFileName($encrypt, $dbFileName);
 		$backup->assetFileName    = $settings->enableLocalVolumes ? $assetName : null;
 		$backup->assetFileName    = $this->getEncryptFileName($encrypt, $backup->assetFileName);
