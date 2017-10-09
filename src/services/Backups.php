@@ -64,12 +64,13 @@ class Backups extends Component
 			$shellCommand = new ShellCommand();
 			$craftPath    = CRAFT_BASE_PATH;
 			$phpPath      = Backup::$app->backups->getPhpPath();
-
-			$command = $phpPath.
+			$command = 'cd'.
+				' '.$craftPath;
+			$command .= ' && '.$phpPath.
 					' craft'.
 					' queue/run';
 			// linux
-			$command .= ' > /dev/null 2>&1';
+			$command .= ' > /dev/null 2&1 &';
 			// windows does not work
 			//$command .= ' 1>> NUL 2>&1';
 			$shellCommand->setCommand($command);
