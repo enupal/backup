@@ -69,7 +69,7 @@ class Backups extends Component
 					' craft'.
 					' queue/run';
 			// linux
-			$command .= ' > /dev/null 2&1 &';
+			$command .= ' > /dev/null 2>&1';
 			// windows does not work
 			//$command .= ' 1>> NUL 2>&1';
 			$shellCommand->setCommand($command);
