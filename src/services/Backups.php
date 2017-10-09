@@ -501,7 +501,7 @@ class Backups extends Component
 		{
 			$backup->databaseFileName = $dbFileName.'.bz2';
 		}
-		$backup->databaseFileName = $this->getEncryptFileName($encrypt, $dbFileName);
+		$backup->databaseFileName = $this->getEncryptFileName($encrypt, $backup->databaseFileName);
 		$backup->assetFileName    = $settings->enableLocalVolumes ? $assetName : null;
 		$backup->assetFileName    = $this->getEncryptFileName($encrypt, $backup->assetFileName);
 		$backup->templateFileName = $settings->enableTemplates ? $templateName : null;
