@@ -64,8 +64,9 @@ class Backups extends Component
 			$shellCommand = new ShellCommand();
 			$craftPath    = CRAFT_BASE_PATH;
 			$phpPath      = Backup::$app->backups->getPhpPath();
-
-			$command = $phpPath.
+			$command = 'cd'.
+				' '.$craftPath;
+			$command .= ' && '.$phpPath.
 					' craft'.
 					' queue/run';
 			// linux
@@ -497,7 +498,14 @@ class Backups extends Component
 		$backups        = [];
 
 		// let's create the Backup Element
-		$backup->databaseFileName = $this->getEncryptFileName($encrypt, $dbFileName);
+		$backup->databaseFileName = $dbFileName;
+
+		if (!Backup::$app->settings->isWindows())
+		{
+			$backup->databaseFileName .= '.bz2';
+		}
+
+		$backup->databaseFileName = $this->getEncryptFileName($encrypt, $backup->databaseFileName);
 		$backup->assetFileName    = $settings->enableLocalVolumes ? $assetName : null;
 		$backup->assetFileName    = $this->getEncryptFileName($encrypt, $backup->assetFileName);
 		$backup->templateFileName = $settings->enableTemplates ? $templateName : null;
@@ -536,7 +544,7 @@ class Backups extends Component
 						]
 					],
 					'target' => [
-						'dirname' => $this->getDatabasePath(),
+						'dirname'  => $this->getDatabasePath(),
 						'filename' => $dbFileName
 					]
 				];
@@ -554,6 +562,12 @@ class Backups extends Component
 				if ($encrypt)
 				{
 					$databaseBackup['crypt'] = $encrypt;
+				}
+
+				// Compress on linux
+				if (!Backup::$app->settings->isWindows())
+				{
+					$databaseBackup['target']['compress'] = 'bzip2';
 				}
 
 				$backups[] = $databaseBackup;
