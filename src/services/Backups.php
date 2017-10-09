@@ -536,7 +536,7 @@ class Backups extends Component
 						]
 					],
 					'target' => [
-						'dirname' => $this->getDatabasePath(),
+						'dirname'  => $this->getDatabasePath(),
 						'filename' => $dbFileName
 					]
 				];
@@ -554,6 +554,12 @@ class Backups extends Component
 				if ($encrypt)
 				{
 					$databaseBackup['crypt'] = $encrypt;
+				}
+
+				// Compress on linux
+				if (!Backup::$app->settings->isWindows())
+				{
+					$databaseBackup['target']['compress'] = 'bzip2';
 				}
 
 				$backups[] = $databaseBackup;
