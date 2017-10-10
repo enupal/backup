@@ -526,52 +526,55 @@ class Backups extends Component
 		if ($settings->enableDatabase)
 		{
 			$dbConfig = Craft::$app->getConfig()->getDb();
+			$dbType = $dbConfig->driver == 'mysql' ? 'mysqldump' : 'pgdump';
 
-			if ($dbConfig->driver == 'mysql')
-			{
-				$databaseBackup = [
-					'name'   => 'Database',
-					'source' => [
-						'type'   => 'mysqldump',
-						'options'       => [
-							'host'          => $dbConfig->server,
-							'databases'     => $dbConfig->database,
-							'user'          => $dbConfig->user,
-							'password'      => $dbConfig->password,
-							'port'          => $dbConfig->port
-							//'ignoreTable'   => 'tableFoo,tableBar',
-							//'structureOnly' => 'logTable1,logTable2'
-						]
-					],
-					'target' => [
-						'dirname'  => $this->getDatabasePath(),
-						'filename' => $dbFileName
+			$databaseBackup = [
+				'name'   => 'Database',
+				'source' => [
+					'type'   => $dbType,
+					'options'       => [
+						'host'          => $dbConfig->server,
+						'databases'     => $dbConfig->database,
+						'user'          => $dbConfig->user,
+						'password'      => $dbConfig->password,
+						'port'          => $dbConfig->port
+						//'ignoreTable'   => 'tableFoo,tableBar',
+						//'structureOnly' => 'logTable1,logTable2'
 					]
-				];
+				],
+				'target' => [
+					'dirname'  => $this->getDatabasePath(),
+					'filename' => $dbFileName
+				]
+			];
 
-				if ($settings->enablePathToMysqldump && $settings->pathToMysqldump)
-				{
-					$databaseBackup['source']['options']['pathToMysqldump'] = $settings->pathToMysqldump;
-				}
-
-				if ($syncs)
-				{
-					$databaseBackup['syncs'] = $syncs;
-				}
-
-				if ($encrypt)
-				{
-					$databaseBackup['crypt'] = $encrypt;
-				}
-
-				// Compress on linux
-				if (!Backup::$app->settings->isWindows())
-				{
-					$databaseBackup['target']['compress'] = 'bzip2';
-				}
-
-				$backups[] = $databaseBackup;
+			if ($settings->enablePathToMysqldump && $settings->pathToMysqldump && $dbType == 'mysqldump')
+			{
+				$databaseBackup['source']['options']['pathToMysqldump'] = $settings->pathToMysqldump;
 			}
+
+			if ($settings->enablePathToPgdump && $settings->pathToPgdump && $dbType == 'pgdump')
+			{
+				$databaseBackup['source']['options']['pathToPgdump'] = $settings->enablePathToPgdump;
+			}
+
+			if ($syncs)
+			{
+				$databaseBackup['syncs'] = $syncs;
+			}
+
+			if ($encrypt)
+			{
+				$databaseBackup['crypt'] = $encrypt;
+			}
+
+			// Compress on linux
+			if (!Backup::$app->settings->isWindows())
+			{
+				$databaseBackup['target']['compress'] = 'bzip2';
+			}
+
+			$backups[] = $databaseBackup;
 		}
 		// END DATABASE
 
