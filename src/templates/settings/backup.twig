@@ -36,6 +36,19 @@
 				errors: settings.getErrors('enableDatabase'),
 			}) }}
 
+			<div id="settings-enableDatabase" class="{% if not settings.enableDatabase %}hidden{% endif %}">
+				{{ forms.textField({
+					label: "Structure Only"|t('enupal-backup'),
+					instructions: "Comma separated list of tables where only the table structure will be stored."|t('enupal-backup'),
+					id: 'excludeData',
+					name: 'excludeData',
+					value: settings.excludeData,
+					autofocus: true,
+					first: true,
+					errors: ''
+				}) }}
+			</div>
+
 			<hr>
 			{{ forms.lightswitchField({
 				label: "Templates"|t('enupal-backup'),

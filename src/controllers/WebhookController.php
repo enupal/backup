@@ -39,7 +39,7 @@ class WebhookController extends BaseController
 			}
 
 			Backup::$app->backups->checkBackupsAmount();
-			Backup::$app->backups->deleteConfigFile();
+			#Backup::$app->backups->deleteConfigFile();
 		}
 		else
 		{

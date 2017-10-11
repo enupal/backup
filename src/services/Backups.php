@@ -527,6 +527,24 @@ class Backups extends Component
 		{
 			$dbConfig = Craft::$app->getConfig()->getDb();
 			$dbType = $dbConfig->driver == 'mysql' ? 'mysqldump' : 'pgdump';
+			$dbSchema = Craft::$app->getDb()->getSchema();
+
+			$excludeTables = explode(",", $settings->excludeData);
+			$ignoreTables  = '';
+
+			foreach ($excludeTables as $key => $excludeTable)
+			{
+				$excludeTable = $dbConfig->database.'.'.$dbSchema->getRawTableName('{{%'.trim($excludeTable).'}}');
+
+				if ($key == 0)
+				{
+					$ignoreTables .= $excludeTable;
+				}
+				else
+				{
+					$ignoreTables .= ','.$excludeTable;
+				}
+			}
 
 			$databaseBackup = [
 				'name'   => 'Database',
@@ -538,8 +556,6 @@ class Backups extends Component
 						'user'          => $dbConfig->user,
 						'password'      => $dbConfig->password,
 						'port'          => $dbConfig->port
-						//'ignoreTable'   => 'tableFoo,tableBar',
-						//'structureOnly' => 'logTable1,logTable2'
 					]
 				],
 				'target' => [
@@ -551,11 +567,13 @@ class Backups extends Component
 			if ($settings->enablePathToMysqldump && $settings->pathToMysqldump && $dbType == 'mysqldump')
 			{
 				$databaseBackup['source']['options']['pathToMysqldump'] = $settings->pathToMysqldump;
+				$databaseBackup['source']['options']['structureOnly'] = $ignoreTables;
 			}
 
 			if ($settings->enablePathToPgdump && $settings->pathToPgdump && $dbType == 'pgdump')
 			{
 				$databaseBackup['source']['options']['pathToPgdump'] = $settings->enablePathToPgdump;
+				$databaseBackup['source']['options']['excludeTableData'] = $ignoreTables;
 			}
 
 			if ($syncs)

@@ -18,6 +18,7 @@ class Settings extends \craft\base\Model
 	public $deleteLocalBackupAfterUpload = 0;
 	// Database by default
 	public $enableDatabase = 1;
+	public $excludeData    = 'assetindexdata, assettransformindex, cache, sessions, templatecaches, templatecachecriteria, templatecacheelements';
 	// Templates
 	public $enableTemplates  = 0;
 	public $excludeTemplates = 'cpresources,';
