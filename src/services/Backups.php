@@ -552,7 +552,6 @@ class Backups extends Component
 					'type'   => $dbType,
 					'options'       => [
 						'host'          => $dbConfig->server,
-						'databases'     => $dbConfig->database,
 						'user'          => $dbConfig->user,
 						'password'      => $dbConfig->password,
 						'port'          => $dbConfig->port
@@ -567,6 +566,7 @@ class Backups extends Component
 			if ($dbType == 'mysqldump')
 			{
 				$databaseBackup['source']['options']['structureOnly'] = $ignoreTables;
+				$databaseBackup['source']['options']['databases'] = $dbConfig->database;
 
 				if ($settings->enablePathToMysqldump && $settings->pathToMysqldump)
 				{
@@ -577,6 +577,7 @@ class Backups extends Component
 			if ($dbType == 'pgdump')
 			{
 				$databaseBackup['source']['options']['excludeTableData'] = $ignoreTables;
+				$databaseBackup['source']['options']['database']         = $dbConfig->database;
 
 				if ($settings->enablePathToPgdump && $settings->pathToPgdump)
 				{
