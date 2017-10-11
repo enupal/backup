@@ -564,16 +564,24 @@ class Backups extends Component
 				]
 			];
 
-			if ($settings->enablePathToMysqldump && $settings->pathToMysqldump && $dbType == 'mysqldump')
+			if ($dbType == 'mysqldump')
 			{
-				$databaseBackup['source']['options']['pathToMysqldump'] = $settings->pathToMysqldump;
 				$databaseBackup['source']['options']['structureOnly'] = $ignoreTables;
+
+				if ($settings->enablePathToMysqldump && $settings->pathToMysqldump)
+				{
+					$databaseBackup['source']['options']['pathToMysqldump'] = $settings->pathToMysqldump;
+				}
 			}
 
-			if ($settings->enablePathToPgdump && $settings->pathToPgdump && $dbType == 'pgdump')
+			if ($dbType == 'pgdump')
 			{
-				$databaseBackup['source']['options']['pathToPgdump'] = $settings->enablePathToPgdump;
 				$databaseBackup['source']['options']['excludeTableData'] = $ignoreTables;
+
+				if ($settings->enablePathToPgdump && $settings->pathToPgdump)
+				{
+					$databaseBackup['source']['options']['pathToPgdump'] = $settings->enablePathToPgdump;
+				}
 			}
 
 			if ($syncs)
