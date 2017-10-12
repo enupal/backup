@@ -11,13 +11,15 @@ use craft\elements\Asset;
 use craft\helpers\Json;
 use craft\helpers\Template as TemplateHelper;
 use yii\base\Exception;
+use yii\base\ErrorException;
+use craft\helpers\FileHelper;
+use craft\errors\ShellCommandException;
+use mikehaertl\shellcommand\Command as ShellCommand;
+use ZipArchive;
 
 use enupal\backup\jobs\CreateBackup;
 use enupal\backup\enums\BackupStatus;
 use enupal\backup\Backup;
-
-use mikehaertl\shellcommand\Command as ShellCommand;
-use craft\errors\ShellCommandException;
 
 class BackupsController extends BaseController
 {
@@ -37,14 +39,58 @@ class BackupsController extends BaseController
 
 			switch ($type)
 			{
+				case 'all':
+
+					$zipPath = Craft::$app->getPath()->getTempPath().DIRECTORY_SEPARATOR.$backup->backupId.'.zip';
+
+					if (is_file($zipPath))
+					{
+						try
+						{
+							FileHelper::removeFile($zipPath);
+						}
+						catch (ErrorException $e)
+						{
+							Backup::error("Unable to delete the file \"{$zipPath}\": ".$e->getMessage());
+						}
+					}
+
+					$zip = new ZipArchive();
+
+					if ($zip->open($zipPath, ZipArchive::CREATE) !== true) {
+						throw new Exception('Cannot create zip at '.$zipPath);
+					}
+
+					if ($backup->getDatabaseFile())
+					{
+						$filename = pathinfo($backup->getDatabaseFile(), PATHINFO_BASENAME);
+
+						$zip->addFile($backup->getDatabaseFile(), $filename);
+					}
+
+					if ($backup->getTemplateFile())
+					{
+						$filename = pathinfo($backup->getTemplateFile(), PATHINFO_BASENAME);
+
+						$zip->addFile($backup->getTemplateFile(), $filename);
+					}
+
+					if ($backup->getAssetFile())
+					{
+						$filename = pathinfo($backup->getAssetFile(), PATHINFO_BASENAME);
+
+						$zip->addFile($backup->getAssetFile(), $filename);
+					}
+
+					$zip->close();
+
+					$filePath = $zipPath;
+					break;
 				case 'database':
 					$filePath = $backup->getDatabaseFile();
 					break;
 				case 'template':
 					$filePath = $backup->getTemplateFile();
-					break;
-				case 'plugin':
-					$filePath = $backup->getPluginFile();
 					break;
 				case 'asset':
 					$filePath = $backup->getAssetFile();

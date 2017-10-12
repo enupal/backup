@@ -16,15 +16,23 @@
 
 {% set title = 'Backup: '~backup.backupId %}
 
-{% set fullPageForm = true %}
+{% set fullPageForm = false %}
 
-{% block saveButton %}
+{% set extraPageHeaderHtml %}
 	{% if backup.backupStatusId == 2 %}
-		<input type="hidden" name="action" value="enupal-slider/backups/download-all">
-		{{ redirectInput('enupal-backup/backup/view/'~backup.id) }}
-		<input type="hidden" id="backupId" name="id" value="{{ backup.id is defined ? backup.id : '' }}">
+	<div class="bootstrap-iso downloads-content">
+		<form id="database-template" method="post" accept-charset="UTF-8">
+			<input type="hidden" name="action" value="enupal-backup/backups/download">
+			<input type="hidden" name="type" value="all">
+			<input type="hidden" name="backupId" value="{{backup.id}}">
+			{{ csrfInput() }}
+			<button type="submit" class="bbtn bbtn-success-craft btn-full">
+				<i class="fa fa-cloud-download fa-lg"></i> <b>Download All</b>
+			</button>
+		</form>
+	</div>
 	{%endif%}
-{% endblock %}
+{% endset %}
 
 {% block main %}
 
@@ -62,12 +70,12 @@
 														<input type="hidden" name="type" value="database">
 														<input type="hidden" name="backupId" value="{{backup.id}}">
 														{{ csrfInput() }}
-														<button type="submit" class="bbtn bbtn-success btn-full">
+														<button type="submit" class="bbtn bbtn-success-craft btn-full">
 															<i class="fa fa-cloud-download fa-lg"></i> <b>Download</b>
 														</button>
 													</form>
 													<p class="intro">{% if backup.backupStatusId %}
-													<h4><span class="label label-info">Size: {{craft.enupalbackup.getSizeFormatted(backup.databaseSize)}}</span></h4>
+													<h4><span class="label label-success">Size: {{craft.enupalbackup.getSizeFormatted(backup.databaseSize)}}</span></h4>
 												{% endif %}</p>
 												</div><!--//item-inner-->
 											</div><!--//item-->
@@ -85,12 +93,12 @@
 														<input type="hidden" name="type" value="template">
 														<input type="hidden" name="backupId" value="{{backup.id}}">
 														{{ csrfInput() }}
-														<button type="submit" class="bbtn bbtn-success btn-full">
+														<button type="submit" class="bbtn bbtn-success-craft btn-full">
 															<i class="fa fa-cloud-download fa-lg"></i> <b>Download</b>
 														</button>
 													</form>
 													<p class="intro">{% if backup.backupStatusId %}
-													<h4><span class="label label-info">Size: {{craft.enupalbackup.getSizeFormatted(backup.templateSize)}}</span></h4>
+													<h4><span class="label label-success">Size: {{craft.enupalbackup.getSizeFormatted(backup.templateSize)}}</span></h4>
 												{% endif %}</p>
 												</div><!--//item-inner-->
 											</div><!--//item-->
@@ -107,12 +115,12 @@
 														<input type="hidden" name="type" value="plugin">
 														<input type="hidden" name="backupId" value="{{backup.id}}">
 														{{ csrfInput() }}
-														<button type="submit" class="bbtn bbtn-success btn-full">
+														<button type="submit" class="bbtn bbtn-success-craft btn-full">
 															<i class="fa fa-cloud-download fa-lg"></i> <b>Download</b>
 														</button>
 													</form>
 													<p class="intro">{% if backup.backupStatusId %}
-													<h4><span class="label label-info">Size: {{craft.enupalbackup.getSizeFormatted(backup.pluginSize)}}</span></h4>
+													<h4><span class="label label-success">Size: {{craft.enupalbackup.getSizeFormatted(backup.pluginSize)}}</span></h4>
 												{% endif %}</p>
 												</div><!--//item-inner-->
 											</div><!--//item-->
@@ -134,7 +142,7 @@
 														</button>
 													</form>
 													<p class="intro">{% if backup.backupStatusId %}
-													<h4><span class="label label-info">Size: {{craft.enupalbackup.getSizeFormatted(backup.assetSize)}}</span></h4>
+													<h4><span class="label label-success">Size: {{craft.enupalbackup.getSizeFormatted(backup.assetSize)}}</span></h4>
 												{% endif %}</p>
 												</div><!--//item-inner-->
 											</div><!--//item-->

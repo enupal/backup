@@ -3234,7 +3234,22 @@
 .bootstrap-iso .bbtn-success {
   color: #ffffff;
   background-color: #5cb85c;
-  border-color: #4cae4c;
+  border-color: #cc5643;
+}
+.bootstrap-iso .bbtn-success-craft {
+  color: #ffffff;
+  background-color: #da5a47;
+  border-color: #cc5643;
+}
+.bootstrap-iso .bbtn-success-craft:hover,
+.bootstrap-iso .bbtn-success-craft:focus,
+.bootstrap-iso .bbtn-success-craft.focus,
+.bootstrap-iso .bbtn-success-craft:active,
+.bootstrap-iso .bbtn-success-craft.active,
+.bootstrap-iso .open > .dropdown-toggle.bbtn-success-craft {
+  color: #ffffff;
+  background-color: #da3a47;
+  border-color: #cc5643;
 }
 .bootstrap-iso .bbtn-success:hover,
 .bootstrap-iso .bbtn-success:focus,
