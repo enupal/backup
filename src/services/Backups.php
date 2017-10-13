@@ -739,8 +739,46 @@ class Backups extends Component
 		else
 		{
 			// File not found.
-			BackupPlugin::error(BackupPlugin::t('Unable to delete the config file'));
+			Backup::error(Backup::t('Unable to delete the config file'));
 		}
+	}
+
+	/**
+	 * Removes a backup and related files
+	 *
+	 * @param BackupElement $backup
+	 *
+	 * @throws \CDbException
+	 * @throws \Exception
+	 * @return boolean
+	 */
+	public function deleteBackup(BackupElement $backup)
+	{
+		$transaction = Craft::$app->db->beginTransaction();
+
+		try
+		{
+			// Delete the Element and Backup
+			$success = Craft::$app->elements->deleteElementById($backup->id);
+
+			if (!$success)
+			{
+				$transaction->rollback();
+				Backup::error("Couldn’t delete Backup on deletebackup service.");
+
+				return false;
+			}
+
+			$transaction->commit();
+		}
+		catch (\Exception $e)
+		{
+			$transaction->rollback();
+
+			throw $e;
+		}
+
+		return true;
 	}
 
 	/**

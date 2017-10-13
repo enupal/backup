@@ -189,12 +189,21 @@ class BackupsController extends BaseController
 
 		$request = Craft::$app->getRequest();
 
-		$sliderId = $request->getRequiredBodyParam('id');
-		$slider   = Backup::$app->backups->getBackupById($sliderId);
+		$backupId = $request->getRequiredBodyParam('id');
+		$backup   = Backup::$app->backups->getBackupById($backupId);
 
 		// @TODO - handle errors
-		$success = Backup::$app->backups->deleteBackup($slider);
+		$success = Backup::$app->backups->deleteBackup($backup);
 
-		return $this->redirectToPostedUrl($form);
+		if($success)
+		{
+			Craft::$app->getSession()->setNotice(Backup::t('Backup deleted.'));
+		}
+		else
+		{
+			Craft::$app->getSession()->setNotice(Backup::t('Couldn’t delete backup.'));
+		}
+
+		return $this->redirectToPostedUrl($backup);
 	}
 }

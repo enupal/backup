@@ -192,6 +192,19 @@
 		<div class="item" data-position="right" data-colspan="1">
 			<div class="pane meta">
 				{% include 'enupal-backup/backups/_sidebar/settings' %}
+
+				<div class="deletebackup field">
+					<div class="heading"></div>
+					<div class="input">
+						<div class="right">
+							<form method="post" accept-charset="UTF-8">
+							{{ csrfInput() }}
+							<input type="hidden" name="id" value="{{backup.id}}">
+							<input type="button" class="btn small formsubmit" value="Delete" data-action="enupal-backup/backups/delete-backup" data-confirm="Are you sure you want to delete this backup, all of it's files, and all of it's data?" data-redirect="{{('enupal-backup/backups')|hash}}">
+							</form>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
