@@ -27,8 +27,8 @@ class Settings extends \craft\base\Model
 	public $volumes            = '';
 	// Dropbox 	Api
 	public $enableDropbox = 0;
-	public $dropboxToken = '';
-	public $dropboxPath  = '/enupalbackup/';
+	public $dropboxToken  = '';
+	public $dropboxPath   = '/enupalbackup/';
 	// Amazon S3 Api
 	public $enableAmazon = 0;
 	public $amazonKey    = '';
@@ -52,27 +52,27 @@ class Settings extends \craft\base\Model
 	public $sosContainer = '';
 	public $sosPath      = '/enupalbackup/';
 	// Advanced
-	public $enablePathToTar = 0;
-	public $pathToTar       = '';
-	public $enablePathToPhp = '';
-	public $pathToPhp = '';
+	public $enablePathToTar       = 0;
+	public $pathToTar             = '';
+	public $enablePathToPhp       = '';
+	public $pathToPhp             = '';
 	public $enablePathToMysqldump = '';
-	public $pathToMysqldump = '';
-	public $enablePathToOpenssl = '';
-	public $pathToOpenssl = '';
-	public $enablePathToPgdump = '';
-	public $pathToPgdump = '';
+	public $pathToMysqldump       = '';
+	public $enablePathToOpenssl   = '';
+	public $pathToOpenssl         = '';
+	public $enablePathToPgdump    = '';
+	public $pathToPgdump          = '';
 	// Webhook
-	public $enableWebhook = 0;
+	public $enableWebhook    = 0;
 	public $webhookSecretKey = '';
 	// security
 	public $enableOpenssl   = 0;
 	public $opensslPassword = '';
 	// notification
-	public $enableNotification = '';
-	public $notificationRecipients = '';
-	public $notificationSenderName = '';
-	public $notificationSenderEmail = '';
+	public $enableNotification       = '';
+	public $notificationRecipients   = '';
+	public $notificationSenderName   = '';
+	public $notificationSenderEmail  = '';
 	public $notificationReplyToEmail = '';
 
 	/**
