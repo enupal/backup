@@ -41,8 +41,7 @@
 		<div class="item" data-position="left" data-min-colspan="2" data-max-colspan="3">
 			<div id="fields" class="pane">
 				<div class="bootstrap-iso downloads-content">
-					<div class="container-fluid">
-						<div class="row">
+					<div class="row">
 						{% set titleHeader = "<i class='fa fa-check-square-o' aria-hidden='true'></i> "~"Download Section"|t('enupal-backup') %}
 
 						{% if backup.backupStatusId == 1 %} {% set titleHeader = "<i class='fa fa-circle-o-notch fa-spin fa fa-fw'></i> Backup it's still running, but you can download local files" %} {% elseif backup.backupStatusId == 3  %} {% set titleHeader =  "<i class='fa fa-times' aria-hidden='true'></i> An error occurred during Backup: "%} {% endif %}
@@ -75,7 +74,7 @@
 														</button>
 													</form>
 													<p class="intro">{% if backup.backupStatusId %}
-													<h4><span class="label label-success">Size: {{craft.enupalbackup.getSizeFormatted(backup.databaseSize)}}</span></h4>
+													<h4><span style="font-size:12px;" class="label label-success"> {{craft.enupalbackup.getSizeFormatted(backup.databaseSize)}}</span></h4>
 												{% endif %}</p>
 												</div><!--//item-inner-->
 											</div><!--//item-->
@@ -98,7 +97,7 @@
 														</button>
 													</form>
 													<p class="intro">{% if backup.backupStatusId %}
-													<h4><span class="label label-success">Size: {{craft.enupalbackup.getSizeFormatted(backup.templateSize)}}</span></h4>
+													<h4><span style="font-size:12px;" class="label label-success"> {{craft.enupalbackup.getSizeFormatted(backup.templateSize)}}</span></h4>
 												{% endif %}</p>
 												</div><!--//item-inner-->
 											</div><!--//item-->
@@ -187,7 +186,6 @@
 							</div><!--//container-->
 						</section><!--//cards-section-->
 						</div>
-					</div>
 				</div>
 			</div>
 		</div>

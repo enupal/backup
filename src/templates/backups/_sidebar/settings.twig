@@ -31,13 +31,15 @@
 				}) }}
 			{% endif %}
 
-			{{ forms.textField({
-				label: "Status"|t('enupal-backup'),
-				id: 'status',
-				name: 'status',
-				value: backup.getStatusName(),
-				disabled: true
-			}) }}
+			<div class="field" id="isEncrypted-field">
+				<div class="heading">
+					<label id="isEncrypted-label" for="isEncrypted">{{"Status"|t('enupal-backup')}}</label>
+				</div>
+				<div class="input ltr">
+					{% set labelColor =  backup.backupStatusId == 2 ? 'success' : backup.backupStatusId == 3 ? 'danger' : backup.backupStatusId == 1 ? 'info' : 'warning' %}
+					<div class="bootstrap-iso"><span class="label label-{{labelColor}}">{{backup.getStatusName()}}</span></div>
+				</div>
+			</div>
 			{% if backup.isEncrypted %}
 
 				<div class="field" id="isEncrypted-field">
