@@ -338,9 +338,9 @@ class Backups extends Component
 				$backup->templateSize = filesize($backup->getTemplateFile());
 			}
 
-			if (is_file($backup->getPluginFile()))
+			if (is_file($backup->getLogFile()))
 			{
-				$backup->pluginSize = filesize($backup->getPluginFile());
+				$backup->logSize = filesize($backup->getLogFile());
 			}
 
 			if (is_file($backup->getAssetFile()))
@@ -493,7 +493,7 @@ class Backups extends Component
 		$dbFileName     = 'database-'.$backupId.'.sql';
 		$assetName      = 'assets-'.$backupId.$compress;
 		$templateName   = 'templates-'.$backupId.$compress;
-		$pluginName     = 'plugins-'.$backupId.$compress;
+		$logName        = 'logs-'.$backupId.$compress;
 		$pathToTar      = $this->getPathToTar();
 		$backups        = [];
 
@@ -510,6 +510,8 @@ class Backups extends Component
 		$backup->assetFileName    = $this->getEncryptFileName($encrypt, $backup->assetFileName);
 		$backup->templateFileName = $settings->enableTemplates ? $templateName : null;
 		$backup->templateFileName = $this->getEncryptFileName($encrypt, $backup->templateFileName);
+		$backup->logFileName = $settings->enableLogs ? $logName : null;
+		$backup->logFileName = $this->getEncryptFileName($encrypt, $backup->logFileName);
 
 		if ($encrypt)
 		{
@@ -709,6 +711,45 @@ class Backups extends Component
 			}
 
 			$backups[] = $templateBackup;
+		}
+
+		// LOGS
+		if ($settings->enableLogs)
+		{
+			$baseLogPath = Craft::$app->getPath()->getLogPath();
+
+			$logBackup = [
+				'name'   => 'Logs',
+				'source' => [
+					'type' => 'tar',
+					'options' => [
+						'path'       => $baseLogPath,
+						'exclude'    => $settings->excludeLogs,
+						'forceLocal' => true
+					]
+				],
+				'target' => [
+					'dirname' => $this->getLogsPath(),
+					'filename' => $logName
+				]
+			];
+
+			if ($pathToTar)
+			{
+				$logBackup['source']['options']['pathToTar'] = $pathToTar;
+			}
+
+			if ($syncs)
+			{
+				$logBackup['syncs'] = $syncs;
+			}
+
+			if ($encrypt)
+			{
+				$logBackup['crypt'] = $encrypt;
+			}
+
+			$backups[] = $logBackup;
 		}
 
 		$config['backups'] = $backups;
@@ -1009,6 +1050,11 @@ class Backups extends Component
 	public function getTemplatesPath()
 	{
 		return $this->getBasePath().'templates'.DIRECTORY_SEPARATOR;
+	}
+
+	public function getLogsPath()
+	{
+		return $this->getBasePath().'logs'.DIRECTORY_SEPARATOR;
 	}
 
 	public function getDatabasePath()

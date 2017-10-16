@@ -22,6 +22,9 @@ class Settings extends \craft\base\Model
 	// Templates
 	public $enableTemplates  = 0;
 	public $excludeTemplates = 'cpresources,';
+	// Logs
+	public $enableLogs  = 0;
+	public $excludeLogs = 'enupalbackup,';
 	// Local Volumes
 	public $enableLocalVolumes = 0;
 	public $volumes            = '';

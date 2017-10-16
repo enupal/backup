@@ -92,6 +92,9 @@ class BackupsController extends BaseController
 				case 'template':
 					$filePath = $backup->getTemplateFile();
 					break;
+				case 'logs':
+					$filePath = $backup->getLogFile();
+					break;
 				case 'asset':
 					$filePath = $backup->getAssetFile();
 					break;
@@ -155,9 +158,9 @@ class BackupsController extends BaseController
 			$backup->templateFileName = null;
 		}
 
-		if (!is_file($backup->getPluginFile()))
+		if (!is_file($backup->getLogFile()))
 		{
-			$backup->pluginFileName = null;
+			$backup->logFileName = null;
 		}
 
 		if (!is_file($backup->getAssetFile()))

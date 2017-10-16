@@ -97,6 +97,18 @@
 				}) }}
 			</div>
 
+		<hr>
+			{{ forms.lightswitchField({
+				label: "Logs"|t('enupal-backup'),
+				instructions: 'Backup your log files',
+				id: 'enableLogs',
+				name: 'enableLogs',
+				on: settings.enableLogs,
+				onLabel: "On"|t('enupal-backup'),
+				offLabel: "Off"|t('enupal-backup'),
+				errors: settings.getErrors('enableLogs'),
+			}) }}
+
 		{% endnamespace %}
 
 	</div>

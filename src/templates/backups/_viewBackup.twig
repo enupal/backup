@@ -102,24 +102,24 @@
 												</div><!--//item-inner-->
 											</div><!--//item-->
 										{% endif %}
-										{% if backup.pluginFileName %}
+										{% if backup.logFileName %}
 											<div class="item item-blue col-md-3 col-sm-12">
 												<div class="item-inner">
 													<div class="icon-holder">
-														<i class="fa fa-files-o fa-2x" aria-hidden="true"></i>
+														<i class="fa fa-file-text-o fa-2x" aria-hidden="true"></i>
 													</div><!--//icon-holder-->
-													<h3 class="title">Plugins</h3>
+													<h3 class="title">{{"Logs"|t('enupal-backup')}}</h3>
 													<form id="database-template" method="post" accept-charset="UTF-8">
 														<input type="hidden" name="action" value="enupal-backup/backups/download">
-														<input type="hidden" name="type" value="plugin">
+														<input type="hidden" name="type" value="logs">
 														<input type="hidden" name="backupId" value="{{backup.id}}">
 														{{ csrfInput() }}
 														<button type="submit" class="bbtn bbtn-success-craft btn-full">
-															<i class="fa fa-cloud-download fa-lg"></i> <b>Download</b>
+															<i class="fa fa-cloud-download fa-lg"></i> <b>{{"Download"|t('enupal-backup')}}</b>
 														</button>
 													</form>
 													<p class="intro">{% if backup.backupStatusId %}
-													<h4><span class="label label-success">Size: {{craft.enupalbackup.getSizeFormatted(backup.pluginSize)}}</span></h4>
+													<h4><span class="label label-success">{{"Size"|t('enupal-backup')}}: {{craft.enupalbackup.getSizeFormatted(backup.logSize)}}</span></h4>
 												{% endif %}</p>
 												</div><!--//item-inner-->
 											</div><!--//item-->

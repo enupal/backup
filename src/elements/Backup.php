@@ -37,8 +37,8 @@ class Backup extends Element
 	public $assetSize;
 	public $templateFileName;
 	public $templateSize;
-	public $pluginFileName;
-	public $pluginSize;
+	public $logFileName;
+	public $logSize;
 	public $backupStatusId = BackupStatus::RUNNING;
 	public $aws = 0;
 	public $dropbox = 0;
@@ -277,6 +277,11 @@ class Backup extends Element
 					$total += $this->databaseSize;
 				}
 
+				if ($this->logSize)
+				{
+					$total += $this->logSize;
+				}
+
 				if ($total == 0)
 				{
 					return "";
@@ -345,11 +350,16 @@ class Backup extends Element
 		return $base.$this->templateFileName;
 	}
 
-	public function getPluginFile()
+	public function getLogFile()
 	{
-		$base = BackupPlugin::$app->backups->getPluginsPath();
+		$base = BackupPlugin::$app->backups->getLogsPath();
 
-		return $base.$this->pluginFileName;
+		if (!$this->logFileName)
+		{
+			return null;
+		}
+
+		return $base.$this->logFileName;
 	}
 
 	public function getAssetFile()
@@ -393,8 +403,8 @@ class Backup extends Element
 		$record->assetSize        = $this->assetSize;
 		$record->templateFileName = $this->templateFileName;
 		$record->templateSize     = $this->templateSize;
-		$record->pluginFileName   = $this->pluginFileName;
-		$record->pluginSize       = $this->pluginSize;
+		$record->logFileName      = $this->logFileName;
+		$record->logSize          = $this->logSize;
 		$record->backupStatusId   = $this->backupStatusId;
 		$record->aws              = $this->aws;
 		$record->dropbox          = $this->dropbox;
