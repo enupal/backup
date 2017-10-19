@@ -86,7 +86,7 @@
 													<div class="icon-holder">
 														<i class="fa fa-files-o fa-2x" aria-hidden="true"></i>
 													</div><!--//icon-holder-->
-													<h3 class="title">Templates</h3>
+													<h3 class="title">{{"Templates"|t('enupal-backup')}}</h3>
 													<form id="form-template" method="post" accept-charset="UTF-8">
 														<input type="hidden" name="action" value="enupal-backup/backups/download">
 														<input type="hidden" name="type" value="template">
@@ -119,7 +119,7 @@
 														</button>
 													</form>
 													<p class="intro">{% if backup.backupStatusId %}
-													<h4><span class="label label-success">{{"Size"|t('enupal-backup')}}: {{craft.enupalbackup.getSizeFormatted(backup.logSize)}}</span></h4>
+													<h4><span style="font-size:12px;" class="label label-success"> {{craft.enupalbackup.getSizeFormatted(backup.logSize)}}</span></h4>
 												{% endif %}</p>
 												</div><!--//item-inner-->
 											</div><!--//item-->
