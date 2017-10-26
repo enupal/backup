@@ -82,6 +82,13 @@ class BackupsController extends BaseController
 						$zip->addFile($backup->getAssetFile(), $filename);
 					}
 
+					if ($backup->getLogFile())
+					{
+						$filename = pathinfo($backup->getLogFile(), PATHINFO_BASENAME);
+
+						$zip->addFile($backup->getLogFile(), $filename);
+					}
+
 					$zip->close();
 
 					$filePath = $zipPath;
