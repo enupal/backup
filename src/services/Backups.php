@@ -500,17 +500,28 @@ class Backups extends Component
 		// let's create the Backup Element
 		$backup->databaseFileName = $dbFileName;
 
+		$backup->assetFileName    = $settings->enableLocalVolumes ? $assetName : null;
+		$backup->templateFileName = $settings->enableTemplates ? $templateName : null;
+		$backup->logFileName      = $settings->enableLogs ? $logName : null;
+
+		// Add compression if available
 		if (!Backup::$app->settings->isWindows())
 		{
+			// compress database just work on linux
 			$backup->databaseFileName .= '.bz2';
 		}
 
+		if ($this->applyCompress())
+		{
+			$backup->assetFileName .= '.bz2';
+			$backup->templateFileName .= '.bz2';
+			$backup->logFileName .= '.bz2';
+		}
+
+		// Add encrypt extension if enabled
 		$backup->databaseFileName = $this->getEncryptFileName($encrypt, $backup->databaseFileName);
-		$backup->assetFileName    = $settings->enableLocalVolumes ? $assetName : null;
-		$backup->assetFileName    = $this->getEncryptFileName($encrypt, $backup->assetFileName);
-		$backup->templateFileName = $settings->enableTemplates ? $templateName : null;
 		$backup->templateFileName = $this->getEncryptFileName($encrypt, $backup->templateFileName);
-		$backup->logFileName = $settings->enableLogs ? $logName : null;
+		$backup->assetFileName    = $this->getEncryptFileName($encrypt, $backup->assetFileName);
 		$backup->logFileName = $this->getEncryptFileName($encrypt, $backup->logFileName);
 
 		if ($encrypt)
@@ -666,6 +677,12 @@ class Backups extends Component
 						$assetBackup['crypt'] = $encrypt;
 					}
 
+					// Compress on linux or if tar path is setup
+					if ($this->applyCompress())
+					{
+						$assetBackup['target']['compress'] = 'bzip2';
+					}
+
 					$backups[] = $assetBackup;
 				}
 				else
@@ -710,6 +727,12 @@ class Backups extends Component
 				$templateBackup['crypt'] = $encrypt;
 			}
 
+			// Compress on linux or if tar path is setup
+			if ($this->applyCompress())
+			{
+				$templateBackup['target']['compress'] = 'bzip2';
+			}
+
 			$backups[] = $templateBackup;
 		}
 
@@ -747,6 +770,12 @@ class Backups extends Component
 			if ($encrypt)
 			{
 				$logBackup['crypt'] = $encrypt;
+			}
+
+			// Compress on linux or if tar path is setup
+			if ($this->applyCompress())
+			{
+				$logBackup['target']['compress'] = 'bzip2';
 			}
 
 			$backups[] = $logBackup;
@@ -992,8 +1021,21 @@ class Backups extends Component
 
 	private function getCompressType()
 	{
-		// @todo - add setting to change this bz2 or something else
-		return '.tar';
+		$compress = '.tar';
+
+		return $compress;
+	}
+
+	private function applyCompress()
+	{
+		$settings = Backup::$app->settings->getSettings();
+
+		if (!Backup::$app->settings->isWindows() || ($settings->enablePathToTar && $settings->pathToTar))
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	private function getPathToTar()

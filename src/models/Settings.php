@@ -86,7 +86,7 @@ class Settings extends \craft\base\Model
 		return [
 			['backupsAmount', 'integer', 'min' => 1, 'on' => 'general'],
 			[
-				['enableDatabase','enableTemplates', 'enableLocalVolumes'],
+				['enableDatabase','enableTemplates', 'enableLocalVolumes', 'enableLogs'],
 				BackupFilesValidator::class, 'on' => 'backupFiles'
 			],
 			[
