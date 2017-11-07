@@ -652,8 +652,9 @@ class Backups extends Component
 						'source' => [
 							'type' => 'tar',
 							'options' => [
-								"path" => $asset->path,
-								"forceLocal" => true
+								'path' => $asset->path,
+								'forceLocal' => true,
+								'ignoreFailedRead' => true
 							]
 						],
 						'target' => [
@@ -702,8 +703,9 @@ class Backups extends Component
 				'source' => [
 					'type' => 'tar',
 					'options' => [
-						"path" => $baseTemplatePath,
-						"forceLocal" => true
+						'path' => $baseTemplatePath,
+						'forceLocal' => true,
+						'ignoreFailedRead' => true
 					]
 				],
 				'target' => [
@@ -748,7 +750,8 @@ class Backups extends Component
 					'options' => [
 						'path'       => $baseLogPath,
 						'exclude'    => $settings->excludeLogs,
-						'forceLocal' => true
+						'forceLocal' => true,
+						'ignoreFailedRead' => true
 					]
 				],
 				'target' => [
