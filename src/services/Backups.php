@@ -10,6 +10,9 @@ use enupal\backup\records\Backup as BackupRecord;
 use enupal\backup\models\Settings;
 use enupal\backup\enums\BackupStatus;
 use enupal\backup\jobs\CreateBackup;
+use enupal\backup\contracts\BackupConfig;
+use enupal\backup\contracts\DatabaseBackup;
+use enupal\backup\contracts\DirectoryBackup;
 
 use craft\helpers\FileHelper;
 use craft\errors\ShellCommandException;
@@ -469,22 +472,7 @@ class Backups extends Component
 		$logPath  = $this->getLogPath($backup->backupId);
 		$settings = Backup::$app->settings->getSettings();
 
-		$config  = [
-			'verbose' => true,
-			'logging' => [
-				[
-					'type'   => 'json',
-					'target' => $logPath
-				],
-				[
-					'type'    => 'webhook',
-					'options' => [
-						'uri'      => UrlHelper::siteUrl('enupal-backup/finished?backupId='.$backup->backupId)
-					]
-				]
-			],
-			'backups' => []
-		];
+		$config = new BackupConfig($backup);
 
 		$backupId       = $backup->backupId;
 		$compress       = $this->getCompressType();
@@ -538,83 +526,13 @@ class Backups extends Component
 		// DATABASE
 		if ($settings->enableDatabase)
 		{
-			$dbConfig = Craft::$app->getConfig()->getDb();
-			$dbType = $dbConfig->driver == 'mysql' ? 'mysqldump' : 'pgdump';
-			$dbSchema = Craft::$app->getDb()->getSchema();
+			$databaseBackup = new DatabaseBackup();
+			$databaseBackup->name     = 'Database';
+			$databaseBackup->fileName = $dbFileName;
+			$databaseBackup->syncs    = $syncs;
+			$databaseBackup->encrypt  = $encrypt;
 
-			$excludeTables = explode(",", $settings->excludeData);
-			$ignoreTables  = '';
-
-			foreach ($excludeTables as $key => $excludeTable)
-			{
-				$excludeTable = $dbConfig->database.'.'.$dbSchema->getRawTableName('{{%'.trim($excludeTable).'}}');
-
-				if ($key == 0)
-				{
-					$ignoreTables .= $excludeTable;
-				}
-				else
-				{
-					$ignoreTables .= ','.$excludeTable;
-				}
-			}
-
-			$databaseBackup = [
-				'name'   => 'Database',
-				'source' => [
-					'type'   => $dbType,
-					'options'       => [
-						'host'          => $dbConfig->server,
-						'user'          => $dbConfig->user,
-						'password'      => $dbConfig->password,
-						'port'          => $dbConfig->port
-					]
-				],
-				'target' => [
-					'dirname'  => $this->getDatabasePath(),
-					'filename' => $dbFileName
-				]
-			];
-
-			if ($dbType == 'mysqldump')
-			{
-				$databaseBackup['source']['options']['structureOnly'] = $ignoreTables;
-				$databaseBackup['source']['options']['databases'] = $dbConfig->database;
-
-				if ($settings->enablePathToMysqldump && $settings->pathToMysqldump)
-				{
-					$databaseBackup['source']['options']['pathToMysqldump'] = $settings->pathToMysqldump;
-				}
-			}
-
-			if ($dbType == 'pgdump')
-			{
-				$databaseBackup['source']['options']['excludeTableData'] = $ignoreTables;
-				$databaseBackup['source']['options']['database']         = $dbConfig->database;
-
-				if ($settings->enablePathToPgdump && $settings->pathToPgdump)
-				{
-					$databaseBackup['source']['options']['pathToPgdump'] = $settings->enablePathToPgdump;
-				}
-			}
-
-			if ($syncs)
-			{
-				$databaseBackup['syncs'] = $syncs;
-			}
-
-			if ($encrypt)
-			{
-				$databaseBackup['crypt'] = $encrypt;
-			}
-
-			// Compress on linux
-			if (!Backup::$app->settings->isWindows())
-			{
-				$databaseBackup['target']['compress'] = 'bzip2';
-			}
-
-			$backups[] = $databaseBackup;
+			$config->addBackup($databaseBackup);
 		}
 		// END DATABASE
 
@@ -647,44 +565,15 @@ class Backups extends Component
 				// @todo - research and test this looks too easy :D
 				if (is_dir($asset->path))
 				{
-					$assetBackup = [
-						'name'   => 'Asset'.$asset->id,
-						'source' => [
-							'type' => 'tar',
-							'options' => [
-								'path' => $asset->path,
-								'forceLocal' => true,
-								'ignoreFailedRead' => true
-							]
-						],
-						'target' => [
-							'dirname' => $this->getAssetsPath(),
-							'filename' => $assetName
-						]
-					];
+					$assetBackup = new DirectoryBackup();
+					$assetBackup->name     = 'Asset'.$asset->id;
+					$assetBackup->path     = $asset->path;
+					$assetBackup->fileName = $assetName;
+					$assetBackup->dirName  = $this->getAssetsPath();
+					$assetBackup->syncs    = $syncs;
+					$assetBackup->encrypt  = $encrypt;
 
-					if ($pathToTar)
-					{
-						$assetBackup['source']['options']['pathToTar'] = $pathToTar;
-					}
-
-					if ($syncs)
-					{
-						$assetBackup['syncs'] = $syncs;
-					}
-
-					if ($encrypt)
-					{
-						$assetBackup['crypt'] = $encrypt;
-					}
-
-					// Compress on linux or if tar path is setup
-					if ($this->applyCompress())
-					{
-						$assetBackup['target']['compress'] = 'bzip2';
-					}
-
-					$backups[] = $assetBackup;
+					$config->addBackup($assetBackup);
 				}
 				else
 				{
@@ -698,44 +587,15 @@ class Backups extends Component
 		{
 			$baseTemplatePath = Craft::$app->getPath()->getSiteTemplatesPath();
 			//@todo - add exclude templates
-			$templateBackup = [
-				'name'   => 'Templates',
-				'source' => [
-					'type' => 'tar',
-					'options' => [
-						'path' => $baseTemplatePath,
-						'forceLocal' => true,
-						'ignoreFailedRead' => true
-					]
-				],
-				'target' => [
-					'dirname' => $this->getTemplatesPath(),
-					'filename' => $templateName
-				]
-			];
+			$templateBackup = new DirectoryBackup();
+			$templateBackup->name     = 'Templates';
+			$templateBackup->path     = $baseTemplatePath;
+			$templateBackup->fileName = $templateName;
+			$templateBackup->dirName  = $this->getTemplatesPath();
+			$templateBackup->syncs    = $syncs;
+			$templateBackup->encrypt  = $encrypt;
 
-			if ($pathToTar)
-			{
-				$templateBackup['source']['options']['pathToTar'] = $pathToTar;
-			}
-
-			if ($syncs)
-			{
-				$templateBackup['syncs'] = $syncs;
-			}
-
-			if ($encrypt)
-			{
-				$templateBackup['crypt'] = $encrypt;
-			}
-
-			// Compress on linux or if tar path is setup
-			if ($this->applyCompress())
-			{
-				$templateBackup['target']['compress'] = 'bzip2';
-			}
-
-			$backups[] = $templateBackup;
+			$config->addBackup($templateBackup);
 		}
 
 		// LOGS
@@ -743,48 +603,17 @@ class Backups extends Component
 		{
 			$baseLogPath = Craft::$app->getPath()->getLogPath();
 
-			$logBackup = [
-				'name'   => 'Logs',
-				'source' => [
-					'type' => 'tar',
-					'options' => [
-						'path'       => $baseLogPath,
-						'exclude'    => $settings->excludeLogs,
-						'forceLocal' => true,
-						'ignoreFailedRead' => true
-					]
-				],
-				'target' => [
-					'dirname' => $this->getLogsPath(),
-					'filename' => $logName
-				]
-			];
+			$logBackup = new DirectoryBackup();
+			$logBackup->name     = 'Logs';
+			$logBackup->path     = $baseLogPath;
+			$logBackup->fileName = $logName;
+			$logBackup->dirName  = $this->getLogsPath();
+			$logBackup->syncs    = $syncs;
+			$logBackup->encrypt  = $encrypt;
+			$logBackup->exclude  = $settings->excludeLogs;
 
-			if ($pathToTar)
-			{
-				$logBackup['source']['options']['pathToTar'] = $pathToTar;
-			}
-
-			if ($syncs)
-			{
-				$logBackup['syncs'] = $syncs;
-			}
-
-			if ($encrypt)
-			{
-				$logBackup['crypt'] = $encrypt;
-			}
-
-			// Compress on linux or if tar path is setup
-			if ($this->applyCompress())
-			{
-				$logBackup['target']['compress'] = 'bzip2';
-			}
-
-			$backups[] = $logBackup;
+			$config->addBackup($logBackup);
 		}
-
-		$config['backups'] = $backups;
 
 		$configFile = $this->getConfigPath();
 
@@ -793,7 +622,7 @@ class Backups extends Component
 			mkdir($this->getBasePath(), 0777, true);
 		}
 
-		file_put_contents($configFile, json_encode($config));
+		file_put_contents($configFile, $config->getConfig(true));
 
 		return $configFile;
 	}
@@ -1029,7 +858,7 @@ class Backups extends Component
 		return $compress;
 	}
 
-	private function applyCompress()
+	public function applyCompress()
 	{
 		$settings = Backup::$app->settings->getSettings();
 
@@ -1041,7 +870,7 @@ class Backups extends Component
 		return false;
 	}
 
-	private function getPathToTar()
+	public function getPathToTar()
 	{
 		$settings  = Backup::$app->settings->getSettings();
 		$pathToTar = null;
