@@ -226,7 +226,7 @@ class Backups extends Component
 
 		$phpPath = $this->getPhpPath();
 
-		$command .= ' && '.$phpPath.' phpbu5.phar';
+		$command .= ' && '.$phpPath.' phpbu.phar';
 		$command .= ' --configuration='.$configFile;
 		$command .= ' --debug';
 
