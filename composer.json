@@ -1,6 +1,6 @@
 {
   "name": "enupal/backup",
-  "description": "Simplifies backups and restoration for Craft CMS",
+  "description": "Fully integrated Backup solution for Craft CMS",
   "version": "1.0.0",
   "type": "craft-plugin",
   "autoload": {
