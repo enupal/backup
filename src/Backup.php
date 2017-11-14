@@ -24,6 +24,8 @@ class Backup extends \craft\base\Plugin
 
 	public $hasCpSection = true;
 
+	public $hasCpSettings = true;
+
 	public function init()
 	{
 		parent::init();
