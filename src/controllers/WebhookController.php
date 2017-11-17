@@ -20,6 +20,7 @@ class WebhookController extends BaseController
 		$backupId = Craft::$app->request->getParam('backupId');
 		$backup   = Backup::$app->backups->getBackupByBackupId($backupId);
 		$settings = Backup::$app->settings->getSettings();
+		Backup::info("Request to finish backup: ".$backupId);
 
 		if ($backup)
 		{
