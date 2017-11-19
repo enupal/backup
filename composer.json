@@ -2,6 +2,17 @@
   "name": "enupal/backup",
   "description": "Fully integrated Backup solution for Craft CMS",
   "version": "1.0.0",
+  "keywords": [
+    "craft",
+    "cms",
+    "craftcms",
+    "craft-plugin",
+    "backup",
+    "schedule",
+    "amazon s3",
+    "dropbox",
+    "cloud"
+  ],
   "type": "craft-plugin",
   "autoload": {
     "psr-4": {
@@ -17,10 +28,8 @@
   ],
   "support": {
     "email": "info@enupal.com",
-    "issues": "http://enupal.com/plugins/backup/issues?state=open",
-    "source": "http://enupal.com/plugins/backup/",
-    "docs": "http://enupal.com/plugins/backup/",
-    "rss": "http://enupal.com/plugins/backup/commits/master.atom"
+    "issues": "https://github.com/enupal/backup/issues",
+    "docs": "https://enupal.com/en/craft-plugins/enupal-backup/docs/getting-started/overview"
   },
   "extra": {
     "name": "Enupal Backup",

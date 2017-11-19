@@ -1,6 +1,11 @@
 # Enupal Backup Plugin for CraftCMS
 
-Simplifies backups and restoration for Craft CMS
+Fully integrated Backup solution for Craft CMS
+
+###Documentation
+------------------------------------------------------------
+
+https://enupal.com/en/craft-plugins/enupal-backup/docs/getting-started/installation
 
 ###Enupal Backup Support
 ------------------------------------------------------------
@@ -9,9 +14,5 @@ Via Email:
 Send us a note at: info@enupal.com
 
 
-###Enupal Backup License Terms
-------------------------------------------------------------
-Use of Enupal Backup is subject to the license agreement available here:
-http://enupal.com/plugins/license
 
 
