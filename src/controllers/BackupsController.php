@@ -18,6 +18,7 @@ use craft\elements\Asset;
 use craft\helpers\Json;
 use craft\helpers\Template as TemplateHelper;
 use yii\base\Exception;
+use craft\helpers\Path;
 use yii\base\ErrorException;
 use craft\helpers\FileHelper;
 use craft\errors\ShellCommandException;
@@ -124,6 +125,37 @@ class BackupsController extends BaseController
 		else
 		{
 			throw new NotFoundHttpException(Backup::t('Invalid backup parameters'));
+		}
+
+		// Ajax call from element index
+		if (Craft::$app->request->getAcceptsJson())
+		{
+			return $this->asJson([
+				'backupFile' => $filePath
+			]);
+		}
+
+		return Craft::$app->getResponse()->sendFile($filePath);
+	}
+
+	/**
+	 * Returns all files from backup to the browser.
+	 *
+	 * @return Response
+	 * @throws ForbiddenHttpException if the user doesn't have access to the DB Backup utility
+	 * @throws NotFoundHttpException if the requested backup cannot be found
+	 */
+	public function actionDownloadBackupFile(): Response
+	{
+		// @todo add permissions
+		#$this->requirePermission('');
+
+		$filePath = Craft::$app->getRequest()->getRequiredQueryParam('backupFilePath');
+
+		if (!is_file($filePath) || !Path::ensurePathIsContained($filePath)) {
+			throw new NotFoundHttpException(Craft::t('app', 'Invalid backup name: {filename}', [
+				'filename' => $filename
+			]));
 		}
 
 		return Craft::$app->getResponse()->sendFile($filePath);
