@@ -26,6 +26,9 @@
       "homepage": "http://enupal.com/"
     }
   ],
+  "require": {
+    "craftcms/cms": "^3.0.0-RC1"
+  },
   "support": {
     "email": "info@enupal.com",
     "issues": "https://github.com/enupal/backup/issues",
