@@ -138,29 +138,6 @@ class BackupsController extends BaseController
 		return Craft::$app->getResponse()->sendFile($filePath);
 	}
 
-	/**
-	 * Returns all files from backup to the browser.
-	 *
-	 * @return Response
-	 * @throws ForbiddenHttpException if the user doesn't have access to the DB Backup utility
-	 * @throws NotFoundHttpException if the requested backup cannot be found
-	 */
-	public function actionDownloadBackupFile(): Response
-	{
-		// @todo add permissions
-		#$this->requirePermission('');
-
-		$filePath = Craft::$app->getRequest()->getRequiredQueryParam('backupFilePath');
-
-		if (!is_file($filePath) || !Path::ensurePathIsContained($filePath)) {
-			throw new NotFoundHttpException(Craft::t('app', 'Invalid backup name: {filename}', [
-				'filename' => $filename
-			]));
-		}
-
-		return Craft::$app->getResponse()->sendFile($filePath);
-	}
-
 	public function actionRun()
 	{
 		$this->requirePostRequest();

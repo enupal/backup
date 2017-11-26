@@ -21,7 +21,6 @@ use craft\validators\UniqueValidator;
 use DateTime;
 
 use enupal\backup\elements\db\BackupQuery;
-use enupal\backup\elements\actions\DownloadAll;
 use enupal\backup\records\Backup as BackupRecord;
 use enupal\backup\enums\BackupStatus;
 use enupal\backup\Backup as BackupPlugin;
@@ -214,11 +213,6 @@ class Backup extends Element
 			'type' => Delete::class,
 			'confirmationMessage' => BackupPlugin::t('Are you sure you want to delete the selected backups?'),
 			'successMessage' => BackupPlugin::t('Backups deleted.'),
-		]);
-
-		// Edit
-		$actions[] = Craft::$app->getElements()->createAction([
-			'type' => DownloadAll::class
 		]);
 
 		return $actions;
