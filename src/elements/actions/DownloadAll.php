@@ -81,10 +81,11 @@ class DownloadAll extends ElementAction
 			{
 				if (textStatus === 'success')
 				{
-					$.fileDownload(response.backupFile)
-					    .done(function () { alert('File download a success!'); })
-					    .fail(function () { alert('File download failed!'); });
-					Craft.cp.displayNotice(Craft.t('enupal-backup','Download will start in 5 seconds'));
+					var url = Craft.getActionUrl('enupal-backup/backups/download-backup-file', {'backupFilePath': response.backupFile});
+					$.fileDownload(url)
+					.done(function () { Craft.cp.displayNotice(Craft.t('enupal-backup','Download will start in 5 seconds')); })
+					.fail(function () { Craft.cp.displayError(Craft.t('enupal-backup','Something went wrong with the download: '+url)); });
+
 				}
 				else
 				{
