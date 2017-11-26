@@ -11,7 +11,7 @@
 {% set title = "Backups"|t %}
 {% set elementType = 'enupal\\backup\\elements\\Backup' %}
 {% do view.registerAssetBundle("enupal\\backup\\assetbundles\\FontAwesomeAsset") %}
-{% set extraPageHeaderHtml %}
+{% block actionButton %}
 	<div class="buttons">
 		<form id="run-backup" method="post">
 			{{ csrfInput() }}
@@ -20,7 +20,11 @@
 			<button class="btn submit add icon">{{ "Backup Now"|t('enupal-backup') }}</button>
 		</form>
 	</div>
-{% endset %}
+
+	<form id="download-all-form" class="utility" method="post" accept-charset="UTF-8">
+
+	</form>
+{% endblock %}
 
 {% js %}
 

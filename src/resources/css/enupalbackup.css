@@ -7,3 +7,11 @@
 div.deletebackup {
 	border-top: 1px solid #e3e5e8;
 }
+
+.enupal-field-heading {
+	color: rgb(85, 85, 85);
+	font-size: .8em;
+	min-height: auto;
+	padding: 8px auto;
+	text-transform: uppercase;
+}
