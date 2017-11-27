@@ -1,4 +1,4 @@
-<p align="center"><a href="https://enupal.com/craft-plugins/enupal-backup/docs/" target="_blank"><img width="312" height="90" src="https://enupal.com/assets/docs/final-backup-morado.svg" alt="Enupal Backup"></a></p>
+![Screenshot](src/icon.svg)
 # Enupal Backup Plugin for CraftCMS
 
 Fully integrated Backup solution for Craft CMS
