@@ -255,9 +255,6 @@ class Backups extends Component
 			throw ShellCommandException::createFromCommand($shellCommand);
 		}
 
-		// moved to the webhook
-		#$this->updateBackupOnComplete($backup);
-
 		return $success;
 	}
 
@@ -791,7 +788,6 @@ class Backups extends Component
 		$syncs = [];
 		$settings = Backup::$app->settings->getSettings();
 		// DROPBOX
-		// @todo - Test with just one backup - triggers an error start with /
 		if ($settings->enableDropbox)
 		{
 			$dropbox = [

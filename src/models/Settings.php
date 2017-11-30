@@ -21,7 +21,7 @@ class Settings extends \craft\base\Model
 {
 	// General
 	public $pluginNameOverride = '';
-	public $backupsAmount = 50;
+	public $backupsAmount = 5;
 	public $deleteLocalBackupAfterUpload = 0;
 	// Database by default
 	public $enableDatabase = 1;

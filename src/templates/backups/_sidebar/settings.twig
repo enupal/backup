@@ -10,7 +10,7 @@
 {% import "_includes/forms" as forms %}
 {% set tab  = 1 %}
 
-<nav id="tabs" class="tabs" style= "margin: 0 0 0 0;">
+<nav id="backup-tabs" class="tabs" style= "margin: 0 0 0 0;">
 	<ul>
 		<li>
 			<a class="tab {{ tab == 1 ? ' sel' : '' }}" href="#tab-enupalbackup-settings">
@@ -20,9 +20,9 @@
 	</ul>
 </nav>
 
-<div>
+<div id="backup-content">
 	<div class="{{ tab != 1 ? 'hidden' : '' }} meta" id="tab-enupalbackup-settings">
-		<div class="field enupal-field-heading"><i class="fa fa-info-circle" aria-hidden="true"> {{'Backup Info'|t('enupal-backup')}}</i></div>
+		<div class="field enupal-field-heading">{{'Backup Info'|t('enupal-backup')}}</div>
 			{{ forms.dateTimeField({
 				label: "Started at"|t('enupal-backup'),
 				id: 'dateCreated',
