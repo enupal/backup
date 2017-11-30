@@ -1,0 +1,99 @@
+{#
+/**
+ * EnupalBackup plugin for Craft CMS 3.x
+ *
+ * @link      https://enupal.com/
+ * @copyright Copyright (c) 2017 Enupal
+ */
+#}
+
+{% extends "enupal-backup/_layouts/settings" %}
+{% import "_includes/forms" as forms %}
+
+{% set settings = craft.enupalbackup.getSettings() %}
+{% set fullPageForm = true %}
+{% set saveShortcutRedirect = 'enupal-backup/settings/schedule' %}
+
+{% set saveButton %}
+	<div class="buttons">
+		<input class="btn submit" type="submit" value="{{ 'Save'|t }}">
+	</div>
+{% endset %}
+
+{% set content %}
+
+	<input type="hidden" name="action" value="enupal-backup/settings/save-settings">
+	<input type="hidden" name="backupScenario" value="schedule">
+	{% set secretKey = craft.enupalbackup.getSecretKey() %}
+
+	<div id="settings-cp">
+
+		{% namespace 'settings' %}
+			{{ forms.field({
+				label: "Webhook"|t('enupal-backup')|upper,
+				instructions: "Enupal Backup provides you a webhook to schedule your backups, here is an example how to do it with <a target='_blank' href='https://de.wikipedia.org/wiki/Cron'>Cron.</a> Adding one of the following lines to your crontab will execute your backup every morning at 3:10 AM."|t('enupal-backup'),
+			}, null) }}
+			<hr>
+
+			{{ forms.lightswitchField({
+				label: "Enable Webhook"|t('enupal-backup'),
+				id: 'enableWebhook',
+				name: 'enableWebhook',
+				on: settings.enableWebhook,
+				onLabel: "On"|t('enupal-backup'),
+				offLabel: "Off"|t('enupal-backup'),
+				errors: settings.getErrors('enableWebhook')
+			}) }}
+
+			{{ forms.textField({
+					label: "Secret Key"|t('enupal-backup'),
+					instructions: "Secret key for webhook. <a id='generate-secret' href='#'>Generate</a>"|t('enupal-backup'),
+					id: 'webhookSecretKey',
+					name: 'webhookSecretKey',
+					value: settings.webhookSecretKey,
+					autofocus: true,
+					required: true,
+					first: true,
+					errors: settings.getErrors('webhookSecretKey')
+			}) }}
+
+			<div class="example-contents">
+				<pre class="programlisting">
+# +------------------------- min (0 - 59)
+# |       +-------------------- hour (0 - 23)
+# |       |    +--------------- day of month (1 - 31)
+# |       |    |     +---------- month (1 - 12)
+# |       |    |     |    +----- day of week (0 - 7) (Sunday=0 or 7)
+# |       |    |     |    |
+# *      *    *    *    *
+
+# Enupal Backup Webhook
+10     3    *    *    *  wget {{siteUrl}}enupal-backup/schedule?key={{settings.webhookSecretKey}} >/dev/null 2>&1
+
+				</pre>
+		</div>
+		<br>
+		{% endnamespace %}
+		<hr>
+
+	</div>
+
+{% endset %}
+
+{% css %}
+
+{% endcss %}
+{% do view.registerAssetBundle("enupal\\backup\\assetBundles\\HighlightAsset") %}
+
+{% js %}
+	$(document).ready(function() {
+		$('pre.programlisting').each(function(i, block) {
+			hljs.highlightBlock(block);
+		});
+	});
+
+	$('#settings-generate-secret').click(function () {
+		var secretKey = {{ secretKey|json_encode()|raw }};
+		$('#settings-webhookSecretKey').val(secretKey);
+	});
+{% endjs %}

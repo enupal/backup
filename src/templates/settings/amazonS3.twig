@@ -1,9 +1,18 @@
+{#
+/**
+ * EnupalBackup plugin for Craft CMS 3.x
+ *
+ * @link      https://enupal.com/
+ * @copyright Copyright (c) 2017 Enupal
+ */
+#}
+
 {% extends "enupal-backup/_layouts/settings" %}
 {% import "_includes/forms" as forms %}
 
 {% set settings = craft.enupalbackup.getSettings() %}
 {% set fullPageForm = true %}
-{% set saveShortcutRedirect = 'enupal-backup/settings/dropbox' %}
+{% set saveShortcutRedirect = 'enupal-backup/settings/amazonS3' %}
 
 {% set saveButton %}
 	<div class="buttons">
@@ -14,6 +23,7 @@
 {% set content %}
 
 	<input type="hidden" name="action" value="enupal-backup/settings/save-settings">
+	<input type="hidden" name="backupScenario" value="amazon">
 
 	<div id="settings-cp">
 
@@ -25,7 +35,8 @@
 				name: 'enableAmazon',
 				on: settings.enableAmazon,
 				onLabel: "On"|t('enupal-backup'),
-				offLabel: "Off"|t('enupal-backup')
+				offLabel: "Off"|t('enupal-backup'),
+				errors: settings.getErrors('enableAmazon'),
 			}) }}
 
 			{{ forms.textField({
@@ -89,7 +100,7 @@
 			}) }}
 
 			{{ forms.lightswitchField({
-				label: "Templates"|t('enupal-backup'),
+				label: "MultiPartUpload functionality"|t('enupal-backup'),
 				instructions: "Use Amazon S3 MultiPartUpload functionality."|t('enupal-backup'),
 				id: 'amazonUseMultiPartUpload',
 				name: 'amazonUseMultiPartUpload',

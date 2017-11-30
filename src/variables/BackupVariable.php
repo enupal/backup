@@ -1,4 +1,10 @@
 <?php
+/**
+ * EnupalBackup plugin for Craft CMS 3.x
+ *
+ * @link      https://enupal.com/
+ * @copyright Copyright (c) 2017 Enupal
+ */
 
 namespace enupal\backup\variables;
 
@@ -78,6 +84,14 @@ class BackupVariable
 	public function getAllLocalVolumes()
 	{
 		return Backup::$app->settings->getAllLocalVolumes();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getSecretKey()
+	{
+		return Backup::$app->backups->getRandomStr();
 	}
 }
 

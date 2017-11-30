@@ -1,4 +1,11 @@
 <?php
+/**
+ * EnupalBackup plugin for Craft CMS 3.x
+ *
+ * @link      https://enupal.com/
+ * @copyright Copyright (c) 2017 Enupal
+ */
+
 namespace enupal\backup\controllers;
 
 use Craft;
@@ -11,13 +18,16 @@ use craft\elements\Asset;
 use craft\helpers\Json;
 use craft\helpers\Template as TemplateHelper;
 use yii\base\Exception;
+use craft\helpers\Path;
+use yii\base\ErrorException;
+use craft\helpers\FileHelper;
+use craft\errors\ShellCommandException;
+use mikehaertl\shellcommand\Command as ShellCommand;
+use ZipArchive;
 
 use enupal\backup\jobs\CreateBackup;
 use enupal\backup\enums\BackupStatus;
 use enupal\backup\Backup;
-
-use mikehaertl\shellcommand\Command as ShellCommand;
-use craft\errors\ShellCommandException;
 
 class BackupsController extends BaseController
 {
@@ -37,14 +47,68 @@ class BackupsController extends BaseController
 
 			switch ($type)
 			{
+				case 'all':
+
+					$zipPath = Craft::$app->getPath()->getTempPath().DIRECTORY_SEPARATOR.$backup->backupId.'.zip';
+
+					if (is_file($zipPath))
+					{
+						try
+						{
+							FileHelper::removeFile($zipPath);
+						}
+						catch (ErrorException $e)
+						{
+							Backup::error("Unable to delete the file \"{$zipPath}\": ".$e->getMessage());
+						}
+					}
+
+					$zip = new ZipArchive();
+
+					if ($zip->open($zipPath, ZipArchive::CREATE) !== true) {
+						throw new Exception('Cannot create zip at '.$zipPath);
+					}
+
+					if ($backup->getDatabaseFile())
+					{
+						$filename = pathinfo($backup->getDatabaseFile(), PATHINFO_BASENAME);
+
+						$zip->addFile($backup->getDatabaseFile(), $filename);
+					}
+
+					if ($backup->getTemplateFile())
+					{
+						$filename = pathinfo($backup->getTemplateFile(), PATHINFO_BASENAME);
+
+						$zip->addFile($backup->getTemplateFile(), $filename);
+					}
+
+					if ($backup->getAssetFile())
+					{
+						$filename = pathinfo($backup->getAssetFile(), PATHINFO_BASENAME);
+
+						$zip->addFile($backup->getAssetFile(), $filename);
+					}
+
+					if ($backup->getLogFile())
+					{
+						$filename = pathinfo($backup->getLogFile(), PATHINFO_BASENAME);
+
+						$zip->addFile($backup->getLogFile(), $filename);
+					}
+
+					$zip->close();
+
+					$filePath = $zipPath;
+					break;
 				case 'database':
 					$filePath = $backup->getDatabaseFile();
 					break;
 				case 'template':
 					$filePath = $backup->getTemplateFile();
 					break;
-				case 'plugin':
-					$filePath = $backup->getPluginFile();
+				case 'logs':
+					$filePath = $backup->getLogFile();
 					break;
 				case 'asset':
 					$filePath = $backup->getAssetFile();
@@ -63,45 +127,22 @@ class BackupsController extends BaseController
 			throw new NotFoundHttpException(Backup::t('Invalid backup parameters'));
 		}
 
+		// Ajax call from element index
+		if (Craft::$app->request->getAcceptsJson())
+		{
+			return $this->asJson([
+				'backupFile' => $filePath
+			]);
+		}
+
 		return Craft::$app->getResponse()->sendFile($filePath);
 	}
 
 	public function actionRun()
 	{
-		// let's add the job if it's linux we can run it in background
-		Craft::$app->queue->push(new CreateBackup());
-		// We have a webhook so don't wait
-		$success = false;
-		$response = [
-			'success' => true,
-			'message' => 'queued'
-		];
+		$this->requirePostRequest();
 
-		if (!Backup::$app->settings->isWindows())
-		{
-			// listen by console
-			$shellCommand = new ShellCommand();
-			$craftPath    = CRAFT_BASE_PATH;
-			$phpPath      = Backup::$app->backups->getPhpPath();
-
-			$command = $phpPath.
-					' craft'.
-					' queue/run';
-			// linux
-			$command .= ' > /dev/null 2&1 &';
-			// windows does not work
-			//$command .= ' 1>> NUL 2>&1';
-			$shellCommand->setCommand($command);
-
-			//@todo requiere this in the docs
-			$shellCommand->useExec = true;
-
-			$success = $shellCommand->execute();
-			$response = [
-				'success' => $success,
-				'message' => 'running'
-			];
-		}
+		$response = Backup::$app->backups->executeEnupalBackup();
 
 		return $this->asJson($response);
 	}
@@ -140,9 +181,9 @@ class BackupsController extends BaseController
 			$backup->templateFileName = null;
 		}
 
-		if (!is_file($backup->getPluginFile()))
+		if (!is_file($backup->getLogFile()))
 		{
-			$backup->pluginFileName = null;
+			$backup->logFileName = null;
 		}
 
 		if (!is_file($backup->getAssetFile()))
@@ -174,12 +215,21 @@ class BackupsController extends BaseController
 
 		$request = Craft::$app->getRequest();
 
-		$sliderId = $request->getRequiredBodyParam('id');
-		$slider   = Backup::$app->backups->getBackupById($sliderId);
+		$backupId = $request->getRequiredBodyParam('id');
+		$backup   = Backup::$app->backups->getBackupById($backupId);
 
 		// @TODO - handle errors
-		$success = Backup::$app->backups->deleteBackup($slider);
+		$success = Backup::$app->backups->deleteBackup($backup);
 
-		return $this->redirectToPostedUrl($form);
+		if($success)
+		{
+			Craft::$app->getSession()->setNotice(Backup::t('Backup deleted.'));
+		}
+		else
+		{
+			Craft::$app->getSession()->setNotice(Backup::t('Couldn’t delete backup.'));
+		}
+
+		return $this->redirectToPostedUrl($backup);
 	}
 }

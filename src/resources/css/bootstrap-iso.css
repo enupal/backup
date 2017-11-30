@@ -3234,7 +3234,22 @@
 .bootstrap-iso .bbtn-success {
   color: #ffffff;
   background-color: #5cb85c;
-  border-color: #4cae4c;
+  border-color: #cc5643;
+}
+.bootstrap-iso .bbtn-success-craft {
+  color: #ffffff;
+  background-color: #da5a47;
+  border-color: #cc5643;
+}
+.bootstrap-iso .bbtn-success-craft:hover,
+.bootstrap-iso .bbtn-success-craft:focus,
+.bootstrap-iso .bbtn-success-craft.focus,
+.bootstrap-iso .bbtn-success-craft:active,
+.bootstrap-iso .bbtn-success-craft.active,
+.bootstrap-iso .open > .dropdown-toggle.bbtn-success-craft {
+  color: #ffffff;
+  background-color: #da3a47;
+  border-color: #cc5643;
 }
 .bootstrap-iso .bbtn-success:hover,
 .bootstrap-iso .bbtn-success:focus,
@@ -7153,8 +7168,7 @@
 
 /*Cards*/
 .cards-section {
-  padding: 60px 0;
-  background: #f9f9fb;
+  padding: 10px 0;
 }
 .cards-section .title {
   margin-top: 0;
@@ -7188,8 +7202,8 @@
   margin-bottom: 15px;
 }
 .cards-section .item-inner {
-  padding: 45px 30px;
-  background: #fff;
+  padding: 40px 30px;
+  background: rgba(188, 222, 184, 0.08);
   position: relative;
   border: 1px solid #f0f0f0;
   -webkit-border-radius: 4px;
@@ -7210,6 +7224,19 @@
   z-index: 1;
   background-image: url("../images/empty.gif");
   /* for IE8 */
+}
+.size-label{
+  background-color: #939394;
+}
+.backup-icon{
+  color:#5f584f;
+}
+
+.cards-section .item-inner:hover .backup-icon {
+  color: #48a156;
+}
+.downloand-backup{
+  font-size: 12px;
 }
 .cards-section .item-inner:hover {
   background: #f5f5f5;
@@ -7276,4 +7303,224 @@
 }
 .cards-section .item-purple .icon {
   color: #8A40A7;
+}
+
+/* Adds support for XL screens*/
+.bootstrap-iso {
+  /*
+*   CSS file with Bootstrap grid classes for screens bigger than 1600px. Just add this file after the Bootstrap CSS file and you will be able to juse col-xl, col-xl-push, hidden-xl, etc.
+*
+*   Author: Marc van Nieuwenhuijzen
+*   Company: WebVakman
+*   Site: WebVakman.nl
+*
+*/
+}
+@media (min-width: 1200px) and (max-width: 1599px) {
+  .bootstrap-iso .hidden-lg {
+    display: none !important;
+  }
+}
+.bootstrap-iso .visible-xl-block,
+.bootstrap-iso .visible-xl-inline,
+.bootstrap-iso .visible-xl-inline-block,
+.bootstrap-iso .visible-xl {
+  display: none !important;
+}
+@media (min-width: 1600px) {
+  .bootstrap-iso .container {
+    width: 1570px;
+  }
+  .bootstrap-iso .col-xl-1,
+  .bootstrap-iso .col-xl-2,
+  .bootstrap-iso .col-xl-3,
+  .bootstrap-iso .col-xl-4,
+  .bootstrap-iso .col-xl-5,
+  .bootstrap-iso .col-xl-6,
+  .bootstrap-iso .col-xl-7,
+  .bootstrap-iso .col-xl-8,
+  .bootstrap-iso .col-xl-9,
+  .bootstrap-iso .col-xl-10,
+  .bootstrap-iso .col-xl-11,
+  .bootstrap-iso .col-xl-12 {
+    float: left;
+  }
+  .bootstrap-iso .col-xl-12 {
+    width: 100%;
+  }
+  .bootstrap-iso .col-xl-11 {
+    width: 91.66666667%;
+  }
+  .bootstrap-iso .col-xl-10 {
+    width: 83.33333333%;
+  }
+  .bootstrap-iso .col-xl-9 {
+    width: 75%;
+  }
+  .bootstrap-iso .col-xl-8 {
+    width: 66.66666667%;
+  }
+  .bootstrap-iso .col-xl-7 {
+    width: 58.33333333%;
+  }
+  .bootstrap-iso .col-xl-6 {
+    width: 50%;
+  }
+  .bootstrap-iso .col-xl-5 {
+    width: 41.66666667%;
+  }
+  .bootstrap-iso .col-xl-4 {
+    width: 33.33333333%;
+  }
+  .bootstrap-iso .col-xl-3 {
+    width: 25%;
+  }
+  .bootstrap-iso .col-xl-2 {
+    width: 16.66666667%;
+  }
+  .bootstrap-iso .col-xl-1 {
+    width: 8.33333333%;
+  }
+  .bootstrap-iso .col-xl-pull-12 {
+    right: 100%;
+  }
+  .bootstrap-iso .col-xl-pull-11 {
+    right: 91.66666667%;
+  }
+  .bootstrap-iso .col-xl-pull-10 {
+    right: 83.33333333%;
+  }
+  .bootstrap-iso .col-xl-pull-9 {
+    right: 75%;
+  }
+  .bootstrap-iso .col-xl-pull-8 {
+    right: 66.66666667%;
+  }
+  .bootstrap-iso .col-xl-pull-7 {
+    right: 58.33333333%;
+  }
+  .bootstrap-iso .col-xl-pull-6 {
+    right: 50%;
+  }
+  .bootstrap-iso .col-xl-pull-5 {
+    right: 41.66666667%;
+  }
+  .bootstrap-iso .col-xl-pull-4 {
+    right: 33.33333333%;
+  }
+  .bootstrap-iso .col-xl-pull-3 {
+    right: 25%;
+  }
+  .bootstrap-iso .col-xl-pull-2 {
+    right: 16.66666667%;
+  }
+  .bootstrap-iso .col-xl-pull-1 {
+    right: 8.33333333%;
+  }
+  .bootstrap-iso .col-xl-pull-0 {
+    right: auto;
+  }
+  .bootstrap-iso .col-xl-push-12 {
+    left: 100%;
+  }
+  .bootstrap-iso .col-xl-push-11 {
+    left: 91.66666667%;
+  }
+  .bootstrap-iso .col-xl-push-10 {
+    left: 83.33333333%;
+  }
+  .bootstrap-iso .col-xl-push-9 {
+    left: 75%;
+  }
+  .bootstrap-iso .col-xl-push-8 {
+    left: 66.66666667%;
+  }
+  .bootstrap-iso .col-xl-push-7 {
+    left: 58.33333333%;
+  }
+  .bootstrap-iso .col-xl-push-6 {
+    left: 50%;
+  }
+  .bootstrap-iso .col-xl-push-5 {
+    left: 41.66666667%;
+  }
+  .bootstrap-iso .col-xl-push-4 {
+    left: 33.33333333%;
+  }
+  .bootstrap-iso .col-xl-push-3 {
+    left: 25%;
+  }
+  .bootstrap-iso .col-xl-push-2 {
+    left: 16.66666667%;
+  }
+  .bootstrap-iso .col-xl-push-1 {
+    left: 8.33333333%;
+  }
+  .bootstrap-iso .col-xl-push-0 {
+    left: auto;
+  }
+  .bootstrap-iso .col-xl-offset-12 {
+    margin-left: 100%;
+  }
+  .bootstrap-iso .col-xl-offset-11 {
+    margin-left: 91.66666667%;
+  }
+  .bootstrap-iso .col-xl-offset-10 {
+    margin-left: 83.33333333%;
+  }
+  .bootstrap-iso .col-xl-offset-9 {
+    margin-left: 75%;
+  }
+  .bootstrap-iso .col-xl-offset-8 {
+    margin-left: 66.66666667%;
+  }
+  .bootstrap-iso .col-xl-offset-7 {
+    margin-left: 58.33333333%;
+  }
+  .bootstrap-iso .col-xl-offset-6 {
+    margin-left: 50%;
+  }
+  .bootstrap-iso .col-xl-offset-5 {
+    margin-left: 41.66666667%;
+  }
+  .bootstrap-iso .col-xl-offset-4 {
+    margin-left: 33.33333333%;
+  }
+  .bootstrap-iso .col-xl-offset-3 {
+    margin-left: 25%;
+  }
+  .bootstrap-iso .col-xl-offset-2 {
+    margin-left: 16.66666667%;
+  }
+  .bootstrap-iso .col-xl-offset-1 {
+    margin-left: 8.33333333%;
+  }
+  .bootstrap-iso .col-xl-offset-0 {
+    margin-left: 0;
+  }
+  .bootstrap-iso .visible-xl {
+    display: block !important;
+  }
+  .bootstrap-iso table.visible-xl {
+    display: table;
+  }
+  .bootstrap-iso tr.visible-xl {
+    display: table-row !important;
+  }
+  .bootstrap-iso th.visible-xl,
+  .bootstrap-iso td.visible-xl {
+    display: table-cell !important;
+  }
+  .bootstrap-iso .visible-xl-block {
+    display: block !important;
+  }
+  .bootstrap-iso .visible-xl-inline {
+    display: inline !important;
+  }
+  .bootstrap-iso .visible-xl-inline-block {
+    display: inline-block !important;
+  }
+  .bootstrap-iso .hidden-xl {
+    display: none !important;
+  }
 }

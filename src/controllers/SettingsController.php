@@ -1,4 +1,11 @@
 <?php
+/**
+ * EnupalBackup plugin for Craft CMS 3.x
+ *
+ * @link      https://enupal.com/
+ * @copyright Copyright (c) 2017 Enupal
+ */
+
 namespace enupal\backup\controllers;
 
 use Craft;
@@ -25,16 +32,18 @@ class SettingsController extends BaseController
 		$this->requirePostRequest();
 		$request  = Craft::$app->getRequest();
 		$settings = $request->getBodyParam('settings');
+		$scenario = $request->getBodyParam('backupScenario');
 
-		if (!Backup::$app->settings->saveSettings($settings))
+		if (!Backup::$app->settings->saveSettings($settings, $scenario))
 		{
 			Craft::$app->getSession()->setError(Backup::t('Couldn’t save settings.'));
 
 			// Send the settings back to the template
-			craft()->urlManager->setRouteVariables(array(
+			Craft::$app->getUrlManager()->setRouteParams([
 				'settings' => $settings
-			));
+			]);
 
+			return null;
 		}
 
 		Craft::$app->getSession()->setNotice(Backup::t('Settings saved.'));

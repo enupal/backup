@@ -1,0 +1,76 @@
+{#
+/**
+ * EnupalBackup plugin for Craft CMS 3.x
+ *
+ * @link      https://enupal.com/
+ * @copyright Copyright (c) 2017 Enupal
+ */
+#}
+
+{% extends "enupal-backup/_layouts/settings" %}
+{% import "_includes/forms" as forms %}
+
+{% set settings = craft.enupalbackup.getSettings() %}
+{% set fullPageForm = true %}
+{% set saveShortcutRedirect = 'enupal-backup/settings/notifications' %}
+
+{% set saveButton %}
+	<div class="buttons">
+		<input class="btn submit" type="submit" value="{{ 'Save'|t('enupal-backup') }}">
+	</div>
+{% endset %}
+
+{% set content %}
+<input type="hidden" name="action" value="enupal-backup/settings/save-settings">
+<input type="hidden" name="backupScenario" value="notification">
+<div id="settings-cp">
+	{% namespace 'settings' %}
+
+	{{ forms.lightswitchField({
+		first: true,
+		label: "Enable Email Notification"|t('enupal-backup'),
+		id: 'enableNotification',
+		name: 'enableNotification',
+		on: settings.enableNotification,
+		onLabel: "Enable",
+		offLabel: "Disable",
+		errors: settings.getErrors('enableNotification')
+	}) }}
+
+	{{ forms.textField({
+		label: 'Email Recipients'|t('enupal-backup'),
+		instructions: "A comma-delimited list of email addresses to notify when your backup is finished."|t('enupal-backup'),
+		name: 'notificationRecipients',
+		value: settings.notificationRecipients,
+		errors: (settings is defined ? settings.getErrors('notificationRecipients') : null),
+		first: true
+	}) }}
+
+	{{ forms.textField({
+		label: "Sender Name"|t('enupal-backup'),
+		instructions: "The name of the sender of your notification email"|t('enupal-backup'),
+		name: 'notificationSenderName',
+		value: settings.notificationSenderName,
+		errors: (settings is defined ? settings.getErrors('notificationSenderName') : null)
+	}) }}
+
+	{{ forms.textField({
+		label: "Sender Email Address"|t('enupal-backup'),
+		instructions: "The 'From' email address of your notification email"|t('enupal-backup'),
+		name: 'notificationSenderEmail',
+		value: settings.notificationSenderEmail,
+		errors: (settings is defined ? settings.getErrors('notificationSenderEmail') : null)
+	}) }}
+
+	{{ forms.textField({
+		label: "Reply To Email Address"|t('enupal-backup'),
+		instructions: "The 'Reply To' email address of your notification email"|t('enupal-backup'),
+		name: 'notificationReplyToEmail',
+		value: settings.notificationReplyToEmail,
+		errors: (settings is defined ? settings.getErrors('notificationReplyToEmail') : null)
+	}) }}
+
+	{% endnamespace %}
+</div>
+
+{% endset %}

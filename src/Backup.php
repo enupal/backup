@@ -1,14 +1,21 @@
 <?php
+/**
+ * EnupalBackup plugin for Craft CMS 3.x
+ *
+ * @link      https://enupal.com/
+ * @copyright Copyright (c) 2017 Enupal
+ */
+
 namespace enupal\backup;
 
 use Craft;
 use craft\events\RegisterUrlRulesEvent;
 use craft\web\UrlManager;
 use yii\base\Event;
-use phpbu\App\Configuration;
-use phpbu\App\Runner;
 use craft\events\DefineComponentsEvent;
 use craft\web\twig\variables\CraftVariable;
+use craft\services\SystemMessages;
+use craft\events\RegisterEmailMessagesEvent;
 
 use enupal\backup\variables\BackupVariable;
 use enupal\backup\models\Settings;
@@ -23,6 +30,8 @@ class Backup extends \craft\base\Plugin
 	public static $app;
 
 	public $hasCpSection = true;
+
+	public $hasCpSettings = true;
 
 	public function init()
 	{
@@ -46,11 +55,42 @@ class Backup extends \craft\base\Plugin
 					$event->components['enupalbackup'] = BackupVariable::class;
 			}
 		);
+
+		Event::on(
+			SystemMessages::class,
+			SystemMessages::EVENT_REGISTER_MESSAGES,
+			function (RegisterEmailMessagesEvent $event) {
+				array_push($event->messages,
+					[
+						'key'     => 'enupal_backup_notification',
+						'subject' => 'Backup process completed',
+						'body'    => 'We are happy to inform you that the backup process has been completed. Backup Id: {{backup.backupId}}'
+					]
+				);
+			}
+		);
 	}
 
 	protected function afterInstall()
 	{
 		self::$app->backups->installDefaultValues();
+	}
+
+	/**
+	 * Performs actions before the plugin is Uninstalled.
+	 *
+	 * @return bool Whether the plugin should be Uninstalled
+	 */
+	protected function beforeUninstall(): bool
+	{
+		$backups = self::$app->backups->getAllBackups();
+
+		foreach ($backups as $key => $backup)
+		{
+			Craft::$app->elements->deleteElementById($backup->id);
+		}
+
+		return true;
 	}
 
 	protected function createSettingsModel()
@@ -125,7 +165,10 @@ class Backup extends \craft\base\Plugin
 	{
 		return [
 			'enupal-backup/finished' =>
-			'enupal-backup/webhook/finished'
+			'enupal-backup/webhook/finished',
+
+			'enupal-backup/schedule' =>
+			'enupal-backup/webhook/schedule'
 		];
 	}
 }

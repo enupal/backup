@@ -1,8 +1,17 @@
+{#
+/**
+ * EnupalBackup plugin for Craft CMS 3.x
+ *
+ * @link      https://enupal.com/
+ * @copyright Copyright (c) 2017 Enupal
+ */
+#}
+
 {% extends "enupal-backup/_layouts/elementindex" %}
 {% set title = "Backups"|t %}
 {% set elementType = 'enupal\\backup\\elements\\Backup' %}
 {% do view.registerAssetBundle("enupal\\backup\\assetbundles\\FontAwesomeAsset") %}
-{% set extraPageHeaderHtml %}
+{% block actionButton %}
 	<div class="buttons">
 		<form id="run-backup" method="post">
 			{{ csrfInput() }}
@@ -11,7 +20,11 @@
 			<button class="btn submit add icon">{{ "Backup Now"|t('enupal-backup') }}</button>
 		</form>
 	</div>
-{% endset %}
+
+	<form id="download-all-form" class="utility" method="post" accept-charset="UTF-8">
+
+	</form>
+{% endblock %}
 
 {% js %}
 
@@ -25,17 +38,17 @@ $("#run-backup").submit( function(e) {
 		method: 'POST',
 		url: '/',
 		data: data,
-		headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-	})
-	.success(function(data) {
-		if (data.message)
-		{
-			Craft.cp.displayNotice(Craft.t('enupal-backup','Enupal Backup: \'{message}\'', { message: data.message }));
-		}
-		location.reload();
-	})
-	.error(function(data) {
+		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+		success: function(data) {
+			if (data.message)
+			{
+				Craft.cp.displayNotice(Craft.t('enupal-backup','Enupal Backup: \'{message}\'', { message: data.message }));
+			}
+			location.reload();
+		},
+		error: function(data) {
 			console.log('error', data);
+		}
 	});
 
 });

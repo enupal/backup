@@ -1,4 +1,10 @@
 <?php
+/**
+ * EnupalBackup plugin for Craft CMS 3.x
+ *
+ * @link      https://enupal.com/
+ * @copyright Copyright (c) 2017 Enupal
+ */
 
 namespace enupal\backup\jobs;
 
@@ -59,7 +65,7 @@ class CreateBackup extends BaseJob
 
 		} catch (\Throwable $e)
 		{
-			$error = '02 - Could not create Enupal Backup: '.$e->getMessage().' --Trace: '.json_encode($e->getTrace());
+			$error = '02 - Could not create Enupal Backup: '.$e->getMessage().' --Trace: '.$e->getTraceAsString();
 			$this->_backup->backupStatusId = BackupStatus::ERROR;
 			$this->_backup->logMessage = $error;
 

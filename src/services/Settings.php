@@ -1,4 +1,11 @@
 <?php
+/**
+ * EnupalBackup plugin for Craft CMS 3.x
+ *
+ * @link      https://enupal.com/
+ * @copyright Copyright (c) 2017 Enupal
+ */
+
 namespace enupal\backup\services;
 
 use Craft;
@@ -14,16 +21,27 @@ class Settings extends Component
 
 	/**
 	 * Saves Settings
-	 *
+	 * @param string $scenario
 	 * @param array $postSettings
 	 *
 	 * @return bool
 	 */
-	public function saveSettings($postSettings): bool
+	public function saveSettings(array $postSettings, string $scenario = null): bool
 	{
 		$backupPlugin = $this->getPlugin();
 
-		//Craft::$app->getSecurity()->hashData($password);
+		$backupPlugin->getSettings()->setAttributes($postSettings, false);
+
+		if ($scenario)
+		{
+			$backupPlugin->getSettings()->setScenario($scenario);
+		}
+
+		// Validate them, now that it's a model
+		if ($backupPlugin->getSettings()->validate() === false)
+		{
+			return false;
+		}
 
 		$success = Craft::$app->getPlugins()->savePluginSettings($backupPlugin, $postSettings);
 

@@ -11,7 +11,7 @@ namespace enupal\backup\assetbundles;
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
-class FontAwesomeAsset extends AssetBundle
+class HighlightAsset extends AssetBundle
 {
 	public function init()
 	{
@@ -21,9 +21,12 @@ class FontAwesomeAsset extends AssetBundle
 		// define the dependencies
 		// define the relative path to CSS/JS files that should be registered with the page
 		// when this asset bundle is registered
+		$this->js = [
+			'js/highlight.min.js'
+		];
 
 		$this->css = [
-			'css/font/css/font-awesome.min.css'
+			'css/highlight.min.css'
 		];
 
 		parent::init();

@@ -1,4 +1,11 @@
 <?php
+/**
+ * EnupalBackup plugin for Craft CMS 3.x
+ *
+ * @link      https://enupal.com/
+ * @copyright Copyright (c) 2017 Enupal
+ */
+
 namespace enupal\backup\elements\db;
 
 use Craft;
@@ -77,8 +84,8 @@ class BackupQuery extends ElementQuery
 			'enupalbackup_backups.assetSize',
 			'enupalbackup_backups.templateFileName',
 			'enupalbackup_backups.templateSize',
-			'enupalbackup_backups.pluginFileName',
-			'enupalbackup_backups.pluginSize',
+			'enupalbackup_backups.logFileName',
+			'enupalbackup_backups.logSize',
 			'enupalbackup_backups.backupStatusId',
 			'enupalbackup_backups.aws',
 			'enupalbackup_backups.dropbox',
@@ -86,6 +93,7 @@ class BackupQuery extends ElementQuery
 			'enupalbackup_backups.ftp',
 			'enupalbackup_backups.softlayer',
 			'enupalbackup_backups.logMessage',
+			'enupalbackup_backups.isEncrypted',
 		]);
 
 		if ($this->backupId) {

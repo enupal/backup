@@ -1,7 +1,16 @@
+{#
+/**
+ * EnupalBackup plugin for Craft CMS 3.x
+ *
+ * @link      https://enupal.com/
+ * @copyright Copyright (c) 2017 Enupal
+ */
+#}
+
 {% import "_includes/forms" as forms %}
 {% set tab  = 1 %}
 
-<nav id="tabs" class="tabs" style= "margin: 0 0 0 0;">
+<nav id="backup-tabs" class="tabs" style= "margin: 0 0 0 0;">
 	<ul>
 		<li>
 			<a class="tab {{ tab == 1 ? ' sel' : '' }}" href="#tab-enupalbackup-settings">
@@ -11,9 +20,9 @@
 	</ul>
 </nav>
 
-<div>
+<div id="backup-content">
 	<div class="{{ tab != 1 ? 'hidden' : '' }} meta" id="tab-enupalbackup-settings">
-		<div class="field enupal-field-heading"><i class="fa fa-info-circle" aria-hidden="true"> {{'Backup Info'|t('enupal-backup')}}</i></div>
+		<div class="field enupal-field-heading">{{'Backup Info'|t('enupal-backup')}}</div>
 			{{ forms.dateTimeField({
 				label: "Started at"|t('enupal-backup'),
 				id: 'dateCreated',
@@ -31,35 +40,48 @@
 				}) }}
 			{% endif %}
 
-			{{ forms.textField({
-				label: "Status"|t('enupal-backup'),
-				id: 'status',
-				name: 'status',
-				value: backup.getStatusName(),
-				disabled: true
-			}) }}
-		{% if backup.dropbox or backup.aws or backup.ftp or backup.softlayer %}
-			<div class="field enupal-field-heading"><i class="fa fa-cloud" aria-hidden="true"> {{'Cloud'|t('enupal-backup')}}</i></div>
-			<div class="field">
+			<div class="field" id="isEncrypted-field">
 				<div class="heading">
-					<label>{{"Uploaded to"|t('enupal-backup')}}</label>
+					<label id="isEncrypted-label" for="isEncrypted">{{"Status"|t('enupal-backup')}}</label>
 				</div>
 				<div class="input ltr">
-					{% if backup.dropbox %}
-							<i title="Dropbox" class="fa fa-dropbox fa-fw" aria-hidden="true"></i>
-					{% endif %}
-					{% if backup.aws %}
-						<i title="Amazon S3" class="fa fa-amazon fa-fw" aria-hidden="true"></i>
-					{% endif %}
-					{% if backup.ftp %}
-						<i title="FTP" class="fa fa-folder-open fa-fw" aria-hidden="true"></i>
-					{% endif %}
-					{% if backup.softlayer %}
-						<i title="Softlayer Object Storage" class="fa fa-cloud fa-fw" aria-hidden="true"></i>
-					{% endif %}
+					{% set labelColor =  backup.backupStatusId == 2 ? 'success' : backup.backupStatusId == 3 ? 'danger' : backup.backupStatusId == 1 ? 'info' : 'warning' %}
+					<div class="bootstrap-iso"><span class="label label-{{labelColor}}">{{backup.getStatusName()}}</span></div>
 				</div>
 			</div>
-		{% endif %}
+			{% if backup.isEncrypted %}
+
+				<div class="field" id="isEncrypted-field">
+					<div class="heading">
+						<label id="isEncrypted-label" for="isEncrypted">Encrypted</label>
+					</div>
+					<div class="input ltr">
+						<i class="fa fa-check-square-o fa-fw" aria-hidden="true"></i>
+					</div>
+				</div>
+			{% endif %}
+			{% if backup.dropbox or backup.aws or backup.ftp or backup.softlayer %}
+				<div class="field enupal-field-heading"><i class="fa fa-cloud" aria-hidden="true"> {{'Cloud'|t('enupal-backup')}}</i></div>
+				<div class="field">
+					<div class="heading">
+						<label>{{"Uploaded to"|t('enupal-backup')}}</label>
+					</div>
+					<div class="input ltr">
+						{% if backup.dropbox %}
+								<i title="Dropbox" class="fa fa-dropbox fa-fw" aria-hidden="true"></i>
+						{% endif %}
+						{% if backup.aws %}
+							<i title="Amazon S3" class="fa fa-amazon fa-fw" aria-hidden="true"></i>
+						{% endif %}
+						{% if backup.ftp %}
+							<i title="FTP" class="fa fa-folder-open fa-fw" aria-hidden="true"></i>
+						{% endif %}
+						{% if backup.softlayer %}
+							<i title="Softlayer Object Storage" class="fa fa-cloud fa-fw" aria-hidden="true"></i>
+						{% endif %}
+					</div>
+				</div>
+			{% endif %}
 	</div><!-- settings div -->
 
 </div>

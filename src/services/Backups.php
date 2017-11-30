@@ -1,4 +1,11 @@
 <?php
+/**
+ * EnupalBackup plugin for Craft CMS 3.x
+ *
+ * @link      https://enupal.com/
+ * @copyright Copyright (c) 2017 Enupal
+ */
+
 namespace enupal\backup\services;
 
 use Craft;
@@ -9,6 +16,10 @@ use enupal\backup\elements\Backup as BackupElement;
 use enupal\backup\records\Backup as BackupRecord;
 use enupal\backup\models\Settings;
 use enupal\backup\enums\BackupStatus;
+use enupal\backup\jobs\CreateBackup;
+use enupal\backup\contracts\BackupConfig;
+use enupal\backup\contracts\DatabaseBackup;
+use enupal\backup\contracts\DirectoryBackup;
 
 use craft\helpers\FileHelper;
 use craft\errors\ShellCommandException;
@@ -18,6 +29,9 @@ use mikehaertl\shellcommand\Command as ShellCommand;
 use yii\base\Exception;
 use craft\helpers\Path;
 use craft\helpers\UrlHelper;
+use craft\mail\Message;
+use craft\models\MailSettings;
+use craft\helpers\MailerHelper;
 
 class Backups extends Component
 {
@@ -36,6 +50,53 @@ class Backups extends Component
 		{
 			$this->backupRecord = new BackupRecord();
 		}
+	}
+
+	/**
+	 * Execute Enupal Backup Job from the service layer
+	 * @return array
+	*/
+	public function executeEnupalBackup()
+	{
+		$success = false;
+		$response = [
+			'success' => true,
+			'message' => 'queued'
+		];
+
+		// Add our CreateBackup job to the queue
+		Craft::$app->queue->push(new CreateBackup());
+
+		// if is Linux try to call queue/run in background
+		if (!Backup::$app->settings->isWindows())
+		{
+			// listen by console
+			$shellCommand = new ShellCommand();
+			$craftPath    = CRAFT_BASE_PATH;
+			$phpPath      = Backup::$app->backups->getPhpPath();
+			$command = 'cd'.
+				' '.$craftPath;
+			$command .= ' && '.$phpPath.
+					' craft'.
+					' queue/run';
+			// linux
+			$command .= ' > /dev/null 2&1 &';
+			// windows does not work
+			//$command .= ' 1>> NUL 2>&1';
+			$shellCommand->setCommand($command);
+
+			//@todo requiere this in the docs
+			$shellCommand->useExec = true;
+
+			$success = $shellCommand->execute();
+
+			$response = [
+				'success' => $success,
+				'message' => 'running'
+			];
+		}
+
+		return $response;
 	}
 
 	/**
@@ -70,6 +131,18 @@ class Backups extends Component
 		$query->siteId($siteId);
 
 		return $query->one();
+	}
+
+	/**
+	 * Returns all Backups
+	 *
+	 * @return null|BackupElement[]
+	 */
+	public function getAllBackups()
+	{
+		$query = BackupElement::find();
+
+		return $query->all();
 	}
 
 	/**
@@ -163,7 +236,7 @@ class Backups extends Component
 
 		$phpPath = $this->getPhpPath();
 
-		$command .= ' && '.$phpPath.' phpbu5.phar';
+		$command .= ' && '.$phpPath.' phpbu.phar';
 		$command .= ' --configuration='.$configFile;
 		$command .= ' --debug';
 
@@ -181,9 +254,6 @@ class Backups extends Component
 		{
 			throw ShellCommandException::createFromCommand($shellCommand);
 		}
-
-		// moved to the webhook
-		#$this->updateBackupOnComplete($backup);
 
 		return $success;
 	}
@@ -256,7 +326,7 @@ class Backups extends Component
 	{
 		// If the log have infomartion the backup is finished
 		$logPath  = $this->getLogPath($backup->backupId);
-		$log      = file_get_contents($logPath);
+		$log      = file_exists($logPath) ? file_get_contents($logPath) : null;
 		$settings = Backup::$app->settings->getSettings();
 
 		if ($log)
@@ -275,9 +345,9 @@ class Backups extends Component
 				$backup->templateSize = filesize($backup->getTemplateFile());
 			}
 
-			if (is_file($backup->getPluginFile()))
+			if (is_file($backup->getLogFile()))
 			{
-				$backup->pluginSize = filesize($backup->getPluginFile());
+				$backup->logSize = filesize($backup->getLogFile());
 			}
 
 			if (is_file($backup->getAssetFile()))
@@ -351,6 +421,52 @@ class Backups extends Component
 	}
 
 	/**
+	 * Enupal Backup send notification service
+	 *
+	 * @param $backup BackupElement
+	*/
+	public function sendNotification(BackupElement $backup)
+	{
+		$settings       = new MailSettings();
+		$backupSettings = Backup::$app->settings->getSettings();
+		$templatePath   = '_enupalBackupNotification/email';
+		$emailSettings  = Craft::$app->getSystemSettings()->getSettings('email');
+
+		$settings->fromEmail = $backupSettings->notificationSenderEmail;
+		$settings->fromName  = $backupSettings->notificationSenderName;
+		$settings->template  = $templatePath;
+		$settings->transportType = $emailSettings['transportType'];
+
+		$mailer  = MailerHelper::createMailer($settings);
+
+		$emails = explode(",", $backupSettings->notificationRecipients);
+
+		try
+		{
+			$emailSent = $mailer
+			->composeFromKey('enupal_backup_notification', ['backup' => $backup])
+			->setTo($emails)
+			->send();
+		}
+		catch (\Throwable $e)
+		{
+			Craft::$app->getErrorHandler()->logException($e);
+			$emailSent = false;
+		}
+
+		if ($emailSent)
+		{
+			Backup::info('Notification Email sent successfully!');
+		}
+		else
+		{
+			Backup::error('There was an error sending the Notification email');
+		}
+
+		return $emailSent;
+	}
+
+	/**
 	 * @param $backup BackupElement
 	 * Generetates the config file and create the backup element entry
 	 *
@@ -360,22 +476,7 @@ class Backups extends Component
 		$logPath  = $this->getLogPath($backup->backupId);
 		$settings = Backup::$app->settings->getSettings();
 
-		$config  = [
-			'verbose' => true,
-			'logging' => [
-				[
-					'type'   => 'json',
-					'target' => $logPath
-				],
-				[
-					'type'    => 'webhook',
-					'options' => [
-						'uri'      => UrlHelper::siteUrl('enupal-backup/finished?backupId='.$backup->backupId)
-					]
-				]
-			],
-			'backups' => []
-		];
+		$config = new BackupConfig($backup);
 
 		$backupId       = $backup->backupId;
 		$compress       = $this->getCompressType();
@@ -384,18 +485,41 @@ class Backups extends Component
 		$dbFileName     = 'database-'.$backupId.'.sql';
 		$assetName      = 'assets-'.$backupId.$compress;
 		$templateName   = 'templates-'.$backupId.$compress;
-		$pluginName     = 'plugins-'.$backupId.$compress;
+		$logName        = 'logs-'.$backupId.$compress;
 		$pathToTar      = $this->getPathToTar();
 		$backups        = [];
 
 		// let's create the Backup Element
-		$backup->databaseFileName = $this->isEncrypt($encrypt, $dbFileName);
+		$backup->databaseFileName = $dbFileName;
+
 		$backup->assetFileName    = $settings->enableLocalVolumes ? $assetName : null;
-		$backup->assetFileName    = $this->isEncrypt($encrypt, $backup->assetFileName);
 		$backup->templateFileName = $settings->enableTemplates ? $templateName : null;
-		$backup->templateFileName = $this->isEncrypt($encrypt, $backup->templateFileName);
-		$backup->pluginFileName   = $settings->enablePlugins ? $pluginName : null;
-		$backup->pluginFileName   = $this->isEncrypt($encrypt, $backup->pluginFileName);
+		$backup->logFileName      = $settings->enableLogs ? $logName : null;
+
+		// Add compression if available
+		if (!Backup::$app->settings->isWindows())
+		{
+			// compress database just work on linux
+			$backup->databaseFileName .= '.bz2';
+		}
+
+		if ($this->applyCompress())
+		{
+			$backup->assetFileName .= '.bz2';
+			$backup->templateFileName .= '.bz2';
+			$backup->logFileName .= '.bz2';
+		}
+
+		// Add encrypt extension if enabled
+		$backup->databaseFileName = $this->getEncryptFileName($encrypt, $backup->databaseFileName);
+		$backup->templateFileName = $this->getEncryptFileName($encrypt, $backup->templateFileName);
+		$backup->assetFileName    = $this->getEncryptFileName($encrypt, $backup->assetFileName);
+		$backup->logFileName = $this->getEncryptFileName($encrypt, $backup->logFileName);
+
+		if ($encrypt)
+		{
+			$backup->isEncrypted = 1;
+		}
 
 		if (!$this->saveBackup($backup))
 		{
@@ -404,46 +528,15 @@ class Backups extends Component
 		}
 
 		// DATABASE
-		$dbConfig = Craft::$app->getConfig()->getDb();
-
-		if ($dbConfig->driver == 'mysql')
+		if ($settings->enableDatabase)
 		{
-			$databaseBackup = [
-				'name'   => 'Database',
-				'source' => [
-					'type'   => 'mysqldump',
-					'options'       => [
-						'host'          => $dbConfig->server,
-						'databases'     => $dbConfig->database,
-						'user'          => $dbConfig->user,
-						'password'      => $dbConfig->password,
-						'port'          => $dbConfig->port
-						//'ignoreTable'   => 'tableFoo,tableBar',
-						//'structureOnly' => 'logTable1,logTable2'
-					]
-				],
-				'target' => [
-					'dirname' => $this->getDatabasePath(),
-					'filename' => $dbFileName
-				]
-			];
+			$databaseBackup = new DatabaseBackup();
+			$databaseBackup->name     = 'Database';
+			$databaseBackup->fileName = $dbFileName;
+			$databaseBackup->syncs    = $syncs;
+			$databaseBackup->encrypt  = $encrypt;
 
-			if ($settings->enablePathToMysqldump && $settings->pathToMysqldump)
-			{
-				$databaseBackup['source']['options']['pathToMysqldump'] = $settings->pathToMysqldump;
-			}
-
-			if ($syncs)
-			{
-				$databaseBackup['syncs'] = $syncs;
-			}
-
-			if ($encrypt)
-			{
-				$databaseBackup['crypt'] = $encrypt;
-			}
-
-			$backups[] = $databaseBackup;
+			$config->addBackup($databaseBackup);
 		}
 		// END DATABASE
 
@@ -476,37 +569,15 @@ class Backups extends Component
 				// @todo - research and test this looks too easy :D
 				if (is_dir($asset->path))
 				{
-					$assetBackup = [
-						'name'   => 'Asset'.$asset->id,
-						'source' => [
-							'type' => 'tar',
-							'options' => [
-								"path" => $asset->path,
-								"forceLocal" => true
-							]
-						],
-						'target' => [
-							'dirname' => $this->getAssetsPath(),
-							'filename' => $assetName
-						]
-					];
+					$assetBackup = new DirectoryBackup();
+					$assetBackup->name     = 'Asset'.$asset->id;
+					$assetBackup->path     = $asset->path;
+					$assetBackup->fileName = $assetName;
+					$assetBackup->dirName  = $this->getAssetsPath();
+					$assetBackup->syncs    = $syncs;
+					$assetBackup->encrypt  = $encrypt;
 
-					if ($pathToTar)
-					{
-						$assetBackup['source']['options']['pathToTar'] = $pathToTar;
-					}
-
-					if ($syncs)
-					{
-						$assetBackup['syncs'] = $syncs;
-					}
-
-					if ($encrypt)
-					{
-						$assetBackup['crypt'] = $encrypt;
-					}
-
-					$backups[] = $assetBackup;
+					$config->addBackup($assetBackup);
 				}
 				else
 				{
@@ -520,40 +591,33 @@ class Backups extends Component
 		{
 			$baseTemplatePath = Craft::$app->getPath()->getSiteTemplatesPath();
 			//@todo - add exclude templates
-			$templateBackup = [
-				'name'   => 'Templates',
-				'source' => [
-					'type' => 'tar',
-					'options' => [
-						"path" => $baseTemplatePath,
-						"forceLocal" => true
-					]
-				],
-				'target' => [
-					'dirname' => $this->getTemplatesPath(),
-					'filename' => $templateName
-				]
-			];
+			$templateBackup = new DirectoryBackup();
+			$templateBackup->name     = 'Templates';
+			$templateBackup->path     = $baseTemplatePath;
+			$templateBackup->fileName = $templateName;
+			$templateBackup->dirName  = $this->getTemplatesPath();
+			$templateBackup->syncs    = $syncs;
+			$templateBackup->encrypt  = $encrypt;
 
-			if ($pathToTar)
-			{
-				$templateBackup['source']['options']['pathToTar'] = $pathToTar;
-			}
-
-			if ($syncs)
-			{
-				$templateBackup['syncs'] = $syncs;
-			}
-
-			if ($encrypt)
-			{
-				$templateBackup['crypt'] = $encrypt;
-			}
-
-			$backups[] = $templateBackup;
+			$config->addBackup($templateBackup);
 		}
 
-		$config['backups'] = $backups;
+		// LOGS
+		if ($settings->enableLogs)
+		{
+			$baseLogPath = Craft::$app->getPath()->getLogPath();
+
+			$logBackup = new DirectoryBackup();
+			$logBackup->name     = 'Logs';
+			$logBackup->path     = $baseLogPath;
+			$logBackup->fileName = $logName;
+			$logBackup->dirName  = $this->getLogsPath();
+			$logBackup->syncs    = $syncs;
+			$logBackup->encrypt  = $encrypt;
+			$logBackup->exclude  = $settings->excludeLogs;
+
+			$config->addBackup($logBackup);
+		}
 
 		$configFile = $this->getConfigPath();
 
@@ -562,7 +626,7 @@ class Backups extends Component
 			mkdir($this->getBasePath(), 0777, true);
 		}
 
-		file_put_contents($configFile, json_encode($config));
+		file_put_contents($configFile, $config->getConfig(true));
 
 		return $configFile;
 	}
@@ -581,8 +645,46 @@ class Backups extends Component
 		else
 		{
 			// File not found.
-			BackupPlugin::error(BackupPlugin::t('Unable to delete the config file'));
+			Backup::error(Backup::t('Unable to delete the config file'));
 		}
+	}
+
+	/**
+	 * Removes a backup and related files
+	 *
+	 * @param BackupElement $backup
+	 *
+	 * @throws \CDbException
+	 * @throws \Exception
+	 * @return boolean
+	 */
+	public function deleteBackup(BackupElement $backup)
+	{
+		$transaction = Craft::$app->db->beginTransaction();
+
+		try
+		{
+			// Delete the Element and Backup
+			$success = Craft::$app->elements->deleteElementById($backup->id);
+
+			if (!$success)
+			{
+				$transaction->rollback();
+				Backup::error("Couldn’t delete Backup on deletebackup service.");
+
+				return false;
+			}
+
+			$transaction->commit();
+		}
+		catch (\Exception $e)
+		{
+			$transaction->rollback();
+
+			throw $e;
+		}
+
+		return true;
 	}
 
 	/**
@@ -645,10 +747,16 @@ class Backups extends Component
 		return true;
 	}
 
-	private function isEncrypt($encrypt, $fileName)
+	private function getEncryptFileName($encrypt, $fileName)
 	{
 		$enc = $encrypt ? '.enc' : '';
-		return $fileName.$enc;
+
+		if ($fileName)
+		{
+			$fileName .= $enc;
+		}
+
+		return $fileName;
 	}
 
 	private function getEncrypt()
@@ -670,13 +778,6 @@ class Backups extends Component
 			{
 				$encrypt['options']['pathToOpenSSL'] = $settings->pathToOpenssl;
 			}
-
-			if (Backup::$app->settings->isWindows())
-			{
-				// @todo report bug on phpbu, error on windows when try to delete
-				$encrypt['options']['keepUncrypted'] = true;
-			}
-
 		}
 
 		return $encrypt;
@@ -687,7 +788,6 @@ class Backups extends Component
 		$syncs = [];
 		$settings = Backup::$app->settings->getSettings();
 		// DROPBOX
-		// @todo - Test with just one backup - triggers an error start with /
 		if ($settings->enableDropbox)
 		{
 			$dropbox = [
@@ -756,11 +856,24 @@ class Backups extends Component
 
 	private function getCompressType()
 	{
-		// @todo - add setting to change this bz2 or something else
-		return '.tar';
+		$compress = '.tar';
+
+		return $compress;
 	}
 
-	private function getPathToTar()
+	public function applyCompress()
+	{
+		$settings = Backup::$app->settings->getSettings();
+
+		if (!Backup::$app->settings->isWindows() || ($settings->enablePathToTar && $settings->pathToTar))
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	public function getPathToTar()
 	{
 		$settings  = Backup::$app->settings->getSettings();
 		$pathToTar = null;
@@ -785,7 +898,7 @@ class Backups extends Component
 	 *                         to select from
 	 * @return string
 	 */
-	private function getRandomStr($length = 10, $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
+	public function getRandomStr($length = 10, $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
 	{
 		$str = '';
 		$max = mb_strlen($keyspace, '8bit') - 1;
@@ -814,6 +927,11 @@ class Backups extends Component
 	public function getTemplatesPath()
 	{
 		return $this->getBasePath().'templates'.DIRECTORY_SEPARATOR;
+	}
+
+	public function getLogsPath()
+	{
+		return $this->getBasePath().'logs'.DIRECTORY_SEPARATOR;
 	}
 
 	public function getDatabasePath()

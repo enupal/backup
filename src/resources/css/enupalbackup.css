@@ -3,3 +3,69 @@
 {
 	width: 100%;
 }
+
+div.deletebackup {
+	border-top: 1px solid #e3e5e8;
+}
+
+.enupal-field-heading {
+  color: rgb(85, 85, 85);
+  font-size: .8em;
+  min-height: auto;
+  text-transform: uppercase;
+  font-weight: 800;
+  text-align: left;
+}
+
+/*TABS*/
+#backup-tabs {
+  overflow: auto;
+  width: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#backup-tabs li {
+    margin: 0;
+    padding: 0;
+    float: left;
+}
+
+#backup-tabs a {
+    box-shadow: -4px 0 0 rgba(0, 0, 0, .2);
+    background: #d55845;
+    background: linear-gradient(220deg, transparent 10px, #d55845 10px);
+    text-shadow: 0 1px 0 rgba(0,0,0,.5);
+    color: #fff;
+    float: left;
+    font: bold 12px/35px 'Lucida sans', Arial, Helvetica;
+    height: 35px;
+    padding: 0 20px;
+    text-decoration: none;
+}
+
+#backup-tabs a:hover {
+    background: #c93434;
+    color:#FFF;
+    background: linear-gradient(220deg, transparent 10px, #c93434 10px);
+}
+
+#backup-tabs a:focus {
+    outline: 0;
+}
+
+#backup-tabs .sel{
+    background: #fff;
+    background: linear-gradient(220deg, transparent 10px, #fff 10px);
+    text-shadow: none;
+    color: #333;
+}
+
+#backup-content {
+    background-color: #fff;
+    background-image:         linear-gradient(top, #fff, #ddd);
+    border-radius: 0 2px 2px 2px;
+    box-shadow: 0 2px 2px #000, 0 -1px 0 #fff inset;
+    padding: 10px;
+}

@@ -1,4 +1,11 @@
 <?php
+/**
+ * EnupalBackup plugin for Craft CMS 3.x
+ *
+ * @link      https://enupal.com/
+ * @copyright Copyright (c) 2017 Enupal
+ */
+
 namespace enupal\backup\elements;
 
 use Craft;
@@ -37,14 +44,15 @@ class Backup extends Element
 	public $assetSize;
 	public $templateFileName;
 	public $templateSize;
-	public $pluginFileName;
-	public $pluginSize;
+	public $logFileName;
+	public $logSize;
 	public $backupStatusId = BackupStatus::RUNNING;
 	public $aws = 0;
 	public $dropbox = 0;
 	public $rsync = 0;
 	public $ftp = 0;
 	public $softlayer = 0;
+	public $isEncrypted = 0;
 	public $logMessage;
 
 	/**
@@ -276,6 +284,11 @@ class Backup extends Element
 					$total += $this->databaseSize;
 				}
 
+				if ($this->logSize)
+				{
+					$total += $this->logSize;
+				}
+
 				if ($total == 0)
 				{
 					return "";
@@ -289,6 +302,8 @@ class Backup extends Element
 					BackupPlugin::t('Started') :
 					BackupPlugin::t('Not defined');
 
+				$encryted = '&nbsp;<i class="fa fa-lock" aria-hidden="true"></i>';
+
 				if ($this->backupStatusId == BackupStatus::FINISHED)
 				{
 					$message = '<i class="fa fa-check-square-o" aria-hidden="true"></i>';
@@ -301,6 +316,12 @@ class Backup extends Element
 				{
 					$message = '<i class="fa fa-times" aria-hidden="true"></i>';
 				}
+
+				if ($this->isEncrypted)
+				{
+					$message .= $encryted;
+				}
+
 				return $message;
 			}
 			case 'dateCreated':
@@ -336,11 +357,16 @@ class Backup extends Element
 		return $base.$this->templateFileName;
 	}
 
-	public function getPluginFile()
+	public function getLogFile()
 	{
-		$base = BackupPlugin::$app->backups->getPluginsPath();
+		$base = BackupPlugin::$app->backups->getLogsPath();
 
-		return $base.$this->pluginFileName;
+		if (!$this->logFileName)
+		{
+			return null;
+		}
+
+		return $base.$this->logFileName;
 	}
 
 	public function getAssetFile()
@@ -384,14 +410,15 @@ class Backup extends Element
 		$record->assetSize        = $this->assetSize;
 		$record->templateFileName = $this->templateFileName;
 		$record->templateSize     = $this->templateSize;
-		$record->pluginFileName   = $this->pluginFileName;
-		$record->pluginSize       = $this->pluginSize;
+		$record->logFileName      = $this->logFileName;
+		$record->logSize          = $this->logSize;
 		$record->backupStatusId   = $this->backupStatusId;
 		$record->aws              = $this->aws;
 		$record->dropbox          = $this->dropbox;
 		$record->rsync            = $this->rsync;
 		$record->ftp              = $this->ftp;
 		$record->softlayer        = $this->softlayer;
+		$record->isEncrypted      = $this->isEncrypted;
 		$record->logMessage       = $this->logMessage;
 
 		$record->save(false);

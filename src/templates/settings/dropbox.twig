@@ -1,3 +1,12 @@
+{#
+/**
+ * EnupalBackup plugin for Craft CMS 3.x
+ *
+ * @link      https://enupal.com/
+ * @copyright Copyright (c) 2017 Enupal
+ */
+#}
+
 {% extends "enupal-backup/_layouts/settings" %}
 {% import "_includes/forms" as forms %}
 
@@ -14,6 +23,7 @@
 {% set content %}
 
 	<input type="hidden" name="action" value="enupal-backup/settings/save-settings">
+	<input type="hidden" name="backupScenario" value="dropbox">
 
 	<div id="settings-cp">
 
@@ -38,7 +48,7 @@
 				placeholder: "xxxxxxx"|t('enupal-backup'),
 				autofocus: true,
 				first: true,
-				errors: ''
+				errors: settings.getErrors('dropboxToken')
 			}) }}
 
 			{{ forms.textField({

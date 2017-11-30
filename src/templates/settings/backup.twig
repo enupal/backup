@@ -1,9 +1,18 @@
+{#
+/**
+ * EnupalBackup plugin for Craft CMS 3.x
+ *
+ * @link      https://enupal.com/
+ * @copyright Copyright (c) 2017 Enupal
+ */
+#}
+
 {% extends "enupal-backup/_layouts/settings" %}
 {% import "_includes/forms" as forms %}
 
 {% set settings = craft.enupalbackup.getSettings() %}
 {% set fullPageForm = true %}
-{% set saveShortcutRedirect = 'enupal-backup/settings/general' %}
+{% set saveShortcutRedirect = 'enupal-backup/settings/backup' %}
 
 {% set saveButton %}
 	<div class="buttons">
@@ -14,6 +23,7 @@
 {% set content %}
 
 	<input type="hidden" name="action" value="enupal-backup/settings/save-settings">
+	<input type="hidden" name="backupScenario" value="backupFiles">
 
 	<div id="settings-cp">
 
@@ -25,25 +35,29 @@
 			<hr>
 
 			{{ forms.lightswitchField({
-				label: "Plugins"|t('enupal-backup'),
-				id: 'enablePlugins',
-				name: 'enablePlugins',
-				on: settings.enablePlugins,
-				toggle: 'settings-enablePlugins',
+				label: "Database"|t('enupal-backup'),
+				id: 'enableDatabase',
+				name: 'enableDatabase',
+				on: settings.enableDatabase,
+				toggle: 'settings-enableDatabase',
 				onLabel: "On"|t('enupal-backup'),
-				offLabel: "Off"|t('enupal-backup')
+				offLabel: "Off"|t('enupal-backup'),
+				errors: settings.getErrors('enableDatabase'),
 			}) }}
 
-			<div id="settings-enablePlugins" class="{% if not settings.enablePlugins %}hidden{% endif %}">
-				{% set plugins = craft.enupalbackup.getAllPlugins() %}
-
-				{{ forms.checkboxSelect({
-					name: 'plugins',
-					options: plugins,
-					showAllOption: true,
-					values: settings.plugins,
+			<div id="settings-enableDatabase" class="{% if not settings.enableDatabase %}hidden{% endif %}">
+				{{ forms.textField({
+					label: "Structure Only"|t('enupal-backup'),
+					instructions: "Comma separated list of tables where only the table structure will be stored."|t('enupal-backup'),
+					id: 'excludeData',
+					name: 'excludeData',
+					value: settings.excludeData,
+					autofocus: true,
+					first: true,
+					errors: ''
 				}) }}
 			</div>
+
 			<hr>
 			{{ forms.lightswitchField({
 				label: "Templates"|t('enupal-backup'),
@@ -52,7 +66,8 @@
 				on: settings.enableTemplates,
 				toggle: 'settings-enableTemplates',
 				onLabel: "On"|t('enupal-backup'),
-				offLabel: "Off"|t('enupal-backup')
+				offLabel: "Off"|t('enupal-backup'),
+				errors: settings.getErrors('enableTemplates'),
 			}) }}
 
 			<div id="settings-enableTemplates" class="{% if not settings.enableTemplates %}hidden{% endif %}">
@@ -76,7 +91,8 @@
 				on: settings.enableLocalVolumes,
 				toggle: 'settings-enableAssets',
 				onLabel: "On"|t('enupal-backup'),
-				offLabel: "Off"|t('enupal-backup')
+				offLabel: "Off"|t('enupal-backup'),
+				errors: settings.getErrors('enableLocalVolumes'),
 			}) }}
 
 			<div id="settings-enableAssets" class="{% if not settings.enableLocalVolumes %}hidden{% endif %}">
@@ -89,6 +105,18 @@
 					values: settings.volumes,
 				}) }}
 			</div>
+
+		<hr>
+			{{ forms.lightswitchField({
+				label: "Logs"|t('enupal-backup'),
+				instructions: 'Backup your log files',
+				id: 'enableLogs',
+				name: 'enableLogs',
+				on: settings.enableLogs,
+				onLabel: "On"|t('enupal-backup'),
+				offLabel: "Off"|t('enupal-backup'),
+				errors: settings.getErrors('enableLogs'),
+			}) }}
 
 		{% endnamespace %}
 

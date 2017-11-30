@@ -1,9 +1,18 @@
+{#
+/**
+ * EnupalBackup plugin for Craft CMS 3.x
+ *
+ * @link      https://enupal.com/
+ * @copyright Copyright (c) 2017 Enupal
+ */
+#}
+
 {% extends "enupal-backup/_layouts/settings" %}
 {% import "_includes/forms" as forms %}
 
 {% set settings = craft.enupalbackup.getSettings() %}
 {% set fullPageForm = true %}
-{% set saveShortcutRedirect = 'enupal-backup/settings/dropbox' %}
+{% set saveShortcutRedirect = 'enupal-backup/settings/ftp' %}
 
 {% set saveButton %}
 	<div class="buttons">
@@ -14,6 +23,7 @@
 {% set content %}
 
 	<input type="hidden" name="action" value="enupal-backup/settings/save-settings">
+	<input type="hidden" name="backupScenario" value="ftp">
 
 	<div id="settings-cp">
 
@@ -25,7 +35,8 @@
 				name: 'enableFtp',
 				on: settings.enableFtp,
 				onLabel: "On"|t('enupal-backup'),
-				offLabel: "Off"|t('enupal-backup')
+				offLabel: "Off"|t('enupal-backup'),
+				errors: settings.getErrors('enableFtp'),
 			}) }}
 
 			{{ forms.selectField({
