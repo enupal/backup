@@ -11,7 +11,9 @@
     "schedule",
     "amazon s3",
     "dropbox",
-    "cloud"
+    "cloud",
+    "ftp",
+    "sftp"
   ],
   "type": "craft-plugin",
   "autoload": {
@@ -32,7 +34,7 @@
   "support": {
     "email": "info@enupal.com",
     "issues": "https://github.com/enupal/backup/issues",
-    "docs": "https://enupal.com/en/craft-plugins/enupal-backup/docs/getting-started/overview"
+    "docs": "https://enupal.com/en/craft-plugins/enupal-backup/docs"
   },
   "extra": {
     "name": "Enupal Backup",
