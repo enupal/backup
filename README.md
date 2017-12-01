@@ -1,5 +1,5 @@
 <p align="center">
-	<a href="https://enupal.com/craft-plugins/enupal-backup/docs/" target="_blank">
+	<a href="https://enupal.com/en/craft-plugins/enupal-backup/docs/" target="_blank">
 	<img width="312" height="312" src="https://enupal.com/assets/docs/backup-icon.svg" alt="Enupal Backup"></a>
 </p>
 
@@ -28,10 +28,10 @@ Via Email:
 Send us a note at: info@enupal.com
 
 ------------------------------------------------------------
-Brought to you by [enupal](https://enupal.com)
+Brought to you by [enupal](https://enupal.com/en)
 
 <p align="center">
-	<a href="https://enupal.com" target="_blank">
+	<a href="https://enupal.com/en" target="_blank">
 	<img width="169" height="35" src="https://enupal.com/assets/docs/enupal-logo.png" alt="Enupal Backup"></a>
 </p>
 
