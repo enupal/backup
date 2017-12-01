@@ -31,7 +31,7 @@ Brought to you by [enupal](https://enupal.com)
 
 <p align="center">
 	<a href="https://enupal.com" target="_blank">
-	<img width="169" height="45" src="https://enupal.com/assets/docs/enupal-logo.png" alt="Enupal Backup"></a>
+	<img width="169" height="35" src="https://enupal.com/assets/docs/enupal-logo.png" alt="Enupal Backup"></a>
 </p>
 
 
