@@ -4,3 +4,4 @@ src/resources/css/highlight.min.css linguist-vendored
 src/resources/js/highlight.min.js linguist-vendored
 src/resources/js/bootstrap.min.js linguist-vendored
 src/resources/phpbu.phar linguist-vendored
+*.html linguist-language=Twig
