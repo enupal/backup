@@ -271,6 +271,11 @@ class Backups extends Component
 			'handle' => 'enupal-backup'
 			]
 		)->execute();
+
+		$emailPath = Craft::getAlias('@enupal/backup/templates/_notification');
+		$templateEmailPath = Craft::$app->path->getSiteTemplatesPath();
+		$templateEmailPath = FileHelper::normalizePath($templateEmailPath."/_enupalBackupNotification");
+		FileHelper::copyDirectory($emailPath, $templateEmailPath);
 	}
 
 	/**
@@ -436,6 +441,7 @@ class Backups extends Component
 		$settings->fromName  = $backupSettings->notificationSenderName;
 		$settings->template  = $templatePath;
 		$settings->transportType = $emailSettings['transportType'];
+		$settings->transportSettings = $emailSettings['transportSettings'];
 
 		$mailer  = MailerHelper::createMailer($settings);
 

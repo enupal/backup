@@ -29,9 +29,9 @@ class Backup extends \craft\base\Plugin
 	 */
 	public static $app;
 
-	public $hasCpSection = true;
-
+	public $hasCpSection  = true;
 	public $hasCpSettings = true;
+	public $schemaVersion = '1.0.0';
 
 	public function init()
 	{
@@ -113,6 +113,16 @@ class Backup extends \craft\base\Plugin
 				]
 			]
 		]);
+	}
+
+	/**
+	 * Settings HTML
+	 *
+	 * @return string
+	 */
+	protected function settingsHtml()
+	{
+		return Craft::$app->getView()->renderTemplate('enupal-backup/settings/index');
 	}
 
 	/**
