@@ -16,6 +16,25 @@ Simplifies Backups for Craft CMS. Manual or scheduled your Backups and upload it
 * Softlayer Object Storage
 * FTP/SFTP.
 
+Choose the files you want to backup:
+
+* Database
+* Templates
+* Assets
+* Logs
+
+Schedule your backups
+
+* You can configure a cron job to call the Enupal Backup webhook and automatically create a backup each night, rather than doing a manual Backup every time.
+
+Receive Email Notifications
+
+* Enupal Backup allows setup an email notification for when the Backup process has finished, it will send a report with useful info about your Backup.
+
+Encrypt your data, keep secure.
+
+* Enupal Backup can encrypt your backup using openssl
+
 ### Documentation
 ------------------------------------------------------------
 
