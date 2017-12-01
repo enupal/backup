@@ -1,8 +1,9 @@
 <p align="center">
 	<a href="https://enupal.com/craft-plugins/enupal-backup/docs/" target="_blank">
-	<img width="312" height="90" src="https://enupal.com/assets/docs/backup-icon.svg" alt="Enupal Backup"></a>
+	<img width="312" height="312" src="https://enupal.com/assets/docs/backup-icon.svg" alt="Enupal Backup"></a>
 </p>
-## Enupal Backup Plugin for Craft CMS 3.x
+
+# Enupal Backup Plugin for Craft CMS 3.x
 
 Fully integrated Backup solution for Craft CMS
 
