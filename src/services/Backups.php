@@ -436,6 +436,7 @@ class Backups extends Component
 		$settings->fromName  = $backupSettings->notificationSenderName;
 		$settings->template  = $templatePath;
 		$settings->transportType = $emailSettings['transportType'];
+		$settings->transportSettings = $emailSettings['transportSettings'];
 
 		$mailer  = MailerHelper::createMailer($settings);
 
