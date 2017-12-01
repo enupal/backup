@@ -54,27 +54,32 @@ class CreateBackup extends BaseJob
 			else
 			{
 				$error = '01 - Unable to execute the Enupal Backup: '.json_encode($this->_backup->getErrors());
-				$this->_backup->backupStatusId = BackupStatus::ERROR;
-				$this->_backup->logMessage = $error;
-
-				Backup::$app->backups->saveBackup($this->_backup);
-				Backup::$app->backups->checkBackupsAmount();
-
-				Backup::error($error);
+				$this->updateBackupToError($error);
 			}
 
 		} catch (\Throwable $e)
 		{
 			$error = '02 - Could not create Enupal Backup: '.$e->getMessage().' --Trace: '.$e->getTraceAsString();
-			$this->_backup->backupStatusId = BackupStatus::ERROR;
-			$this->_backup->logMessage = $error;
-
-			Backup::$app->backups->saveBackup($this->_backup);
-			Backup::$app->backups->checkBackupsAmount();
-
-			Backup::error($error);
+			$this->updateBackupToError($error);
 		}
 		// let's dont return false if the backup fails we'll know it
 		return true;
+	}
+
+	private function updateBackupToError($error)
+	{
+		$settings = Backup::$app->settings->getSettings();
+		$this->_backup->backupStatusId = BackupStatus::ERROR;
+		$this->_backup->logMessage = $error;
+
+		Backup::$app->backups->saveBackup($this->_backup);
+		Backup::$app->backups->checkBackupsAmount();
+
+		Backup::error($error);
+
+		if ($settings->enableNotification)
+		{
+			Backup::$app->backups->sendNotification($this->_backup);
+		}
 	}
 }

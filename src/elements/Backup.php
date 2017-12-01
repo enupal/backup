@@ -267,34 +267,7 @@ class Backup extends Element
 		{
 			case 'size':
 			{
-				$total = 0;
-
-				if ($this->assetSize)
-				{
-					$total += $this->assetSize;
-				}
-
-				if ($this->templateSize)
-				{
-					$total += $this->templateSize;
-				}
-
-				if ($this->databaseSize)
-				{
-					$total += $this->databaseSize;
-				}
-
-				if ($this->logSize)
-				{
-					$total += $this->logSize;
-				}
-
-				if ($total == 0)
-				{
-					return "";
-				}
-
-				return BackupPlugin::$app->backups->getSizeFormatted($total);
+				return $this->getTotalSize();
 			}
 			case 'status':
 			{
@@ -379,6 +352,39 @@ class Backup extends Element
 		}
 
 		return $base.$this->assetFileName;
+	}
+
+
+	public function getTotalSize()
+	{
+		$total = 0;
+
+		if ($this->assetSize)
+		{
+			$total += $this->assetSize;
+		}
+
+		if ($this->templateSize)
+		{
+			$total += $this->templateSize;
+		}
+
+		if ($this->databaseSize)
+		{
+			$total += $this->databaseSize;
+		}
+
+		if ($this->logSize)
+		{
+			$total += $this->logSize;
+		}
+
+		if ($total == 0)
+		{
+			return "";
+		}
+
+		return BackupPlugin::$app->backups->getSizeFormatted($total);
 	}
 
 	/**
