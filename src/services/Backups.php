@@ -264,7 +264,7 @@ class Backups extends Component
 		$settings = $model->getAttributes();
 
 		$settings = json_encode($settings);
-		$affectedRows = Craft::$app->getDb()->createCommand()->update('plugins', [
+		$affectedRows = Craft::$app->getDb()->createCommand()->update('{{%plugins}}', [
 			'settings' => $settings
 			],
 			[
