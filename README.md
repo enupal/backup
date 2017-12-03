@@ -36,17 +36,16 @@ Encrypt your data, keep secure.
 * Enupal Backup can encrypt your backup using openssl
 
 ### Documentation
-------------------------------------------------------------
 
 https://enupal.com/en/craft-plugins/enupal-backup/docs/
 
 ### Enupal Backup Support
-------------------------------------------------------------
 
 Via Email:
 Send us a note at: info@enupal.com
 
 ------------------------------------------------------------
+
 Brought to you by [enupal](https://enupal.com/en)
 
 <p align="center">
