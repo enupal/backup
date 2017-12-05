@@ -32,6 +32,9 @@
     "issues": "https://github.com/enupal/backup/issues",
     "docs": "https://enupal.com/en/craft-plugins/enupal-backup/docs"
   },
+  "require": {
+    "craftcms/cms": "^3.0.0-RC1"
+  },
   "extra": {
     "name": "Enupal Backup",
     "handle": "enupal-backup",

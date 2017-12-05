@@ -511,9 +511,9 @@ class Backups extends Component
 
 		if ($this->applyCompress())
 		{
-			$backup->assetFileName .= '.bz2';
-			$backup->templateFileName .= '.bz2';
-			$backup->logFileName .= '.bz2';
+			$backup->assetFileName = $backup->assetFileName ? $backup->assetFileName.'.bz2' : null;
+			$backup->templateFileName = $backup->templateFileName ? $backup->templateFileName.'.bz2' : null;
+			$backup->logFileName = $backup->logFileName ? $backup->logFileName.'.bz2' : null;
 		}
 
 		// Add encrypt extension if enabled

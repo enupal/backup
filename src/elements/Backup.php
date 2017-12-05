@@ -442,18 +442,22 @@ class Backup extends Element
 		$files[] = $this->getDatabaseFile();
 		$files[] = $this->getTemplateFile();
 		$files[] = $this->getAssetFile();
+		$files[] = $this->getLogFile();
 		$files[] = BackupPlugin::$app->backups->getLogPath($this->backupId);
 
 		foreach ($files as $file)
 		{
-			if (file_exists($file))
+			if ($file)
 			{
-				unlink($file);
-			}
-			else
-			{
-				// File not found.
-				BackupPlugin::error(BackupPlugin::t('Unable to delete the file: '.$file));
+				if (file_exists($file))
+				{
+					unlink($file);
+				}
+				else
+				{
+					// File not found.
+					BackupPlugin::error(BackupPlugin::t('Unable to delete the file: '.$file));
+				}
 			}
 		}
 
