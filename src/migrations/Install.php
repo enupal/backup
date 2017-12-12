@@ -26,6 +26,8 @@ class Install extends Migration
 	{
 		$this->createTables();
 		$this->addForeignKeys();
+
+		return true;
 	}
 
 	/**
@@ -34,6 +36,8 @@ class Install extends Migration
 	public function safeDown()
 	{
 		$this->dropTable('{{%enupalbackup_backups}}');
+
+		return true;
 	}
 
 	/**
