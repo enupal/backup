@@ -35,7 +35,7 @@ class Install extends Migration
 	 */
 	public function safeDown()
 	{
-		$this->dropTable('{{%enupalbackup_backups}}');
+		$this->dropTableIfExists('{{%enupalbackup_backups}}');
 
 		return true;
 	}
