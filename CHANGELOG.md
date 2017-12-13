@@ -1,5 +1,11 @@
 # Enupal Backup Changelog
 
+## 1.0.5 - 2017.12.13
+### Added
+- Added require Craft cms rc1 or higher
+### Improved
+- Improved UI on view backup
+
 ## 1.0.4 - 2017.12.12
 ### Improved
 - Improved install migration
