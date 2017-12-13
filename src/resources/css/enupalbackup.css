@@ -9,12 +9,12 @@ div.deletebackup {
 }
 
 .enupal-field-heading {
-  color: rgb(85, 85, 85);
+  color: #333F4D;
   font-size: .8em;
   min-height: auto;
   text-transform: uppercase;
-  font-weight: 800;
   text-align: left;
+  background-color: #ebedef
 }
 
 /*TABS*/
@@ -54,9 +54,9 @@ div.deletebackup {
 }
 
 #backup-tabs .sel{
-    background: #ebedef;
+    background: #333f4d;
     text-shadow: none;
-    color: #333;
+    color: #fff;
 }
 
 #backup-content {

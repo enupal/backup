@@ -13,7 +13,7 @@
 <nav id="backup-tabs" class="tabs" style= "margin: 0 0 0 0;">
 	<ul>
 		<li>
-			<a class="tab {{ tab == 1 ? ' sel' : '' }}" href="#tab-enupalbackup-settings">
+			<a class="tab sel" href="#tab-enupalbackup-settings">
 				{{ "Information"|t('enupal-backup') }}
 			</a>
 		</li>
@@ -22,7 +22,8 @@
 
 <div id="backup-content">
 	<div class="{{ tab != 1 ? 'hidden' : '' }} meta" id="tab-enupalbackup-settings">
-		<div class="field enupal-field-heading">{{'Backup Info'|t('enupal-backup')}}</div>
+		<div class="enupal-field-heading"><i class="fa fa-info-circle" aria-hidden="true"></i>
+ {{'Backup Info'|t('enupal-backup')}}</div>
 			{{ forms.dateTimeField({
 				label: "Started at"|t('enupal-backup'),
 				id: 'dateCreated',
@@ -61,7 +62,7 @@
 				</div>
 			{% endif %}
 			{% if backup.dropbox or backup.aws or backup.ftp or backup.softlayer %}
-				<div class="field enupal-field-heading"><i class="fa fa-cloud" aria-hidden="true"> {{'Cloud'|t('enupal-backup')}}</i></div>
+				<div class="enupal-field-heading"><i class="fa fa-cloud" aria-hidden="true"> {{'Cloud'|t('enupal-backup')}}</i></div>
 				<div class="field">
 					<div class="heading">
 						<label>{{"Uploaded to"|t('enupal-backup')}}</label>
