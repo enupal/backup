@@ -1,5 +1,11 @@
 # Enupal Backup Changelog
 
+## 1.0.6 - 2018.01.11
+### Fixed
+- Fixed bug on error modal window
+### Updated
+- Updated sidebar to craftcms styles
+
 ## 1.0.5 - 2017.12.13
 ### Added
 - Added require Craft cms rc1 or higher

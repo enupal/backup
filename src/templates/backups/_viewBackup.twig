@@ -15,8 +15,6 @@
 
 {% set title = 'Backup: '~backup.backupId %}
 
-{% set fullPageForm = false %}
-
 {% block actionButton %}
 	{% if backup.backupStatusId == 2 %}
 	<div class="bootstrap-iso downloads-content">
@@ -93,9 +91,15 @@
 														<i class="fa fa-cloud-download fa-lg"></i> <b>{{"Download"|t}}</b>
 													</button>
 												</form>
-												<p class="intro">{% if backup.backupStatusId %}
-												<h4><spa style="font-size: 11px;" class="label size-label"> {{craft.enupalbackup.getSizeFormatted(backup.templateSize)}}</span></h4>
-											{% endif %}</p>
+												<p class="intro">
+												{% if backup.backupStatusId %}
+													<h4>
+														<span style="font-size: 11px;" class="label size-label">
+														{{craft.enupalbackup.getSizeFormatted(backup.templateSize)}}
+														</span>
+													</h4>
+                                                {% endif %}
+												</p>
 											</div><!--//item-inner-->
 										</div><!--//item-->
 									{% endif %}
@@ -115,7 +119,8 @@
 														<i class="fa fa-cloud-download fa-lg"></i> <b>{{"Download"|t('enupal-backup')}}</b>
 													</button>
 												</form>
-												<p class="intro">{% if backup.backupStatusId %}
+												<p class="intro">
+													{% if backup.backupStatusId %}
 												<h4><span style="font-size: 11px;" class="label size-label">{{craft.enupalbackup.getSizeFormatted(backup.assetSize)}}</span></h4>
 											{% endif %}</p>
 											</div><!--//item-inner-->
@@ -185,20 +190,11 @@
 					</div>
 			</div>
 		</div>
-
-	{% do view.registerAssetBundle("enupal\\backup\\assetbundles\\BackupAsset") %}
-	{% do view.registerAssetBundle("enupal\\backup\\assetbundles\\FontAwesomeAsset") %}
-	{% js %}
-		$(document).ready(function() {
-			new EnupalBackup();
-		});
-	{% endjs %}
-
 {% endblock %}
 
 {% block details %}
-	<div class="meta">
-		{% include 'enupal-backup/backups/_sidebar/settings' %}
+	<div>
+		{% include "enupal-backup/backups/_sidebar/settings" %}
 
 		<div class="deletebackup field">
 			<div class="heading"></div>
@@ -214,3 +210,11 @@
 		</div>
 	</div>
 {% endblock %}
+
+{% do view.registerAssetBundle("enupal\\backup\\assetbundles\\BackupAsset") %}
+{% do view.registerAssetBundle("enupal\\backup\\assetbundles\\FontAwesomeAsset") %}
+{% js %}
+	$(document).ready(function() {
+	new EnupalBackup();
+	});
+{% endjs %}
