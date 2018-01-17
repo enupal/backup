@@ -10,7 +10,6 @@ namespace enupal\backup\jobs;
 
 use enupal\backup\Backup;
 use craft\queue\BaseJob;
-use Craft;
 
 use enupal\backup\enums\BackupStatus;
 
@@ -36,7 +35,6 @@ class CreateBackup extends BaseJob
 
 	public function execute($queue)
 	{
-		$result = false;
 		$totalSteps = 2;
 		$this->_backup = Backup::$app->backups->initializeBackup();
 
@@ -47,7 +45,7 @@ class CreateBackup extends BaseJob
 		{
 			if ($this->_backup->id)
 			{
-				$result = Backup::$app->backups->enupalBackup($this->_backup);
+				Backup::$app->backups->enupalBackup($this->_backup);
 				$step = 2;
 				$this->setProgress($queue, $step / $totalSteps);
 			}

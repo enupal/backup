@@ -8,7 +8,6 @@
 
 namespace enupal\backup\records;
 
-use Craft;
 use craft\db\ActiveRecord;
 use yii\db\ActiveQueryInterface;
 use craft\records\Element;

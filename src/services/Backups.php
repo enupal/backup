@@ -10,7 +10,6 @@ namespace enupal\backup\services;
 
 use Craft;
 use yii\base\Component;
-use yii\db\Query;
 use enupal\backup\Backup;
 use enupal\backup\elements\Backup as BackupElement;
 use enupal\backup\records\Backup as BackupRecord;
@@ -27,9 +26,6 @@ use craft\volumes\Local;
 use craft\helpers\App as CraftApp;
 use mikehaertl\shellcommand\Command as ShellCommand;
 use yii\base\Exception;
-use craft\helpers\Path;
-use craft\helpers\UrlHelper;
-use craft\mail\Message;
 use craft\models\MailSettings;
 use craft\helpers\MailerHelper;
 
@@ -300,12 +296,9 @@ class Backups extends Component
 		$backup           = new BackupElement();
 		$backup->backupId = $backupId;
 		$backup->backupStatusId   = BackupStatus::STARTED;
+		$this->saveBackup($backup);
 
-		if (!$this->saveBackup($backup))
-		{
-			return $backup;
-		}
-
+		// Return the backup if have errors check $backup->getErrors();
 		return $backup;
 	}
 

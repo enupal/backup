@@ -33,7 +33,8 @@
     "docs": "https://enupal.com/en/craft-plugins/enupal-backup/docs"
   },
   "require": {
-    "craftcms/cms": "^3.0.0-RC1"
+    "craftcms/cms": "^3.0.0-RC1",
+    "mikehaertl/php-shellcommand": "~1.2.5"
   },
   "extra": {
     "name": "Enupal Backup",

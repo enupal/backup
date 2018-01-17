@@ -10,15 +10,7 @@ namespace enupal\backup\controllers;
 
 use Craft;
 use craft\web\Controller as BaseController;
-use craft\helpers\UrlHelper;
-use yii\web\NotFoundHttpException;
-use yii\db\Query;
-use craft\helpers\ArrayHelper;
-use craft\elements\Asset;
-
-use enupal\backup\models\Settings as SettingsModel;
 use enupal\backup\Backup;
-use enupal\backup\elements\Backup as BackupElement;
 
 class SettingsController extends BaseController
 {

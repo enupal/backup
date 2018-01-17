@@ -8,6 +8,8 @@
 
 namespace enupal\backup\enums;
 
+use craft\helpers\StringHelper;
+
 abstract class BaseEnum
 {
 	// Properties
