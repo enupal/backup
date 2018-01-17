@@ -1,5 +1,12 @@
 # Enupal Backup Changelog
 
+## 1.0.7 - 2018.01.16
+### Improved
+- Improved code conventions
+
+### Updated
+- Updated phpbu to 5.0.9
+
 ## 1.0.6 - 2018.01.11
 ### Fixed
 - Fixed bug on error modal window
