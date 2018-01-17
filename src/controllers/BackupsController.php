@@ -10,22 +10,13 @@ namespace enupal\backup\controllers;
 
 use Craft;
 use craft\web\Controller as BaseController;
-use craft\helpers\UrlHelper;
 use yii\web\NotFoundHttpException;
-use yii\db\Query;
-use craft\helpers\ArrayHelper;
-use craft\elements\Asset;
-use craft\helpers\Json;
-use craft\helpers\Template as TemplateHelper;
 use yii\base\Exception;
-use craft\helpers\Path;
 use yii\base\ErrorException;
 use craft\helpers\FileHelper;
-use craft\errors\ShellCommandException;
 use mikehaertl\shellcommand\Command as ShellCommand;
 use ZipArchive;
 
-use enupal\backup\jobs\CreateBackup;
 use enupal\backup\enums\BackupStatus;
 use enupal\backup\Backup;
 

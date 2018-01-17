@@ -10,10 +10,6 @@ namespace enupal\backup\services;
 
 use Craft;
 use yii\base\Component;
-
-use enupal\backup\Backup;
-use enupal\backup\models\Settings as SettingsModel;
-use yii\db\Query;
 use craft\volumes\Local;
 
 class Settings extends Component

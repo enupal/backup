@@ -12,13 +12,8 @@ use Craft;
 use craft\base\Element;
 use craft\elements\db\ElementQueryInterface;
 use yii\base\ErrorHandler;
-use craft\db\Query;
 use craft\helpers\UrlHelper;
-use yii\base\InvalidConfigException;
 use craft\elements\actions\Delete;
-use craft\validators\HandleValidator;
-use craft\validators\UniqueValidator;
-use DateTime;
 
 use enupal\backup\elements\db\BackupQuery;
 use enupal\backup\records\Backup as BackupRecord;

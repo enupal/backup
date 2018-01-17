@@ -9,10 +9,7 @@
 namespace enupal\backup\variables;
 
 use Craft;
-use craft\helpers\Template as TemplateHelper;
-use craft\helpers\FileHelper;
 use enupal\backup\Backup;
-use enupal\backup\models\Settings;
 
 /**
  * EnupalBackup provides an API for accessing information about sliders. It is accessible from templates via `craft.enupalbackup`.

@@ -24,17 +24,3 @@ div.deletebackup {
     box-shadow: 0 2px 2px #000, 0 -1px 0 #fff inset;
     padding: 10px;
 }
-
-/*Sidebar settings*/
-
-#backup-tabs { position: relative; z-index: 1; -webkit-box-shadow: inset 0 -1px 0 #e3e5e8; box-shadow: inset 0 -1px 0 #e3e5e8; min-height: 40px; overflow: hidden; }
-#backup-tabs ul { display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-orient: horizontal; -webkit-box-direction: normal; -ms-flex-direction: row; flex-direction: row; width: calc(100% + 1px); }
-#backup-tabs ul li { -webkit-box-sizing: border-box; box-sizing: border-box; }
-body.ltr #backup-tabs ul li { border-right: 1px solid rgba(0, 0, 20, 0.1); }
-body.ltr #backup-tabs ul li { border-left: 1px solid rgba(0, 0, 20, 0.1); }
-#backup-tabs ul li a { position: relative; display: block; padding: 10px 24px; white-space: nowrap; overflow: hidden; }
-#backup-tabs ul li a:after { content: '.'; font-size: 0; display: block; position: absolute; top: 0; width: 24px; height: calc(100% - 1px); }
-#backup-tabs ul li a:hover { text-decoration: none; }
-#backup-tabs ul li a:not(.sel) { color: #576575; }
-#backup-tabs ul li a:not(.sel):hover { color: #0d78f2; }
-#backup-tabs ul li a.sel { color: #29323d; background: #fff; padding-bottom: 10px; cursor: default; }

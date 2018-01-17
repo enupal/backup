@@ -8,13 +8,8 @@
 
 namespace enupal\backup\elements\db;
 
-use Craft;
-use craft\db\Query;
 use craft\elements\db\ElementQuery;
 use craft\helpers\Db;
-use yii\db\Connection;
-
-use enupal\backup\Backup;
 
 class BackupQuery extends ElementQuery
 {
