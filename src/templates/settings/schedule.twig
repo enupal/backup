@@ -56,6 +56,16 @@
 					first: true,
 					errors: settings.getErrors('webhookSecretKey')
 			}) }}
+			{% set webhookUrl = siteUrl ~ 'enupal-backup/schedule?key='~settings.webhookSecretKey %}
+			<hr>
+            {{ forms.field({
+                label: webhookUrl,
+                instructions: "Webhook URL"|t('enupal-backup'),
+            }, null) }}
+
+            {{ forms.field({
+                label: 'Cronjob Example:'|t('enupal-backup'),
+            }, null) }}
 
 			<div class="example-contents">
 				<pre class="programlisting">
@@ -68,7 +78,7 @@
 # *      *    *    *    *
 
 # Enupal Backup Webhook
-10     3    *    *    *  wget {{siteUrl}}enupal-backup/schedule?key={{settings.webhookSecretKey}} -O /dev/null
+10     3    *    *    *  wget {{webhookUrl}} -O /dev/null
 
 				</pre>
 		</div>
