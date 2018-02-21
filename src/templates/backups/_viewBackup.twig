@@ -37,7 +37,8 @@
 		<div id="fields" class="pane">
 			<div class="bootstrap-iso downloads-content">
 				<div class="row">
-					{% set titleHeader = "<i class='fa fa-check-square-o' aria-hidden='true'></i> "~"Download Section"|t('enupal-backup') %}
+					{% set downloadTitle = "Download Section"|t('enupal-backup') %}
+					{% set titleHeader = "<i class='fa fa-check-square-o' aria-hidden='true'></i> "~downloadTitle %}
 
 					{% if backup.backupStatusId == 1 %} {% set titleHeader = "<i class='fa fa-circle-o-notch fa-spin fa fa-fw'></i> Backup it's still running, but you can download local files" %} {% elseif backup.backupStatusId == 3  %} {% set titleHeader =  "<i class='fa fa-times' aria-hidden='true'></i> An error occurred during Backup: "%} {% endif %}
 

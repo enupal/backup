@@ -68,7 +68,7 @@
 # *      *    *    *    *
 
 # Enupal Backup Webhook
-10     3    *    *    *  wget {{siteUrl}}enupal-backup/schedule?key={{settings.webhookSecretKey}} >/dev/null 2>&1
+10     3    *    *    *  wget {{siteUrl}}enupal-backup/schedule?key={{settings.webhookSecretKey}} -O /dev/null
 
 				</pre>
 		</div>

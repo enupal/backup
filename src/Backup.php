@@ -48,13 +48,15 @@ class Backup extends \craft\base\Plugin
 			}
 		);
 
-		Event::on(
-			CraftVariable::class,
-			CraftVariable::EVENT_DEFINE_COMPONENTS,
-			function (DefineComponentsEvent $event) {
-					$event->components['enupalbackup'] = BackupVariable::class;
-			}
-		);
+        Event::on(
+            CraftVariable::class,
+            CraftVariable::EVENT_INIT,
+            function (Event $event) {
+                /** @var CraftVariable $variable */
+                $variable = $event->sender;
+                $variable->set('enupalbackup', BackupVariable::class);
+            }
+        );
 
 		Event::on(
 			SystemMessages::class,
