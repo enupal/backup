@@ -13,11 +13,11 @@ namespace enupal\backup\enums;
  */
 abstract class BackupStatus extends BaseEnum
 {
-	// Constants
-	// =========================================================================
+    // Constants
+    // =========================================================================
 
-	const FINISHED = 2;
-	const STARTED  = 0;
-	const RUNNING  = 1;
-	const ERROR    = 3;
+    const FINISHED = 2;
+    const STARTED = 0;
+    const RUNNING = 1;
+    const ERROR = 3;
 }

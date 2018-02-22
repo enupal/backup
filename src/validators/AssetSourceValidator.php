@@ -15,18 +15,17 @@ use Craft;
 
 class AssetSourceValidator extends Validator
 {
-	public $skipOnEmpty = false;
+    public $skipOnEmpty = false;
 
-	/**
-	 * At least one source
-	 */
-	public function validateAttribute($object, $attribute)
-	{
-		$volumes = $object->enableLocalVolumes;
+    /**
+     * At least one source
+     */
+    public function validateAttribute($object, $attribute)
+    {
+        $volumes = $object->enableLocalVolumes;
 
-		if ($volumes && !$object->volumes)
-		{
-			$this->addError($object, $attribute, Backup::t('Please select at least one Volume'));
-		}
-	}
+        if ($volumes && !$object->volumes) {
+            $this->addError($object, $attribute, Backup::t('Please select at least one Volume'));
+        }
+    }
 }

@@ -15,16 +15,15 @@ use Craft;
 
 class DropboxValidator extends Validator
 {
-	public $skipOnEmpty = false;
+    public $skipOnEmpty = false;
 
-	/**
-	 * At least one need to be enable
-	 */
-	public function validateAttribute($object, $attribute)
-	{
-		if ($object->enableDropbox && !$object->dropboxToken)
-		{
-			$this->addError($object, $attribute, Backup::t('Secrect Key cannot be blank'));
-		}
-	}
+    /**
+     * At least one need to be enable
+     */
+    public function validateAttribute($object, $attribute)
+    {
+        if ($object->enableDropbox && !$object->dropboxToken) {
+            $this->addError($object, $attribute, Backup::t('Secrect Key cannot be blank'));
+        }
+    }
 }
