@@ -1,5 +1,13 @@
 # Enupal Backup Changelog
 
+## 1.0.8 - 2018.02.22
+### Added
+- Added PSR2 support
+- Added refresh elements index after backup
+
+### Improved
+- Improved webhook example
+
 ## 1.0.7 - 2018.01.16
 ### Improved
 - Improved code conventions
