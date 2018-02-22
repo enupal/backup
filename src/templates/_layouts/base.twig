@@ -9,6 +9,6 @@
 
 {% extends "_layouts/cp" %}
 
-{% set bodyClass = craft.app.request.getSegments()|slice(0, 3)|join(' ') %}
+{% set bodyClass = craft.app.request.segments()|slice(0, 3)|join(' ') %}
 
-{% set selectedSubnavItem = craft.request.segment(2) == 'backup' ? 'backups' : craft.request.segment(2)  %}
+{% set selectedSubnavItem = craft.app.request.getSegment(2) == 'backup' ? 'backups' : craft.request.getSegment(2)  %}

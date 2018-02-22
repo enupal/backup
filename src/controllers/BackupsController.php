@@ -22,205 +22,181 @@ use enupal\backup\Backup;
 
 class BackupsController extends BaseController
 {
-	/*
-	 * Download backup
-	*/
-	public function actionDownload()
-	{
-		$this->requirePostRequest();
-		$backupId = Craft::$app->getRequest()->getRequiredBodyParam('backupId');
-		$type     = Craft::$app->getRequest()->getRequiredBodyParam('type');
-		$backup   = Backup::$app->backups->getBackupById($backupId);
+    /*
+     * Download backup
+    */
+    public function actionDownload()
+    {
+        $this->requirePostRequest();
+        $backupId = Craft::$app->getRequest()->getRequiredBodyParam('backupId');
+        $type = Craft::$app->getRequest()->getRequiredBodyParam('type');
+        $backup = Backup::$app->backups->getBackupById($backupId);
 
-		if ($backup && $type)
-		{
-			$filePath = null;
+        if ($backup && $type) {
+            $filePath = null;
 
-			switch ($type)
-			{
-				case 'all':
+            switch ($type) {
+                case 'all':
 
-					$zipPath = Craft::$app->getPath()->getTempPath().DIRECTORY_SEPARATOR.$backup->backupId.'.zip';
+                    $zipPath = Craft::$app->getPath()->getTempPath().DIRECTORY_SEPARATOR.$backup->backupId.'.zip';
 
-					if (is_file($zipPath))
-					{
-						try
-						{
-							FileHelper::removeFile($zipPath);
-						}
-						catch (ErrorException $e)
-						{
-							Backup::error("Unable to delete the file \"{$zipPath}\": ".$e->getMessage());
-						}
-					}
+                    if (is_file($zipPath)) {
+                        try {
+                            FileHelper::removeFile($zipPath);
+                        } catch (ErrorException $e) {
+                            Backup::error("Unable to delete the file \"{$zipPath}\": ".$e->getMessage());
+                        }
+                    }
 
-					$zip = new ZipArchive();
+                    $zip = new ZipArchive();
 
-					if ($zip->open($zipPath, ZipArchive::CREATE) !== true) {
-						throw new Exception('Cannot create zip at '.$zipPath);
-					}
+                    if ($zip->open($zipPath, ZipArchive::CREATE) !== true) {
+                        throw new Exception('Cannot create zip at '.$zipPath);
+                    }
 
-					if ($backup->getDatabaseFile())
-					{
-						$filename = pathinfo($backup->getDatabaseFile(), PATHINFO_BASENAME);
+                    if ($backup->getDatabaseFile()) {
+                        $filename = pathinfo($backup->getDatabaseFile(), PATHINFO_BASENAME);
 
-						$zip->addFile($backup->getDatabaseFile(), $filename);
-					}
+                        $zip->addFile($backup->getDatabaseFile(), $filename);
+                    }
 
-					if ($backup->getTemplateFile())
-					{
-						$filename = pathinfo($backup->getTemplateFile(), PATHINFO_BASENAME);
+                    if ($backup->getTemplateFile()) {
+                        $filename = pathinfo($backup->getTemplateFile(), PATHINFO_BASENAME);
 
-						$zip->addFile($backup->getTemplateFile(), $filename);
-					}
+                        $zip->addFile($backup->getTemplateFile(), $filename);
+                    }
 
-					if ($backup->getAssetFile())
-					{
-						$filename = pathinfo($backup->getAssetFile(), PATHINFO_BASENAME);
+                    if ($backup->getAssetFile()) {
+                        $filename = pathinfo($backup->getAssetFile(), PATHINFO_BASENAME);
 
-						$zip->addFile($backup->getAssetFile(), $filename);
-					}
+                        $zip->addFile($backup->getAssetFile(), $filename);
+                    }
 
-					if ($backup->getLogFile())
-					{
-						$filename = pathinfo($backup->getLogFile(), PATHINFO_BASENAME);
+                    if ($backup->getLogFile()) {
+                        $filename = pathinfo($backup->getLogFile(), PATHINFO_BASENAME);
 
-						$zip->addFile($backup->getLogFile(), $filename);
-					}
+                        $zip->addFile($backup->getLogFile(), $filename);
+                    }
 
-					$zip->close();
+                    $zip->close();
 
-					$filePath = $zipPath;
-					break;
-				case 'database':
-					$filePath = $backup->getDatabaseFile();
-					break;
-				case 'template':
-					$filePath = $backup->getTemplateFile();
-					break;
-				case 'logs':
-					$filePath = $backup->getLogFile();
-					break;
-				case 'asset':
-					$filePath = $backup->getAssetFile();
-					break;
-			}
+                    $filePath = $zipPath;
+                    break;
+                case 'database':
+                    $filePath = $backup->getDatabaseFile();
+                    break;
+                case 'template':
+                    $filePath = $backup->getTemplateFile();
+                    break;
+                case 'logs':
+                    $filePath = $backup->getLogFile();
+                    break;
+                case 'asset':
+                    $filePath = $backup->getAssetFile();
+                    break;
+            }
 
-			if (!is_file($filePath))
-			{
-				throw new NotFoundHttpException(Backup::t('Invalid backup name: {filename}', [
-					'filename' => $filePath
-				]));
-			}
-		}
-		else
-		{
-			throw new NotFoundHttpException(Backup::t('Invalid backup parameters'));
-		}
+            if (!is_file($filePath)) {
+                throw new NotFoundHttpException(Backup::t('Invalid backup name: {filename}', [
+                    'filename' => $filePath
+                ]));
+            }
+        } else {
+            throw new NotFoundHttpException(Backup::t('Invalid backup parameters'));
+        }
 
-		// Ajax call from element index
-		if (Craft::$app->request->getAcceptsJson())
-		{
-			return $this->asJson([
-				'backupFile' => $filePath
-			]);
-		}
+        // Ajax call from element index
+        if (Craft::$app->request->getAcceptsJson()) {
+            return $this->asJson([
+                'backupFile' => $filePath
+            ]);
+        }
 
-		return Craft::$app->getResponse()->sendFile($filePath);
-	}
+        return Craft::$app->getResponse()->sendFile($filePath);
+    }
 
-	public function actionRun()
-	{
-		$this->requirePostRequest();
+    public function actionRun()
+    {
+        $this->requirePostRequest();
 
-		$response = Backup::$app->backups->executeEnupalBackup();
+        $response = Backup::$app->backups->executeEnupalBackup();
 
-		return $this->asJson($response);
-	}
+        return $this->asJson($response);
+    }
 
-	/**
-	 * View a Backup.
-	 *
-	 * @param int|null  $backupId The backup's ID
-	 *
-	 * @throws HttpException
-	 * @throws Exception
-	 */
-	public function actionViewBackup(int $backupId = null)
-	{
-		// Get the Backup
-		$backup = Backup::$app->backups->getBackupById($backupId);
+    /**
+     * View a Backup.
+     *
+     * @param int|null $backupId The backup's ID
+     *
+     * @throws HttpException
+     * @throws Exception
+     */
+    public function actionViewBackup(int $backupId = null)
+    {
+        // Get the Backup
+        $backup = Backup::$app->backups->getBackupById($backupId);
 
-		if (!$backup)
-		{
-			throw new NotFoundHttpException(Backup::t('Backup not found'));
-		}
+        if (!$backup) {
+            throw new NotFoundHttpException(Backup::t('Backup not found'));
+        }
 
-		if ($backup->backupStatusId == BackupStatus::RUNNING)
-		{
-			Backup::$app->backups->updateBackupOnComplete($backup);
-			Backup::$app->backups->checkBackupsAmount();
-		}
+        if ($backup->backupStatusId == BackupStatus::RUNNING) {
+            Backup::$app->backups->updateBackupOnComplete($backup);
+            Backup::$app->backups->checkBackupsAmount();
+        }
 
-		if (!is_file($backup->getDatabaseFile()))
-		{
-			$backup->databaseFileName = null;
-		}
+        if (!is_file($backup->getDatabaseFile())) {
+            $backup->databaseFileName = null;
+        }
 
-		if (!is_file($backup->getTemplateFile()))
-		{
-			$backup->templateFileName = null;
-		}
+        if (!is_file($backup->getTemplateFile())) {
+            $backup->templateFileName = null;
+        }
 
-		if (!is_file($backup->getLogFile()))
-		{
-			$backup->logFileName = null;
-		}
+        if (!is_file($backup->getLogFile())) {
+            $backup->logFileName = null;
+        }
 
-		if (!is_file($backup->getAssetFile()))
-		{
-			$backup->assetFileName = null;
-		}
+        if (!is_file($backup->getAssetFile())) {
+            $backup->assetFileName = null;
+        }
 
-		$variables['backup'] = $backup;
+        $variables['backup'] = $backup;
 
-		$logPath = Backup::$app->backups->getLogPath($backup->backupId);
+        $logPath = Backup::$app->backups->getLogPath($backup->backupId);
 
-		if (is_file($logPath))
-		{
-			$log  = file_get_contents($logPath);
-			$variables['log'] = $log;
-		}
+        if (is_file($logPath)) {
+            $log = file_get_contents($logPath);
+            $variables['log'] = $log;
+        }
 
-		return $this->renderTemplate('enupal-backup/backups/_viewBackup', $variables);
-	}
+        return $this->renderTemplate('enupal-backup/backups/_viewBackup', $variables);
+    }
 
-	/**
-	 * Delete a backup.
-	 *
-	 * @return void
-	 */
-	public function actionDeleteBackup()
-	{
-		$this->requirePostRequest();
+    /**
+     * Delete a backup.
+     *
+     * @return void
+     */
+    public function actionDeleteBackup()
+    {
+        $this->requirePostRequest();
 
-		$request = Craft::$app->getRequest();
+        $request = Craft::$app->getRequest();
 
-		$backupId = $request->getRequiredBodyParam('id');
-		$backup   = Backup::$app->backups->getBackupById($backupId);
+        $backupId = $request->getRequiredBodyParam('id');
+        $backup = Backup::$app->backups->getBackupById($backupId);
 
-		// @TODO - handle errors
-		$success = Backup::$app->backups->deleteBackup($backup);
+        // @TODO - handle errors
+        $success = Backup::$app->backups->deleteBackup($backup);
 
-		if($success)
-		{
-			Craft::$app->getSession()->setNotice(Backup::t('Backup deleted.'));
-		}
-		else
-		{
-			Craft::$app->getSession()->setNotice(Backup::t('Couldn’t delete backup.'));
-		}
+        if ($success) {
+            Craft::$app->getSession()->setNotice(Backup::t('Backup deleted.'));
+        } else {
+            Craft::$app->getSession()->setNotice(Backup::t('Couldn’t delete backup.'));
+        }
 
-		return $this->redirectToPostedUrl($backup);
-	}
+        return $this->redirectToPostedUrl($backup);
+    }
 }

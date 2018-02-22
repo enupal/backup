@@ -2,7 +2,7 @@
   "name": "enupal/backup",
   "description": "Fully integrated Backup solution for Craft CMS",
   "type": "craft-plugin",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "keywords": [
     "craft",
     "cms",
@@ -24,7 +24,7 @@
   "authors": [
     {
       "name": "Enupal",
-      "homepage": "http://enupal.com/"
+      "homepage": "http://enupal.com/en"
     }
   ],
   "support": {

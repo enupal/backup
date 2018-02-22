@@ -15,100 +15,94 @@ use craft\volumes\Local;
 class Settings extends Component
 {
 
-	/**
-	 * Saves Settings
-	 * @param string $scenario
-	 * @param array $postSettings
-	 *
-	 * @return bool
-	 */
-	public function saveSettings(array $postSettings, string $scenario = null): bool
-	{
-		$backupPlugin = $this->getPlugin();
+    /**
+     * Saves Settings
+     *
+     * @param string $scenario
+     * @param array  $postSettings
+     *
+     * @return bool
+     */
+    public function saveSettings(array $postSettings, string $scenario = null): bool
+    {
+        $backupPlugin = $this->getPlugin();
 
-		$backupPlugin->getSettings()->setAttributes($postSettings, false);
+        $backupPlugin->getSettings()->setAttributes($postSettings, false);
 
-		if ($scenario)
-		{
-			$backupPlugin->getSettings()->setScenario($scenario);
-		}
+        if ($scenario) {
+            $backupPlugin->getSettings()->setScenario($scenario);
+        }
 
-		// Validate them, now that it's a model
-		if ($backupPlugin->getSettings()->validate() === false)
-		{
-			return false;
-		}
+        // Validate them, now that it's a model
+        if ($backupPlugin->getSettings()->validate() === false) {
+            return false;
+        }
 
-		$success = Craft::$app->getPlugins()->savePluginSettings($backupPlugin, $postSettings);
+        $success = Craft::$app->getPlugins()->savePluginSettings($backupPlugin, $postSettings);
 
-		return $success;
-	}
+        return $success;
+    }
 
-	public function getSettings()
-	{
-		$backupPlugin = $this->getPlugin();
+    public function getSettings()
+    {
+        $backupPlugin = $this->getPlugin();
 
-		return $backupPlugin->getSettings();
-	}
+        return $backupPlugin->getSettings();
+    }
 
-	public function getAllPlugins()
-	{
-		$plugins  = Craft::$app->getPlugins()->getAllPlugins();
-		$response = [];
+    public function getAllPlugins()
+    {
+        $plugins = Craft::$app->getPlugins()->getAllPlugins();
+        $response = [];
 
-		foreach ($plugins as $key => $plugin)
-		{
-			$response[] = [
-				'value' => $plugin->getHandle(),
-				'label' => $plugin->name
-			];
-		}
+        foreach ($plugins as $key => $plugin) {
+            $response[] = [
+                'value' => $plugin->getHandle(),
+                'label' => $plugin->name
+            ];
+        }
 
-		return $response;
-	}
+        return $response;
+    }
 
-	public function getAllLocalVolumes()
-	{
-		$volumes  = Craft::$app->getVolumes()->getAllVolumes();
-		$response = [];
+    public function getAllLocalVolumes()
+    {
+        $volumes = Craft::$app->getVolumes()->getAllVolumes();
+        $response = [];
 
-		foreach ($volumes as $key => $volume)
-		{
-			if (get_class($volume) == Local::class)
-			{
-				$response[] = [
-					'value' => $volume->id,
-					'label' => $volume->name
-				];
-			}
-		}
+        foreach ($volumes as $key => $volume) {
+            if (get_class($volume) == Local::class) {
+                $response[] = [
+                    'value' => $volume->id,
+                    'label' => $volume->name
+                ];
+            }
+        }
 
-		return $response;
-	}
+        return $response;
+    }
 
-	public function getAllLocalVolumesObjects()
-	{
-		$volumes  = Craft::$app->getVolumes()->getAllVolumes();
-		$response = [];
+    public function getAllLocalVolumesObjects()
+    {
+        $volumes = Craft::$app->getVolumes()->getAllVolumes();
+        $response = [];
 
-		foreach ($volumes as $key => $volume)
-		{
-			if (get_class($volume) == Local::class)
-			{
-				$response[] = $volume;
-			}
-		}
+        foreach ($volumes as $key => $volume) {
+            if (get_class($volume) == Local::class) {
+                $response[] = $volume;
+            }
+        }
 
-		return $response;
-	}
+        return $response;
+    }
 
-	public function getPlugin()
-	{
-		return Craft::$app->getPlugins()->getPlugin('enupal-backup');
-	}
+    public function getPlugin()
+    {
+        return Craft::$app->getPlugins()->getPlugin('enupal-backup');
+    }
 
-	public function isWindows()
-	{
-		return defined('PHP_WINDOWS_VERSION_BUILD');
-	}
+    public function isWindows()
+    {
+        return defined('PHP_WINDOWS_VERSION_BUILD');
+    }
 }

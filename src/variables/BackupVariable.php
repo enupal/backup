@@ -18,77 +18,77 @@ use enupal\backup\Backup;
 class BackupVariable
 {
 
-	/**
-	 * @return string
-	 */
-	public function getName()
-	{
-		$plugin = Craft::$app->plugins->getPlugin('enupal-backup');
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        $plugin = Craft::$app->plugins->getPlugin('enupal-backup');
 
-		return $plugin->getName();
-	}
+        return $plugin->getName();
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getVersion()
-	{
-		$plugin = Craft::$app->plugins->getPlugin('enupal-backup');
+    /**
+     * @return string
+     */
+    public function getVersion()
+    {
+        $plugin = Craft::$app->plugins->getPlugin('enupal-backup');
 
-		return $plugin->getVersion();
-	}
+        return $plugin->getVersion();
+    }
 
-	/**
-	 * @return mixed
-	 */
-	public function getFtpTypes()
-	{
-		$options = [
-			'ftp'  => 'FTP',
-			'sftp' => 'SFTP'
-		];
+    /**
+     * @return mixed
+     */
+    public function getFtpTypes()
+    {
+        $options = [
+            'ftp' => 'FTP',
+            'sftp' => 'SFTP'
+        ];
 
-		return $options;
-	}
+        return $options;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getSettings()
-	{
-		return Backup::$app->settings->getSettings();
-	}
+    /**
+     * @return string
+     */
+    public function getSettings()
+    {
+        return Backup::$app->settings->getSettings();
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getSizeFormatted($size)
-	{
-		return Backup::$app->backups->getSizeFormatted($size);
-	}
+    /**
+     * @return string
+     */
+    public function getSizeFormatted($size)
+    {
+        return Backup::$app->backups->getSizeFormatted($size);
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getAllPlugins()
-	{
-		return Backup::$app->settings->getAllPlugins();
-	}
+    /**
+     * @return string
+     */
+    public function getAllPlugins()
+    {
+        return Backup::$app->settings->getAllPlugins();
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getAllLocalVolumes()
-	{
-		return Backup::$app->settings->getAllLocalVolumes();
-	}
+    /**
+     * @return string
+     */
+    public function getAllLocalVolumes()
+    {
+        return Backup::$app->settings->getAllLocalVolumes();
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getSecretKey()
-	{
-		return Backup::$app->backups->getRandomStr();
-	}
+    /**
+     * @return string
+     */
+    public function getSecretKey()
+    {
+        return Backup::$app->backups->getRandomStr();
+    }
 }
 

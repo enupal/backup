@@ -12,21 +12,28 @@
 {% set elementType = 'enupal\\backup\\elements\\Backup' %}
 {% do view.registerAssetBundle("enupal\\backup\\assetbundles\\FontAwesomeAsset") %}
 {% block actionButton %}
-	<div class="buttons">
-		<form id="run-backup" method="post">
-			{{ csrfInput() }}
-			{{ redirectInput('enupal-backup/backups') }}
-			<input type="hidden" name="action" value="/enupal-backup/backups/run">
-			<button class="btn submit add icon">{{ "Backup Now"|t('enupal-backup') }}</button>
-		</form>
-	</div>
+    <div class="buttons">
+        <form id="run-backup" method="post">
+            {{ csrfInput() }}
+            {{ redirectInput('enupal-backup/backups') }}
+            <input type="hidden" name="action"
+                   value="/enupal-backup/backups/run">
+            <button class="btn submit add icon">{{ "Backup Now"|t('enupal-backup') }}</button>
+        </form>
+    </div>
 
-	<form id="download-all-form" class="utility" method="post" accept-charset="UTF-8">
+    <form id="download-all-form" class="utility" method="post"
+          accept-charset="UTF-8">
 
-	</form>
+    </form>
 {% endblock %}
 
 {% js %}
+$(document).ready(function(){
+    setTimeout(function(){
+        Craft.elementIndex.updateElements();
+    },8000);
+});
 
 $("#run-backup").submit( function(e) {
 
