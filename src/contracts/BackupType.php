@@ -45,7 +45,7 @@ abstract class BackupType
     /**
      * Returns the backup array
      *
-     * @return []
+     * @return  []
      */
     abstract public function getBackup();
 }

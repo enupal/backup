@@ -20,8 +20,7 @@ class WebhookController extends BaseController
     /**
      * Webhook to listen when a backup process finish up
      *
-     * @param $backupId
-     *
+     * @return \yii\web\Response
      */
     public function actionFinished()
     {
@@ -56,8 +55,7 @@ class WebhookController extends BaseController
     /**
      * Webhook to listen when a cronjob call EnupalBackup process
      *
-     * @param $backupId
-     *
+     * @return \yii\web\Response
      */
     public function actionSchedule()
     {

@@ -19,6 +19,9 @@ class BackupFilesValidator extends Validator
 
     /**
      * At least one need to be enable
+     *
+     * @param $object
+     * @param $attribute
      */
     public function validateAttribute($object, $attribute)
     {

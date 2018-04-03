@@ -32,7 +32,10 @@ class RecipientsValidator extends Validator
     /**
      * Custom validator for email distribution list
      *
+     * @param        $object
      * @param string $attribute
+     *
+     * @param        $email
      *
      * @return boolean
      */

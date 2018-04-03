@@ -130,7 +130,6 @@ class Backup extends Element
     public function __toString()
     {
         try {
-            // @todo - For some reason the Title returns null possible Craft3 bug
             return $this->backupId;
         } catch (\Exception $e) {
             ErrorHandler::convertExceptionToError($e);
@@ -284,7 +283,7 @@ class Backup extends Element
                 }
             case 'dateCreated':
                 {
-                    return $this->dateCreated->format("Y-m-d H:i");;
+                    return $this->dateCreated->format("Y-m-d H:i");
                 }
         }
 
@@ -365,7 +364,7 @@ class Backup extends Element
 
     /**
      * @inheritdoc
-     * @throws Exception if reasons
+     * @throws \Exception if reasons
      */
     public function afterSave(bool $isNew)
     {
@@ -374,7 +373,7 @@ class Backup extends Element
             $record = BackupRecord::findOne($this->id);
 
             if (!$record) {
-                throw new Exception('Invalid Backup ID: '.$this->id);
+                throw new \Exception('Invalid Backup ID: '.$this->id);
             }
         } else {
             $record = new BackupRecord();
