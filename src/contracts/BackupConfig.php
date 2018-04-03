@@ -62,7 +62,9 @@ class BackupConfig
     /**
      * Returns the backup config
      *
-     * @return []
+     * @param bool $asJson
+     *
+     * @return array|string []
      */
     public function getConfig($asJson = false)
     {

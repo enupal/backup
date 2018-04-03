@@ -33,18 +33,13 @@ class Backups extends Component
 {
     protected $backupRecord;
 
-    /**
-     * Constructor
-     *
-     * @param object $backupRecord
-     */
-    public function __construct($backupRecord = null)
+    public function init()
     {
-        $this->backupRecord = $backupRecord;
-
         if (is_null($this->backupRecord)) {
             $this->backupRecord = new BackupRecord();
         }
+
+        parent::init();
     }
 
     /**
@@ -56,7 +51,7 @@ class Backups extends Component
     {
         $success = false;
         $response = [
-            'success' => true,
+            'success' => $success,
             'message' => 'queued'
         ];
 
@@ -80,8 +75,10 @@ class Backups extends Component
             //$command .= ' 1>> NUL 2>&1';
             $shellCommand->setCommand($command);
 
-            //@todo requiere this in the docs
-            $shellCommand->useExec = true;
+            // We have better error messages with exec
+            if (function_exists('exec')) {
+                $shellCommand->useExec = true;
+            }
 
             $success = $shellCommand->execute();
 
@@ -156,8 +153,11 @@ class Backups extends Component
     /**
      * @param $backup BackupElement
      *
-     * @throws \Exception
      * @return bool
+     * @throws Exception
+     * @throws \Exception
+     * @throws \Throwable
+     * @throws \yii\db\Exception
      */
     public function saveBackup(BackupElement $backup)
     {
@@ -193,9 +193,14 @@ class Backups extends Component
     /**
      * Performs a Enupal Backup operation.
      *
+     * @param BackupElement $backup
+     *
      * @return boolean
      * @throws Exception
      * @throws ShellCommandException in case of failure
+     * @throws \Exception
+     * @throws \Throwable
+     * @throws \yii\db\Exception
      */
     public function enupalBackup(BackupElement $backup)
     {
@@ -266,6 +271,9 @@ class Backups extends Component
      * This function creates a default backup and generates the id
      *
      * @return BackupElement
+     * @throws \Exception
+     * @throws \yii\web\ServerErrorHttpException
+     * @throws \Throwable
      */
     public function initializeBackup()
     {
@@ -307,6 +315,14 @@ class Backups extends Component
 
     /**
      * Check if the log file has content, if so the backup is finished
+     *
+     * @param BackupElement $backup
+     *
+     * @return bool
+     * @throws Exception
+     * @throws \Exception
+     * @throws \Throwable
+     * @throws \yii\db\Exception
      */
     public function updateBackupOnComplete(BackupElement $backup)
     {
@@ -394,6 +410,8 @@ class Backups extends Component
      * Enupal Backup send notification service
      *
      * @param $backup BackupElement
+     *
+     * @return bool
      */
     public function sendNotification(BackupElement $backup)
     {
@@ -435,6 +453,10 @@ class Backups extends Component
      * @param $backup BackupElement
      *                Generetates the config file and create the backup element entry
      *
+     * @return string
+     * @throws Exception
+     * @throws \Exception
+     * @throws \Throwable
      */
     private function getConfigJson(BackupElement $backup)
     {
@@ -519,7 +541,6 @@ class Backups extends Component
             // Supports local volumes for now.
             if (get_class($asset) == Local::class) {
                 // Check if the path exists
-                // @todo - research and test this looks too easy :D
                 if (is_dir($asset->path)) {
                     $assetBackup = new DirectoryBackup();
                     $assetBackup->name = 'Asset'.$asset->id;
@@ -598,9 +619,10 @@ class Backups extends Component
      *
      * @param BackupElement $backup
      *
-     * @throws \CDbException
-     * @throws \Exception
      * @return boolean
+     * @throws \Exception
+     * @throws \Throwable
+     * @throws \yii\db\Exception
      */
     public function deleteBackup(BackupElement $backup)
     {
@@ -637,13 +659,8 @@ class Backups extends Component
         // Amount of backups to keep
         $settings = Backup::$app->settings->getSettings();
 
-        $condition = 'backupStatusId =:finished';
-        $params = [
-            ':finished' => BackupStatus::FINISHED
-        ];
-
         try {
-            $count = BackupElement::find()->where($condition, $params)->count();
+            $count = BackupElement::find()->where(['backupStatusId' => BackupStatus::FINISHED])->count();
 
             $totalToDelete = 0;
 
@@ -652,7 +669,7 @@ class Backups extends Component
 
                 if ($totalToDelete) {
                     $backups = BackupElement::find()
-                        ->where($condition, $params)
+                        ->where(['backupStatusId' => BackupStatus::FINISHED])
                         ->limit($totalToDelete)
                         ->orderBy(['enupalbackup_backups.dateCreated' => SORT_ASC])
                         ->all();
@@ -820,6 +837,7 @@ class Backups extends Component
      *                         to select from
      *
      * @return string
+     * @throws \Exception
      */
     public function getRandomStr($length = 10, $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
     {

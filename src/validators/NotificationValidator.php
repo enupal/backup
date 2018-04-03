@@ -19,6 +19,9 @@ class NotificationValidator extends Validator
 
     /**
      * Email notification validation
+     *
+     * @param $object
+     * @param $attribute
      */
     public function validateAttribute($object, $attribute)
     {

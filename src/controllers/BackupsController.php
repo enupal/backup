@@ -22,9 +22,14 @@ use enupal\backup\Backup;
 
 class BackupsController extends BaseController
 {
-    /*
+    /**
      * Download backup
-    */
+     *
+     * @return \yii\web\Response|static
+     * @throws NotFoundHttpException
+     * @throws \Exception
+     * @throws \yii\web\BadRequestHttpException
+     */
     public function actionDownload()
     {
         $this->requirePostRequest();
@@ -42,8 +47,8 @@ class BackupsController extends BaseController
 
                     if (is_file($zipPath)) {
                         try {
-                            FileHelper::removeFile($zipPath);
-                        } catch (ErrorException $e) {
+                            FileHelper::unlink($zipPath);
+                        } catch (\Exception $e) {
                             Backup::error("Unable to delete the file \"{$zipPath}\": ".$e->getMessage());
                         }
                     }
@@ -51,7 +56,7 @@ class BackupsController extends BaseController
                     $zip = new ZipArchive();
 
                     if ($zip->open($zipPath, ZipArchive::CREATE) !== true) {
-                        throw new Exception('Cannot create zip at '.$zipPath);
+                        throw new \Exception('Cannot create zip at '.$zipPath);
                     }
 
                     if ($backup->getDatabaseFile()) {
@@ -129,6 +134,7 @@ class BackupsController extends BaseController
      *
      * @param int|null $backupId The backup's ID
      *
+     * @return \yii\web\Response
      * @throws HttpException
      * @throws Exception
      */
@@ -177,7 +183,8 @@ class BackupsController extends BaseController
     /**
      * Delete a backup.
      *
-     * @return void
+     * @return \yii\web\Response
+     * @throws \yii\web\BadRequestHttpException
      */
     public function actionDeleteBackup()
     {

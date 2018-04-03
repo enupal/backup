@@ -8,6 +8,7 @@
 
 namespace enupal\backup\models;
 
+use craft\base\Model;
 use enupal\backup\validators\BackupFilesValidator;
 use enupal\backup\validators\AssetSourceValidator;
 use enupal\backup\validators\DropboxValidator;
@@ -17,7 +18,7 @@ use enupal\backup\validators\SoftlayerValidator;
 use enupal\backup\validators\NotificationValidator;
 use enupal\backup\validators\RecipientsValidator;
 
-class Settings extends \craft\base\Model
+class Settings extends Model
 {
     // General
     public $pluginNameOverride = '';
@@ -92,6 +93,7 @@ class Settings extends \craft\base\Model
     {
         return [
             ['backupsAmount', 'integer', 'min' => 1, 'on' => 'general'],
+            ['backupsAmount', 'required', 'on' => 'general'],
             [
                 ['enableDatabase', 'enableTemplates', 'enableLocalVolumes', 'enableLogs'],
                 BackupFilesValidator::class, 'on' => 'backupFiles'

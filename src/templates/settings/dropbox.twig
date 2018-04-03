@@ -15,56 +15,58 @@
 {% set saveShortcutRedirect = 'enupal-backup/settings/dropbox' %}
 
 {% set saveButton %}
-	<div class="buttons">
-		<input class="btn submit" type="submit" value="{{ 'Save'|t('enupal-backup') }}">
-	</div>
+    <div class="buttons">
+        <input class="btn submit" type="submit"
+               value="{{ 'Save'|t('enupal-backup') }}">
+    </div>
 {% endset %}
 
 {% set content %}
 
-	<input type="hidden" name="action" value="enupal-backup/settings/save-settings">
-	<input type="hidden" name="backupScenario" value="dropbox">
+    <input type="hidden" name="action"
+           value="enupal-backup/settings/save-settings">
+    <input type="hidden" name="backupScenario" value="dropbox">
 
-	<div id="settings-cp">
+    <div id="settings-cp">
 
-		{% namespace 'settings' %}
+        {% namespace 'settings' %}
 
-			{{ forms.lightswitchField({
-				label: "Enable Dropbox"|t('enupal-backup'),
-				id: 'enableDropbox',
-				name: 'enableDropbox',
-				on: settings.enableDropbox,
-				onLabel: "On"|t('enupal-backup'),
-				offLabel: "Off"|t('enupal-backup')
-			}) }}
+            {{ forms.lightswitchField({
+                label: "Enable Dropbox"|t('enupal-backup'),
+                id: 'enableDropbox',
+                name: 'enableDropbox',
+                on: settings.enableDropbox,
+                onLabel: "On"|t('enupal-backup'),
+                offLabel: "Off"|t('enupal-backup')
+            }) }}
 
-			{{ forms.textField({
-				label: "Secrect Key"|t('enupal-backup'),
-				id: 'dropboxToken',
-				name: 'dropboxToken',
-				instructions: "The dropbox authentication token. Go to <a href='https://www.dropbox.com/login?cont=https%3A%2F%2Fwww.dropbox.com%2Fdevelopers%2Fapps' target='_blank'> www.dropbox.com/developers/apps</a> Create  your app Choose: dropbox api app files and datastore yes provide some app name 'my-dropbox-app' generate access token to authenticate connection to your dropbox"|t('enupal-backup'),
-				value: settings.dropboxToken,
-				required: true,
-				type: 'password',
-				placeholder: "xxxxxxx"|t('enupal-backup'),
-				autofocus: true,
-				first: true,
-				errors: settings.getErrors('dropboxToken')
-			}) }}
+            {{ forms.textField({
+                label: "Secrect Key"|t('enupal-backup'),
+                id: 'dropboxToken',
+                name: 'dropboxToken',
+                instructions: "The dropbox authentication token. Go to <a href='https://www.dropbox.com/login?cont=https%3A%2F%2Fwww.dropbox.com%2Fdevelopers%2Fapps' target='_blank'> www.dropbox.com/developers/apps</a> Create  your app Choose: dropbox api app files and datastore yes provide some app name 'my-dropbox-app' generate access token to authenticate connection to your dropbox"|t('enupal-backup'),
+                value: settings.dropboxToken,
+                required: true,
+                type: 'password',
+                placeholder: "xxxxxxx"|t('enupal-backup'),
+                autofocus: true,
+                first: true,
+                errors: settings.getErrors('dropboxToken')
+            }) }}
 
-			{{ forms.textField({
-				label: "Path"|t('enupal-backup'),
-				id: 'dropboxPath',
-				name: 'dropboxPath',
-				instructions: "Directory where to store the backup in your dropbox account."|t('enupal-backup'),
-				value: settings.dropboxPath,
-				autofocus: true,
-				first: true,
-				errors: ''
-			}) }}
+            {{ forms.textField({
+                label: "Path"|t('enupal-backup'),
+                id: 'dropboxPath',
+                name: 'dropboxPath',
+                instructions: "Directory where to store the backup in your dropbox account."|t('enupal-backup'),
+                value: settings.dropboxPath,
+                autofocus: true,
+                first: true,
+                errors: ''
+            }) }}
 
-		{% endnamespace %}
+        {% endnamespace %}
 
-	</div>
+    </div>
 
 {% endset %}

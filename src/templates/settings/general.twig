@@ -15,37 +15,54 @@
 {% set saveShortcutRedirect = 'enupal-backup/settings/general' %}
 
 {% set saveButton %}
-	<div class="buttons">
-		<input class="btn submit" type="submit" value="{{ 'Save'|t }}">
-	</div>
+    <div class="buttons">
+        <input class="btn submit" type="submit" value="{{ 'Save'|t }}">
+    </div>
 {% endset %}
 
 {% set content %}
 
-	<input type="hidden" name="action" value="enupal-backup/settings/save-settings">
+    <input type="hidden" name="action"
+           value="enupal-backup/settings/save-settings">
+    <input type="hidden" name="backupScenario" value="general">
 
-	<div id="settings-cp">
+    <div id="settings-cp">
 
-		{% namespace 'settings' %}
-			{{ forms.field({
-				label: "General settings"|t('enupal-backup')|upper
-			}, null) }}
-			<hr>
+        {% namespace 'settings' %}
+            {{ forms.field({
+                label: "General settings"|t('enupal-backup')|upper
+            }, null) }}
+            <hr>
 
-			{{ forms.textField({
-				label: "Amount of backups to keep locally"|t('enupal-backup'),
-				id: 'backupsAmount',
-				instructions: 'Keep only a configured amount of backups with status Finished'|t('enupal-backup'),
-				name: 'backupsAmount',
-				value: settings.backupsAmount,
-				size: 10,
-				autofocus: true,
-				first: true,
-				errors: ''
-			}) }}
+            {{ forms.textField({
+                label: "Plugin Name"|t,
+                id: 'pluginNameOverride',
+                name: 'pluginNameOverride',
+                instructions: "Intuitive, human-readable plugin name for the end user."|t('enupal-backup'),
+                value: settings.pluginNameOverride,
+                placeholder: "Enupal Backup"|t('enupal-backup'),
+                autofocus: true,
+                first: true,
+                errors: ''
+            }) }}
 
-		{% endnamespace %}
+            <hr>
 
-	</div>
+            {{ forms.textField({
+                label: "Amount of backups to keep locally"|t('enupal-backup'),
+                id: 'backupsAmount',
+                instructions: 'Keep only a configured amount of backups with status Finished'|t('enupal-backup'),
+                name: 'backupsAmount',
+                value: settings.backupsAmount,
+                size: 10,
+                autofocus: true,
+                required: true,
+                first: true,
+                errors: settings.getErrors('backupsAmount')
+            }) }}
+
+        {% endnamespace %}
+
+    </div>
 
 {% endset %}

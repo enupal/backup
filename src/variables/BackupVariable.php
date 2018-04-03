@@ -60,6 +60,8 @@ class BackupVariable
     }
 
     /**
+     * @param $size
+     *
      * @return string
      */
     public function getSizeFormatted($size)

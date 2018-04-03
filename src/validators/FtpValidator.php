@@ -19,6 +19,9 @@ class FtpValidator extends Validator
 
     /**
      * Ftp validation
+     *
+     * @param $object
+     * @param $attribute
      */
     public function validateAttribute($object, $attribute)
     {

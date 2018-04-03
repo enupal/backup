@@ -10,6 +10,7 @@ namespace enupal\backup\jobs;
 
 use enupal\backup\Backup;
 use craft\queue\BaseJob;
+use enupal\backup\elements\Backup as BackupElement;
 
 use enupal\backup\enums\BackupStatus;
 

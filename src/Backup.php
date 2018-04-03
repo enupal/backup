@@ -9,10 +9,10 @@
 namespace enupal\backup;
 
 use Craft;
+use craft\base\Plugin;
 use craft\events\RegisterUrlRulesEvent;
 use craft\web\UrlManager;
 use yii\base\Event;
-use craft\events\DefineComponentsEvent;
 use craft\web\twig\variables\CraftVariable;
 use craft\services\SystemMessages;
 use craft\events\RegisterEmailMessagesEvent;
@@ -20,7 +20,7 @@ use craft\events\RegisterEmailMessagesEvent;
 use enupal\backup\variables\BackupVariable;
 use enupal\backup\models\Settings;
 
-class Backup extends \craft\base\Plugin
+class Backup extends Plugin
 {
     /**
      * Enable use of Backup::$app-> in place of Craft::$app->
@@ -37,6 +37,12 @@ class Backup extends \craft\base\Plugin
     {
         parent::init();
         self::$app = $this->get('app');
+
+        $settings = Backup::$app->settings->getDbSettings();
+
+        if (isset($settings['pluginNameOverride']) && $settings['pluginNameOverride']){
+            $this->name = $settings['pluginNameOverride'];
+        }
 
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
             $event->rules = array_merge($event->rules, $this->getCpUrlRules());
@@ -82,6 +88,7 @@ class Backup extends \craft\base\Plugin
      * Performs actions before the plugin is Uninstalled.
      *
      * @return bool Whether the plugin should be Uninstalled
+     * @throws \Throwable
      */
     protected function beforeUninstall(): bool
     {
@@ -120,6 +127,8 @@ class Backup extends \craft\base\Plugin
      * Settings HTML
      *
      * @return string
+     * @throws \Twig_Error_Loader
+     * @throws \yii\base\Exception
      */
     protected function settingsHtml()
     {

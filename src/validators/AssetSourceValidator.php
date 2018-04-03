@@ -19,6 +19,9 @@ class AssetSourceValidator extends Validator
 
     /**
      * At least one source
+     *
+     * @param $object
+     * @param $attribute
      */
     public function validateAttribute($object, $attribute)
     {
