@@ -273,6 +273,7 @@ class Backups extends Component
      * @return BackupElement
      * @throws \Exception
      * @throws \yii\web\ServerErrorHttpException
+     * @throws \Throwable
      */
     public function initializeBackup()
     {
@@ -455,6 +456,7 @@ class Backups extends Component
      * @return string
      * @throws Exception
      * @throws \Exception
+     * @throws \Throwable
      */
     private function getConfigJson(BackupElement $backup)
     {
