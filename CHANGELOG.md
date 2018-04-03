@@ -1,5 +1,12 @@
 # Enupal Backup Changelog
 
+## 1.0.9 - 2018.04.03
+### Added
+- Added Plugin name override setting
+
+### Improved
+- Improved code inspections
+
 ## 1.0.8 - 2018.02.22
 ### Added
 - Added PSR2 support
