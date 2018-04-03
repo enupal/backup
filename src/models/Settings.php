@@ -93,6 +93,7 @@ class Settings extends Model
     {
         return [
             ['backupsAmount', 'integer', 'min' => 1, 'on' => 'general'],
+            ['backupsAmount', 'required', 'on' => 'general'],
             [
                 ['enableDatabase', 'enableTemplates', 'enableLocalVolumes', 'enableLogs'],
                 BackupFilesValidator::class, 'on' => 'backupFiles'

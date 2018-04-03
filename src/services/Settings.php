@@ -9,6 +9,7 @@
 namespace enupal\backup\services;
 
 use Craft;
+use craft\db\Query;
 use yii\base\Component;
 use craft\volumes\Local;
 
@@ -48,6 +49,19 @@ class Settings extends Component
         $backupPlugin = $this->getPlugin();
 
         return $backupPlugin->getSettings();
+    }
+
+    public function getDbSettings()
+    {
+        $settings = (new Query())
+            ->select('settings')
+            ->from(['{{%plugins}}'])
+            ->where(['handle' => 'enupal-backup'])
+            ->one();
+
+        $settings = json_decode($settings['settings'], true);
+
+        return $settings;
     }
 
     public function getAllPlugins()
