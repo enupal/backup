@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.0.10 - 2018.04.09
+### Improved
+- Improved Amazon S3 upload files
+
 ## 1.0.9 - 2018.04.03
 ### Added
 - Added Plugin name override setting
