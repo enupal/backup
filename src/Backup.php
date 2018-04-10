@@ -30,8 +30,19 @@ class Backup extends Plugin
      */
     public static $app;
 
+    /**
+     * @inheritdoc
+     */
     public $hasCpSection = true;
+
+    /**
+     * @inheritdoc
+     */
     public $hasCpSettings = true;
+
+    /**
+     * @inheritdoc
+     */
     public $schemaVersion = '1.0.0';
 
     public function init()

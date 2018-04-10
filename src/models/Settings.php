@@ -34,13 +34,13 @@ class Settings extends Model
     /**
      * @var bool
      */
-    public $deleteLocalBackupAfterUpload = 0;
+    public $deleteLocalBackupAfterUpload = false;
 
     // Database by default
     /**
      * @var bool
      */
-    public $enableDatabase = 1;
+    public $enableDatabase = true;
 
     /**
      * @var string
@@ -51,7 +51,7 @@ class Settings extends Model
     /**
      * @var bool
      */
-    public $enableTemplates = 0;
+    public $enableTemplates = false;
 
     /**
      * @var bool
@@ -61,7 +61,7 @@ class Settings extends Model
     /**
      * @var bool
      */
-    public $enableLogs = 0;
+    public $enableLogs = false;
 
     /**
      * @var string
@@ -72,7 +72,7 @@ class Settings extends Model
     /**
      * @var bool
      */
-    public $enableLocalVolumes = 0;
+    public $enableLocalVolumes = false;
 
     /**
      * @var string
@@ -83,7 +83,7 @@ class Settings extends Model
     /**
      * @var bool
      */
-    public $enableDropbox = 0;
+    public $enableDropbox = false;
     /**
      * @var bool
      */
@@ -102,7 +102,7 @@ class Settings extends Model
     /**
      * @var bool
      */
-    public $enableAmazon = 0;
+    public $enableAmazon = false;
 
     /**
      * @var string
@@ -132,13 +132,13 @@ class Settings extends Model
     /**
      * @var bool
      */
-    public $amazonUseMultiPartUpload = 0;
+    public $amazonUseMultiPartUpload = false;
 
     // FTP or SFTP
     /**
      * @var bool
      */
-    public $enableFtp = 0;
+    public $enableFtp = false;
 
     /**
      * @var string
@@ -169,7 +169,7 @@ class Settings extends Model
     /**
      * @var bool
      */
-    public $enableSos = 0;
+    public $enableSos = false;
 
     /**
      * @var string
@@ -200,7 +200,7 @@ class Settings extends Model
     /**
      * @var bool
      */
-    public $enablePathToTar = 0;
+    public $enablePathToTar = false;
 
     /**
      * @var string
@@ -220,7 +220,7 @@ class Settings extends Model
     /**
      * @var bool
      */
-    public $enablePathToMysqldump = 0;
+    public $enablePathToMysqldump = false;
 
     /**
      * @var string
@@ -230,7 +230,7 @@ class Settings extends Model
     /**
      * @var bool
      */
-    public $enablePathToOpenssl = 0;
+    public $enablePathToOpenssl = false;
 
     /**
      * @var string
@@ -240,7 +240,7 @@ class Settings extends Model
     /**
      * @var bool
      */
-    public $enablePathToPgdump = 0;
+    public $enablePathToPgdump = false;
 
     /**
      * @var string
@@ -251,7 +251,7 @@ class Settings extends Model
     /**
      * @var bool
      */
-    public $enableWebhook = 0;
+    public $enableWebhook = false;
 
     /**
      * @var string
@@ -262,7 +262,7 @@ class Settings extends Model
     /**
      * @var bool
      */
-    public $enableOpenssl = 0;
+    public $enableOpenssl = false;
 
     /**
      * @var string
@@ -273,7 +273,7 @@ class Settings extends Model
     /**
      * @var bool
      */
-    public $enableNotification = 0;
+    public $enableNotification = false;
 
     /**
      * @var string

@@ -381,28 +381,28 @@ class Backups extends Component
                     if (isset($error['msg'])) {
                         // Dropbox
                         if (strpos(strtolower($error['msg']), 'dropbox') !== false) {
-                            $backup->dropbox = 0;
+                            $backup->dropbox = false;
                         }
                     }
 
                     if (isset($error['message'])) {
                         // Amazon
                         if (strpos(strtolower($error['message']), 'amazon') !== false) {
-                            $backup->aws = 0;
+                            $backup->aws = false;
                         }
                     }
 
                     if (isset($error['file'])) {
                         // FTP
                         if (strpos(strtolower($error['file']), 'ftp') !== false) {
-                            $backup->ftp = 0;
+                            $backup->ftp = false;
                         }
                     }
 
                     if (isset($error['file'])) {
                         // SOFTLAYER
                         if (strpos(strtolower($error['file']), 'softlayer') !== false) {
-                            $backup->softlayer = 0;
+                            $backup->softlayer = false;
                         }
                     }
                 }
