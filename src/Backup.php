@@ -12,6 +12,7 @@ use Craft;
 use craft\base\Plugin;
 use craft\events\RegisterUrlRulesEvent;
 use craft\web\UrlManager;
+use enupal\backup\services\App;
 use yii\base\Event;
 use craft\web\twig\variables\CraftVariable;
 use craft\services\SystemMessages;
@@ -25,7 +26,7 @@ class Backup extends Plugin
     /**
      * Enable use of Backup::$app-> in place of Craft::$app->
      *
-     * @var [type]
+     * @var App
      */
     public static $app;
 

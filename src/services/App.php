@@ -12,7 +12,14 @@ use craft\base\Component;
 
 class App extends Component
 {
+    /**
+     * @var Backups
+     */
     public $backups;
+
+    /**
+     * @var Settings
+     */
     public $settings;
 
     public function init()

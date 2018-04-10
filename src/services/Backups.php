@@ -753,7 +753,7 @@ class Backups extends Component
                     'secret' => $settings->amazonSecret,
                     'bucket' => $settings->amazonBucket,
                     'region' => $settings->amazonRegion,
-                    'path' => trim($settings->amazonPath.'/'.$backupId),
+                    'path' => trim($settings->amazonPath.$backupId),
                     'useMultiPartUpload' => $settings->amazonUseMultiPartUpload
                 ]
             ];
