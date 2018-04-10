@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.0.11 - 2018.04.10
+### Improved
+- Improved general performance
+
 ## 1.0.10 - 2018.04.09
 ### Improved
 - Improved Amazon S3 upload files
