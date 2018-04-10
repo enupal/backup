@@ -75,7 +75,7 @@ class Settings extends Model
     public $enableLocalVolumes = false;
 
     /**
-     * @var string
+     * @var string|array
      */
     public $volumes;
 
