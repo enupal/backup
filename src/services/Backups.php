@@ -247,6 +247,10 @@ class Backups extends Component
         return $success;
     }
 
+    /**
+     * @throws Exception
+     * @throws \yii\db\Exception
+     */
     public function installDefaultValues()
     {
         $model = new Settings();

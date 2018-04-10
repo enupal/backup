@@ -34,6 +34,9 @@ class CreateBackup extends BaseJob
         return Backup::t('Creating backup');
     }
 
+    /**
+     * @inheritdoc
+     */
     public function execute($queue)
     {
         $totalSteps = 2;
@@ -59,6 +62,14 @@ class CreateBackup extends BaseJob
         return true;
     }
 
+    /**
+     * @param $error
+     *
+     * @throws \Exception
+     * @throws \Throwable
+     * @throws \yii\base\Exception
+     * @throws \yii\db\Exception
+     */
     private function updateBackupToError($error)
     {
         $settings = Backup::$app->settings->getSettings();
