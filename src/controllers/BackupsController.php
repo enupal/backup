@@ -145,7 +145,7 @@ class BackupsController extends BaseController
      * @throws \Throwable
      * @throws \yii\db\Exception
      */
-    public function actionViewBackup(int $backupId = null)
+    public function actionViewBackup(int $backupId)
     {
         // Get the Backup
         $backup = Backup::$app->backups->getBackupById($backupId);
