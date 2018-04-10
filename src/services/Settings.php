@@ -44,6 +44,9 @@ class Settings extends Component
         return $success;
     }
 
+    /**
+     * @return \enupal\backup\models\Settings|null
+     */
     public function getSettings()
     {
         $backupPlugin = $this->getPlugin();
@@ -51,6 +54,9 @@ class Settings extends Component
         return $backupPlugin->getSettings();
     }
 
+    /**
+     * @return array|bool|mixed
+     */
     public function getDbSettings()
     {
         $settings = (new Query())
@@ -64,6 +70,9 @@ class Settings extends Component
         return $settings;
     }
 
+    /**
+     * @return array
+     */
     public function getAllPlugins()
     {
         $plugins = Craft::$app->getPlugins()->getAllPlugins();
@@ -79,6 +88,9 @@ class Settings extends Component
         return $response;
     }
 
+    /**
+     * @return array
+     */
     public function getAllLocalVolumes()
     {
         $volumes = Craft::$app->getVolumes()->getAllVolumes();
@@ -96,6 +108,9 @@ class Settings extends Component
         return $response;
     }
 
+    /**
+     * @return array
+     */
     public function getAllLocalVolumesObjects()
     {
         $volumes = Craft::$app->getVolumes()->getAllVolumes();
@@ -110,11 +125,17 @@ class Settings extends Component
         return $response;
     }
 
+    /**
+     * @return \craft\base\PluginInterface|null
+     */
     public function getPlugin()
     {
         return Craft::$app->getPlugins()->getPlugin('enupal-backup');
     }
 
+    /**
+     * @return bool
+     */
     public function isWindows()
     {
         return defined('PHP_WINDOWS_VERSION_BUILD');
