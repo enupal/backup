@@ -97,7 +97,7 @@ class Backups extends Component
      * @param int      $id
      * @param int|null $siteId
      *
-     * @return array|\craft\base\ElementInterface|null
+     * @return array|BackupElement|null
      */
     public function getBackupById(int $id, int $siteId = null)
     {
@@ -115,10 +115,10 @@ class Backups extends Component
     /**
      * Returns a Backup model if one is found in the database by backupId
      *
-     * @param string $backupId
-     * @param int    $siteId
+     * @param string   $backupId
+     * @param int|null $siteId
      *
-     * @return null|BackupElement
+     * @return array|BackupElement|null
      */
     public function getBackupByBackupId(string $backupId, int $siteId = null)
     {
@@ -132,7 +132,7 @@ class Backups extends Component
     /**
      * Returns all Backups
      *
-     * @return null|BackupElement[]
+     * @return array|BackupElement[]|null
      */
     public function getAllBackups()
     {
@@ -143,8 +143,8 @@ class Backups extends Component
 
     /**
      * Returns all the Pending backups
-     *
-     * @return null|BackupElement[]
+     * s
+     * @return array|BackupElement[]|null
      */
     public function getPendingBackups()
     {

@@ -25,7 +25,7 @@ class BackupsController extends BaseController
     /**
      * Download backup
      *
-     * @return \yii\web\Response|static
+     * @return \yii\web\Response|\yii\console\Response|static
      * @throws NotFoundHttpException
      * @throws \Exception
      * @throws \yii\web\BadRequestHttpException
