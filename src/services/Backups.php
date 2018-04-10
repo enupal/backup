@@ -380,7 +380,7 @@ class Backups extends Component
                     if (isset($error['message'])) {
                         // Amazon
                         if (strpos(strtolower($error['message']), 'amazon') !== false) {
-                            $backup->amazon = 0;
+                            $backup->aws = 0;
                         }
                     }
 

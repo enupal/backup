@@ -120,6 +120,10 @@ class BackupsController extends BaseController
         return Craft::$app->getResponse()->sendFile($filePath);
     }
 
+    /**
+     * @return \yii\web\Response
+     * @throws \yii\web\BadRequestHttpException
+     */
     public function actionRun()
     {
         $this->requirePostRequest();
@@ -135,8 +139,11 @@ class BackupsController extends BaseController
      * @param int|null $backupId The backup's ID
      *
      * @return \yii\web\Response
-     * @throws HttpException
      * @throws Exception
+     * @throws NotFoundHttpException
+     * @throws \Exception
+     * @throws \Throwable
+     * @throws \yii\db\Exception
      */
     public function actionViewBackup(int $backupId = null)
     {
@@ -168,6 +175,8 @@ class BackupsController extends BaseController
             $backup->assetFileName = null;
         }
 
+        $variables = [];
+
         $variables['backup'] = $backup;
 
         $logPath = Backup::$app->backups->getLogPath($backup->backupId);
@@ -184,6 +193,9 @@ class BackupsController extends BaseController
      * Delete a backup.
      *
      * @return \yii\web\Response
+     * @throws \Exception
+     * @throws \Throwable
+     * @throws \yii\db\Exception
      * @throws \yii\web\BadRequestHttpException
      */
     public function actionDeleteBackup()

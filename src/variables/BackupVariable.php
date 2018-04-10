@@ -51,8 +51,9 @@ class BackupVariable
         return $options;
     }
 
+
     /**
-     * @return string
+     * @return \enupal\backup\models\Settings|null
      */
     public function getSettings()
     {
@@ -70,7 +71,7 @@ class BackupVariable
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getAllPlugins()
     {
@@ -78,7 +79,7 @@ class BackupVariable
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getAllLocalVolumes()
     {
@@ -87,6 +88,7 @@ class BackupVariable
 
     /**
      * @return string
+     * @throws \Exception
      */
     public function getSecretKey()
     {
