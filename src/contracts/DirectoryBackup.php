@@ -33,6 +33,9 @@ class DirectoryBackup extends BackupType
         $this->pathToTar = Backup::$app->backups->getPathToTar();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getBackup()
     {
         $backup = [

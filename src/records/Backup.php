@@ -26,13 +26,14 @@ use craft\records\Element;
  * @property string $templateSize
  * @property string $logFileName
  * @property string $logSize
+ * @property string $databaseSize
  * @property integer $backupStatusId
- * @property boolean $aws
- * @property boolean $dropbox
- * @property boolean $rsync
- * @property boolean $ftp
- * @property boolean $softlayer
- * @property boolean $isEncrypted
+ * @property bool $aws
+ * @property bool $dropbox
+ * @property bool $rsync
+ * @property bool $ftp
+ * @property bool $softlayer
+ * @property bool $isEncrypted
  */
 class Backup extends ActiveRecord
 {

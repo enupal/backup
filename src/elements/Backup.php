@@ -42,12 +42,37 @@ class Backup extends Element
     public $logFileName;
     public $logSize;
     public $backupStatusId = BackupStatus::RUNNING;
+
+    /**
+     * @var bool
+     */
     public $aws = 0;
+
+    /**
+     * @var bool
+     */
     public $dropbox = 0;
+
+    /**
+     * @var bool
+     */
     public $rsync = 0;
+
+    /**
+     * @var bool
+     */
     public $ftp = 0;
+
+    /**
+     * @var bool
+     */
     public $softlayer = 0;
+
+    /**
+     * @var bool
+     */
     public $isEncrypted = 0;
+
     public $logMessage;
 
     /**

@@ -8,8 +8,6 @@
 
 namespace enupal\backup\contracts;
 
-use enupal\backup\Backup;
-
 abstract class BackupType
 {
     /**
@@ -18,17 +16,17 @@ abstract class BackupType
     public $name;
 
     /**
-     * @var []
+     * @var array
      */
     public $syncs;
 
     /**
-     * @var []
+     * @var array
      */
     public $encrypt;
 
     /**
-     * @var []
+     * @var array
      */
     public $settings;
 
@@ -45,7 +43,7 @@ abstract class BackupType
     /**
      * Returns the backup array
      *
-     * @return  []
+     * @return array
      */
     abstract public function getBackup();
 }
