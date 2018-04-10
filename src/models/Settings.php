@@ -21,70 +21,279 @@ use enupal\backup\validators\RecipientsValidator;
 class Settings extends Model
 {
     // General
-    public $pluginNameOverride = '';
+    /**
+     * @var string
+     */
+    public $pluginNameOverride;
+
+    /**
+     * @var integer
+     */
     public $backupsAmount = 5;
-    public $deleteLocalBackupAfterUpload = 0;
+
+    /**
+     * @var bool
+     */
+    public $deleteLocalBackupAfterUpload = false;
+
     // Database by default
-    public $enableDatabase = 1;
+    /**
+     * @var bool
+     */
+    public $enableDatabase = true;
+
+    /**
+     * @var string
+     */
     public $excludeData = 'assetindexdata, assettransformindex, cache, sessions, templatecaches, templatecachecriteria, templatecacheelements';
+
     // Templates
-    public $enableTemplates = 0;
+    /**
+     * @var bool
+     */
+    public $enableTemplates = false;
+
+    /**
+     * @var bool
+     */
     public $excludeTemplates = 'cpresources,';
     // Logs
-    public $enableLogs = 0;
+    /**
+     * @var bool
+     */
+    public $enableLogs = false;
+
+    /**
+     * @var string
+     */
     public $excludeLogs = 'enupalbackup,';
+
     // Local Volumes
-    public $enableLocalVolumes = 0;
-    public $volumes = '';
+    /**
+     * @var bool
+     */
+    public $enableLocalVolumes = false;
+
+    /**
+     * @var string
+     */
+    public $volumes;
+
     // Dropbox 	Api
-    public $enableDropbox = 0;
-    public $dropboxToken = '';
+    /**
+     * @var bool
+     */
+    public $enableDropbox = false;
+    /**
+     * @var bool
+     */
+
+    /**
+     * @var string
+     */
+    public $dropboxToken;
+
+    /**
+     * @var string
+     */
     public $dropboxPath = '/enupalbackup/';
     // Amazon S3 Api
-    public $enableAmazon = 0;
-    public $amazonKey = '';
-    public $amazonSecret = '';
-    public $amazonBucket = '';
-    public $amazonRegion = '';
+
+    /**
+     * @var bool
+     */
+    public $enableAmazon = false;
+
+    /**
+     * @var string
+     */
+    public $amazonKey;
+
+    /**
+     * @var string
+     */
+    public $amazonSecret;
+
+    /**
+     * @var string
+     */
+    public $amazonBucket;
+
+    /**
+     * @var string
+     */
+    public $amazonRegion;
+
+    /**
+     * @var string
+     */
     public $amazonPath = '/enupalbackup/';
-    public $amazonUseMultiPartUpload = 0;
+
+    /**
+     * @var bool
+     */
+    public $amazonUseMultiPartUpload = false;
+
     // FTP or SFTP
-    public $enableFtp = 0;
+    /**
+     * @var bool
+     */
+    public $enableFtp = false;
+
+    /**
+     * @var string
+     */
     public $ftpType = 'ftp';
-    public $ftpHost = '';
-    public $ftpUser = '';
-    public $ftpPassword = '';
+
+    /**
+     * @var string
+     */
+    public $ftpHost;
+
+    /**
+     * @var string
+     */
+    public $ftpUser;
+
+    /**
+     * @var string
+     */
+    public $ftpPassword;
+
+    /**
+     * @var string
+     */
     public $ftpPath = 'enupalbackup/';
+
     // Softlayer Object Storage
-    public $enableSos = 0;
-    public $sosUser = '';
-    public $sosSecret = '';
-    public $sosHost = '';
-    public $sosContainer = '';
+    /**
+     * @var bool
+     */
+    public $enableSos = false;
+
+    /**
+     * @var string
+     */
+    public $sosUser;
+
+    /**
+     * @var string
+     */
+    public $sosSecret;
+
+    /**
+     * @var string
+     */
+    public $sosHost;
+
+    /**
+     * @var string
+     */
+    public $sosContainer;
+
+    /**
+     * @var string
+     */
     public $sosPath = '/enupalbackup/';
+
     // Advanced
-    public $enablePathToTar = 0;
-    public $pathToTar = '';
-    public $enablePathToPhp = '';
-    public $pathToPhp = '';
-    public $enablePathToMysqldump = '';
-    public $pathToMysqldump = '';
-    public $enablePathToOpenssl = '';
-    public $pathToOpenssl = '';
-    public $enablePathToPgdump = '';
-    public $pathToPgdump = '';
+    /**
+     * @var bool
+     */
+    public $enablePathToTar = false;
+
+    /**
+     * @var string
+     */
+    public $pathToTar;
+
+    /**
+     * @var string
+     */
+    public $enablePathToPhp;
+
+    /**
+     * @var string
+     */
+    public $pathToPhp;
+
+    /**
+     * @var bool
+     */
+    public $enablePathToMysqldump = false;
+
+    /**
+     * @var string
+     */
+    public $pathToMysqldump;
+
+    /**
+     * @var bool
+     */
+    public $enablePathToOpenssl = false;
+
+    /**
+     * @var string
+     */
+    public $pathToOpenssl;
+
+    /**
+     * @var bool
+     */
+    public $enablePathToPgdump = false;
+
+    /**
+     * @var string
+     */
+    public $pathToPgdump;
+
     // Webhook
-    public $enableWebhook = 0;
-    public $webhookSecretKey = '';
+    /**
+     * @var bool
+     */
+    public $enableWebhook = false;
+
+    /**
+     * @var string
+     */
+    public $webhookSecretKey;
     // security
-    public $enableOpenssl = 0;
-    public $opensslPassword = '';
+
+    /**
+     * @var bool
+     */
+    public $enableOpenssl = false;
+
+    /**
+     * @var string
+     */
+    public $opensslPassword;
+
     // notification
-    public $enableNotification = '';
-    public $notificationRecipients = '';
-    public $notificationSenderName = '';
-    public $notificationSenderEmail = '';
-    public $notificationReplyToEmail = '';
+    /**
+     * @var bool
+     */
+    public $enableNotification = false;
+
+    /**
+     * @var string
+     */
+    public $notificationRecipients;
+
+    /**
+     * @var string
+     */
+    public $notificationSenderName;
+
+    /**
+     * @var string
+     */
+    public $notificationSenderEmail;
+
+    /**
+     * @var string
+     */
+    public $notificationReplyToEmail;
 
     /**
      * @inheritdoc

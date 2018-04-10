@@ -13,7 +13,7 @@ use yii\base\Component;
 use enupal\backup\Backup;
 use enupal\backup\elements\Backup as BackupElement;
 use enupal\backup\records\Backup as BackupRecord;
-use enupal\backup\models\Settings;
+use enupal\backup\models\Settings as SettingsModel;
 use enupal\backup\enums\BackupStatus;
 use enupal\backup\jobs\CreateBackup;
 use enupal\backup\contracts\BackupConfig;
@@ -94,13 +94,17 @@ class Backups extends Component
     /**
      * Returns a Backup model if one is found in the database by id
      *
-     * @param int $id
-     * @param int $siteId
+     * @param int      $id
+     * @param int|null $siteId
      *
-     * @return null|BackupElement
+     * @return array|BackupElement|null
      */
     public function getBackupById(int $id, int $siteId = null)
     {
+        if (!$id) {
+            return null;
+        }
+
         $query = BackupElement::find();
         $query->id($id);
         $query->siteId($siteId);
@@ -111,10 +115,10 @@ class Backups extends Component
     /**
      * Returns a Backup model if one is found in the database by backupId
      *
-     * @param string $backupId
-     * @param int    $siteId
+     * @param string   $backupId
+     * @param int|null $siteId
      *
-     * @return null|BackupElement
+     * @return array|BackupElement|null
      */
     public function getBackupByBackupId(string $backupId, int $siteId = null)
     {
@@ -128,7 +132,7 @@ class Backups extends Component
     /**
      * Returns all Backups
      *
-     * @return null|BackupElement[]
+     * @return array|BackupElement[]|null
      */
     public function getAllBackups()
     {
@@ -139,8 +143,8 @@ class Backups extends Component
 
     /**
      * Returns all the Pending backups
-     *
-     * @return null|BackupElement[]
+     * s
+     * @return array|BackupElement[]|null
      */
     public function getPendingBackups()
     {
@@ -253,11 +257,11 @@ class Backups extends Component
      */
     public function installDefaultValues()
     {
-        $model = new Settings();
+        $model = new SettingsModel();
         $settings = $model->getAttributes();
 
         $settings = json_encode($settings);
-        $affectedRows = Craft::$app->getDb()->createCommand()->update('{{%plugins}}', [
+        Craft::$app->getDb()->createCommand()->update('{{%plugins}}', [
             'settings' => $settings
         ],
             [
@@ -377,28 +381,28 @@ class Backups extends Component
                     if (isset($error['msg'])) {
                         // Dropbox
                         if (strpos(strtolower($error['msg']), 'dropbox') !== false) {
-                            $backup->dropbox = 0;
+                            $backup->dropbox = false;
                         }
                     }
 
                     if (isset($error['message'])) {
                         // Amazon
                         if (strpos(strtolower($error['message']), 'amazon') !== false) {
-                            $backup->aws = 0;
+                            $backup->aws = false;
                         }
                     }
 
                     if (isset($error['file'])) {
                         // FTP
                         if (strpos(strtolower($error['file']), 'ftp') !== false) {
-                            $backup->ftp = 0;
+                            $backup->ftp = false;
                         }
                     }
 
                     if (isset($error['file'])) {
                         // SOFTLAYER
                         if (strpos(strtolower($error['file']), 'softlayer') !== false) {
-                            $backup->softlayer = 0;
+                            $backup->softlayer = false;
                         }
                     }
                 }
@@ -454,8 +458,9 @@ class Backups extends Component
     }
 
     /**
+     * Generates the config file and create the backup element entry
+     *
      * @param $backup BackupElement
-     *                Generetates the config file and create the backup element entry
      *
      * @return string
      * @throws Exception
@@ -464,7 +469,6 @@ class Backups extends Component
      */
     private function getConfigJson(BackupElement $backup)
     {
-        $logPath = $this->getLogPath($backup->backupId);
         $settings = Backup::$app->settings->getSettings();
 
         $config = new BackupConfig($backup);
@@ -477,8 +481,6 @@ class Backups extends Component
         $assetName = 'assets-'.$backupId.$compress;
         $templateName = 'templates-'.$backupId.$compress;
         $logName = 'logs-'.$backupId.$compress;
-        $pathToTar = $this->getPathToTar();
-        $backups = [];
 
         // let's create the Backup Element
         $backup->databaseFileName = $dbFileName;
@@ -505,7 +507,7 @@ class Backups extends Component
         $backup->assetFileName = $this->getEncryptFileName($encrypt, $backup->assetFileName);
         $backup->logFileName = $this->getEncryptFileName($encrypt, $backup->logFileName);
 
-        if ($encrypt) {
+        if (!empty($encrypt)) {
             $backup->isEncrypted = 1;
         }
 
@@ -665,8 +667,6 @@ class Backups extends Component
 
         try {
             $count = BackupElement::find()->where(['backupStatusId' => BackupStatus::FINISHED])->count();
-
-            $totalToDelete = 0;
 
             if ($count > $settings['backupsAmount']) {
                 $totalToDelete = $count - $settings['backupsAmount'];

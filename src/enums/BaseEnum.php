@@ -48,7 +48,7 @@ abstract class BaseEnum
     /**
      * Checks to see if the given value is valid in the enum.
      *
-     * @param      $value  The value to search for.
+     * @param string $value  The value to search for.
      * @param bool $strict Defaults to false. If set the true, will do a case sensitive search for the value.
      *
      * @return bool true if it is a valid value, false otherwise.

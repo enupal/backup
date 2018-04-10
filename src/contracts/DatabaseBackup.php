@@ -77,6 +77,9 @@ class DatabaseBackup extends BackupType
         $this->dirName = Backup::$app->backups->getDatabasePath();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getBackup()
     {
         $databaseBackup = [

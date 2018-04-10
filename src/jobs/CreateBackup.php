@@ -65,6 +65,7 @@ class CreateBackup extends BaseJob
     /**
      * @param $error
      *
+     * @return null
      * @throws \Exception
      * @throws \Throwable
      * @throws \yii\base\Exception
@@ -72,6 +73,10 @@ class CreateBackup extends BaseJob
      */
     private function updateBackupToError($error)
     {
+        if (!$this->_backup) {
+            return null;
+        }
+
         $settings = Backup::$app->settings->getSettings();
         $this->_backup->backupStatusId = BackupStatus::ERROR;
         $this->_backup->logMessage = $error;

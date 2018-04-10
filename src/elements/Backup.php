@@ -25,29 +25,99 @@ use enupal\backup\Backup as BackupPlugin;
  */
 class Backup extends Element
 {
-    // Properties
-    // =========================================================================
-
-    // General - Properties
-    // =========================================================================
+    /**
+     * @var integer
+     */
     public $id;
+
+    /**
+     * @var string
+     */
     public $backupId;
+
+    /**
+     * @var string
+     */
     public $time;
+
+    /**
+     * @var string
+     */
     public $databaseFileName;
+
+    /**
+     * @var string
+     */
     public $databaseSize;
+
+    /**
+     * @var string
+     */
     public $assetFileName;
+
+    /**
+     * @var string
+     */
     public $assetSize;
+
+    /**
+     * @var string
+     */
     public $templateFileName;
+
+    /**
+     * @var string
+     */
     public $templateSize;
+
+    /**
+     * @var string
+     */
     public $logFileName;
+
+    /**
+     * @var string
+     */
     public $logSize;
+
+    /**
+     * @var integer
+     */
     public $backupStatusId = BackupStatus::RUNNING;
+
+    /**
+     * @var bool
+     */
     public $aws = 0;
+
+    /**
+     * @var bool
+     */
     public $dropbox = 0;
+
+    /**
+     * @var bool
+     */
     public $rsync = 0;
+
+    /**
+     * @var bool
+     */
     public $ftp = 0;
+
+    /**
+     * @var bool
+     */
     public $softlayer = 0;
+
+    /**
+     * @var bool
+     */
     public $isEncrypted = 0;
+
+    /**
+     * @var string
+     */
     public $logMessage;
 
     /**
