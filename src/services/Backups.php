@@ -508,7 +508,7 @@ class Backups extends Component
         $backup->logFileName = $this->getEncryptFileName($encrypt, $backup->logFileName);
 
         if (!empty($encrypt)) {
-            $backup->isEncrypted = 1;
+            $backup->isEncrypted = true;
         }
 
         if (!$this->saveBackup($backup)) {
