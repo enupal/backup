@@ -699,6 +699,12 @@ class Backups extends Component
         return true;
     }
 
+    /**
+     * @param $encrypt
+     * @param $fileName
+     *
+     * @return string
+     */
     private function getEncryptFileName($encrypt, $fileName)
     {
         $enc = $encrypt ? '.enc' : '';
@@ -710,6 +716,9 @@ class Backups extends Component
         return $fileName;
     }
 
+    /**
+     * @return array
+     */
     private function getEncrypt()
     {
         $encrypt = [];
@@ -732,6 +741,11 @@ class Backups extends Component
         return $encrypt;
     }
 
+    /**
+     * @param $backupId
+     *
+     * @return array
+     */
     private function getSyncs($backupId)
     {
         $syncs = [];
@@ -799,6 +813,9 @@ class Backups extends Component
         return $syncs;
     }
 
+    /**
+     * @return string
+     */
     private function getCompressType()
     {
         $compress = '.tar';
@@ -806,6 +823,9 @@ class Backups extends Component
         return $compress;
     }
 
+    /**
+     * @return bool
+     */
     public function applyCompress()
     {
         $settings = Backup::$app->settings->getSettings();
@@ -817,6 +837,9 @@ class Backups extends Component
         return false;
     }
 
+    /**
+     * @return null|string
+     */
     public function getPathToTar()
     {
         $settings = Backup::$app->settings->getSettings();
@@ -854,41 +877,74 @@ class Backups extends Component
         return $str;
     }
 
+    /**
+     * @return string
+     * @throws Exception
+     */
     public function getBasePath()
     {
         return Craft::$app->getPath()->getStoragePath().DIRECTORY_SEPARATOR.'enupalbackup'.DIRECTORY_SEPARATOR;
     }
 
+    /**
+     * @return string
+     * @throws Exception
+     */
     public function getTempDatabasePath()
     {
         return Craft::$app->getPath()->getStoragePath().DIRECTORY_SEPARATOR.'enupalbackuptemp'.DIRECTORY_SEPARATOR;
     }
 
+    /**
+     * @return string
+     * @throws Exception
+     */
     public function getAssetsPath()
     {
         return $this->getBasePath().'assets'.DIRECTORY_SEPARATOR;
     }
 
+    /**
+     * @return string
+     * @throws Exception
+     */
     public function getTemplatesPath()
     {
         return $this->getBasePath().'templates'.DIRECTORY_SEPARATOR;
     }
 
+    /**
+     * @return string
+     * @throws Exception
+     */
     public function getLogsPath()
     {
         return $this->getBasePath().'logs'.DIRECTORY_SEPARATOR;
     }
 
+    /**
+     * @return string
+     * @throws Exception
+     */
     public function getDatabasePath()
     {
         return $this->getBasePath().'databases'.DIRECTORY_SEPARATOR;
     }
 
+    /**
+     * @return string
+     * @throws Exception
+     */
     public function getPluginsPath()
     {
         return $this->getBasePath().'plugins'.DIRECTORY_SEPARATOR;
     }
 
+    /**
+     * @param $backupId
+     *
+     * @return string
+     */
     public function getLogPath($backupId)
     {
         $base = Craft::$app->getPath()->getLogPath().DIRECTORY_SEPARATOR.'enupalbackup'.DIRECTORY_SEPARATOR;
@@ -896,6 +952,10 @@ class Backups extends Component
         return $base.$backupId.'.log';
     }
 
+    /**
+     * @return string
+     * @throws Exception
+     */
     public function getConfigPath()
     {
         $base = $this->getBasePath();
@@ -904,6 +964,9 @@ class Backups extends Component
         return $configFile;
     }
 
+    /**
+     * @return string
+     */
     public function getPhpPath()
     {
         $settings = Backup::$app->settings->getSettings();
@@ -916,6 +979,9 @@ class Backups extends Component
         return $phpPath;
     }
 
+    /**
+     * @return array
+     */
     public function getColorStatuses()
     {
         $colors = [

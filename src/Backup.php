@@ -80,6 +80,10 @@ class Backup extends Plugin
         );
     }
 
+    /**
+     * @throws \yii\base\Exception
+     * @throws \yii\db\Exception
+     */
     protected function afterInstall()
     {
         self::$app->backups->installDefaultValues();
