@@ -28,7 +28,7 @@ abstract class BaseEnum
     /**
      * Checks to see if the given name is valid in the enum.
      *
-     * @param      $name   The name to search for.
+     * @param string $name   The name to search for.
      * @param bool $strict Defaults to false. If set to true, will do a case sensitive search for the name.
      *
      * @return bool true if it is a valid name, false otherwise.

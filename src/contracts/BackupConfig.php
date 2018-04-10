@@ -25,6 +25,13 @@ class BackupConfig
      */
     public $config = [];
 
+    /**
+     * BackupConfig constructor.
+     *
+     * @param BackupElement $backup
+     *
+     * @throws \yii\base\Exception
+     */
     public function __construct(BackupElement $backup)
     {
         $this->backupElement = $backup;

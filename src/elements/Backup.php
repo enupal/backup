@@ -129,17 +129,13 @@ class Backup extends Element
     /** @noinspection PhpInconsistentReturnPointsInspection */
     public function __toString()
     {
-        try {
-            return $this->backupId;
-        } catch (\Exception $e) {
-            ErrorHandler::convertExceptionToError($e);
-        }
+        return $this->backupId;
     }
 
     /**
      * @inheritdoc
      *
-     * @return FormQuery The newly created [[FormQuery]] instance.
+     * @return BackupQuery The newly created [[BackupQuery]] instance.
      */
     public static function find(): ElementQueryInterface
     {
@@ -234,6 +230,7 @@ class Backup extends Element
      */
     protected static function defineTableAttributes(): array
     {
+        $attributes = [];
         $attributes['backupId'] = ['label' => BackupPlugin::t('Backup Id')];
         $attributes['size'] = ['label' => BackupPlugin::t('Size')];
         $attributes['dateCreated'] = ['label' => BackupPlugin::t('Date')];

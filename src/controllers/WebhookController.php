@@ -18,9 +18,13 @@ class WebhookController extends BaseController
     protected $allowAnonymous = ['actionFinished', 'actionSchedule'];
 
     /**
-     * Webhook to listen when a backup process finish up
+     * WebHook to listen when a backup process finish up
      *
      * @return \yii\web\Response
+     * @throws \Exception
+     * @throws \Throwable
+     * @throws \yii\base\Exception
+     * @throws \yii\db\Exception
      */
     public function actionFinished()
     {
@@ -52,8 +56,9 @@ class WebhookController extends BaseController
         return $this->asJson(['success' => true]);
     }
 
+
     /**
-     * Webhook to listen when a cronjob call EnupalBackup process
+     * WebHook to listen when a cronjob call EnupalBackup process
      *
      * @return \yii\web\Response
      */

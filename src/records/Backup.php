@@ -16,10 +16,23 @@ use craft\records\Element;
  * Class Backup record.
  *
  * @property int    $id
- * @property int    $groupId
- * @property string $name
- * @property string $handle
+ * @property string $backupId
+ * @property string $time
+ * @property string $databaseFileName
  * @property string $slides
+ * @property string $assetFileName
+ * @property string $assetSize
+ * @property string $templateFileName
+ * @property string $templateSize
+ * @property string $logFileName
+ * @property string $logSize
+ * @property integer $backupStatusId
+ * @property boolean $aws
+ * @property boolean $dropbox
+ * @property boolean $rsync
+ * @property boolean $ftp
+ * @property boolean $softlayer
+ * @property boolean $isEncrypted
  */
 class Backup extends ActiveRecord
 {
