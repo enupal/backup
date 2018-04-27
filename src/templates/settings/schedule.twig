@@ -59,8 +59,8 @@
 			{% set webhookUrl = siteUrl ~ 'enupal-backup/schedule?key='~settings.webhookSecretKey %}
 			<hr>
             {{ forms.field({
-                label: webhookUrl,
-                instructions: "Webhook URL"|t('enupal-backup'),
+                label: "Webhook URL"|t('enupal-backup'),
+                instructions: webhookUrl,
             }, null) }}
 
             {{ forms.field({
@@ -93,7 +93,7 @@
 {% css %}
 
 {% endcss %}
-{% do view.registerAssetBundle("enupal\\backup\\assetBundles\\HighlightAsset") %}
+{% do view.registerAssetBundle("enupal\\backup\\web\\assets\\HighlightAsset") %}
 
 {% js %}
 	$(document).ready(function() {
