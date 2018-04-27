@@ -213,8 +213,8 @@
 	</div>
 {% endblock %}
 
-{% do view.registerAssetBundle("enupal\\backup\\assetbundles\\BackupAsset") %}
-{% do view.registerAssetBundle("enupal\\backup\\assetbundles\\FontAwesomeAsset") %}
+{% do view.registerAssetBundle("enupal\\backup\\web\\assets\\BackupAsset") %}
+{% do view.registerAssetBundle("enupal\\backup\\web\\assets\\FontAwesomeAsset") %}
 {% js %}
 	$(document).ready(function() {
 	new EnupalBackup();

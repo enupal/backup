@@ -6,12 +6,12 @@
  * @copyright Copyright (c) 2017 Enupal
  */
 
-namespace enupal\backup\assetbundles;
+namespace enupal\backup\web\assets;
 
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
-class BackupAsset extends AssetBundle
+class HighlightAsset extends AssetBundle
 {
     public function init()
     {
@@ -19,21 +19,14 @@ class BackupAsset extends AssetBundle
         $this->sourcePath = '@enupal/backup/resources/';
 
         // define the dependencies
-        $this->depends = [
-            CpAsset::class,
-        ];
-
-        // define the dependencies
         // define the relative path to CSS/JS files that should be registered with the page
         // when this asset bundle is registered
         $this->js = [
-            'js/enupalbackup.js',
-            'js/bootstrap.min.js',
+            'js/highlight.min.js'
         ];
 
         $this->css = [
-            'css/enupalbackup.css',
-            'css/bootstrap-iso.css'
+            'css/highlight.min.css'
         ];
 
         parent::init();

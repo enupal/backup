@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.0.12 - 2018.04.27
+### Fixed
+- Fixed bug related to reflection class not found in some scenarios. 
+
 ## 1.0.11 - 2018.04.10
 ### Improved
 - Improved general performance
