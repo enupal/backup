@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.0.13 - 2018.05.03
+### Improved
+- Improved Dropbox validation and instructions.
+
 ## 1.0.12 - 2018.04.27
 ### Fixed
 - Fixed bug related to reflection class not found in some scenarios. 
