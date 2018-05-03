@@ -385,6 +385,13 @@ class Backups extends Component
                         }
                     }
 
+                    if (isset($error['file'])) {
+                        // Dropbox
+                        if (strpos(strtolower($error['file']), 'dropbox') !== false) {
+                            $backup->dropbox = false;
+                        }
+                    }
+
                     if (isset($error['message'])) {
                         // Amazon
                         if (strpos(strtolower($error['message']), 'amazon') !== false) {
