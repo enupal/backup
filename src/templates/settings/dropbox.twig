@@ -41,10 +41,10 @@
             }) }}
 
             {{ forms.textField({
-                label: "Secrect Key"|t('enupal-backup'),
+                label: "Access token <span class='info'>- Go to <a href='https://www.dropbox.com/login?cont=https%3A%2F%2Fwww.dropbox.com%2Fdevelopers%2Fapps' target='_blank'> www.dropbox.com/developers/apps</a><br>- Click on 'Create app'<br>- Click on 'Dropbox api'<br>- Click on 'App Folder'<br>- Provide some app name 'my-dropbox-app'<br>- Click on 'Create app'<br>- Scroll down to 'Generated access token' and Click 'Generate' Click on generate</span>"|t('enupal-backup'),
                 id: 'dropboxToken',
                 name: 'dropboxToken',
-                instructions: "The dropbox authentication token. Go to <a href='https://www.dropbox.com/login?cont=https%3A%2F%2Fwww.dropbox.com%2Fdevelopers%2Fapps' target='_blank'> www.dropbox.com/developers/apps</a> Create  your app Choose: dropbox api app files and datastore yes provide some app name 'my-dropbox-app' generate access token to authenticate connection to your dropbox"|t('enupal-backup'),
+                instructions: "The dropbox access token. "|t('enupal-backup'),
                 value: settings.dropboxToken,
                 required: true,
                 type: 'password',
