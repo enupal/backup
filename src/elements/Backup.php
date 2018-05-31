@@ -73,6 +73,16 @@ class Backup extends Element
     /**
      * @var string
      */
+    public $configFileName;
+
+    /**
+     * @var string
+     */
+    public $configSize;
+
+    /**
+     * @var string
+     */
     public $logFileName;
 
     /**
@@ -357,6 +367,10 @@ class Backup extends Element
         return parent::tableAttributeHtml($attribute);
     }
 
+    /**
+     * @return null|string
+     * @throws \yii\base\Exception
+     */
     public function getDatabaseFile()
     {
         $base = BackupPlugin::$app->backups->getDatabasePath();
@@ -368,6 +382,10 @@ class Backup extends Element
         return $base.$this->databaseFileName;
     }
 
+    /**
+     * @return null|string
+     * @throws \yii\base\Exception
+     */
     public function getTemplateFile()
     {
         $base = BackupPlugin::$app->backups->getTemplatesPath();
@@ -379,6 +397,10 @@ class Backup extends Element
         return $base.$this->templateFileName;
     }
 
+    /**
+     * @return null|string
+     * @throws \yii\base\Exception
+     */
     public function getLogFile()
     {
         $base = BackupPlugin::$app->backups->getLogsPath();
@@ -410,6 +432,9 @@ class Backup extends Element
         }
     }
 
+    /**
+     * @return string
+     */
     public function getTotalSize()
     {
         $total = 0;
@@ -506,6 +531,9 @@ class Backup extends Element
         return true;
     }
 
+    /**
+     * @return string
+     */
     public function getStatusName()
     {
         $statuses = BackupStatus::getConstants();
