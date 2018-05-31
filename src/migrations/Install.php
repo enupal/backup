@@ -53,6 +53,8 @@ class Install extends Migration
             'assetSize' => $this->string(),
             'templateFileName' => $this->string(),
             'templateSize' => $this->string(),
+            'configFileName' => $this->text(),
+            'configSize' => $this->string(),
             'logFileName' => $this->string(),
             'logSize' => $this->string(),
             'backupStatusId' => $this->integer(),

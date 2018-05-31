@@ -358,7 +358,7 @@ class Backups extends Component
             if (is_file($backup->getLogFile())) {
                 $backup->logSize = filesize($backup->getLogFile());
             }
-
+            // asset files
             $assetFiles = [];
             $assetFileSizes = 0;
             $backup->getAssetFiles($assetFiles);
@@ -370,6 +370,19 @@ class Backups extends Component
 
             if ($assetFileSizes) {
                 $backup->assetSize = $assetFileSizes;
+            }
+            // config files
+            $configFiles = [];
+            $configFileSizes = 0;
+            $backup->getAssetFiles($configFiles);
+            foreach ($configFiles as $configFile) {
+                if (is_file($configFile)) {
+                    $configFileSizes += filesize($configFile);
+                }
+            }
+
+            if ($configFileSizes) {
+                $backup->configSize = $configFileSizes;
             }
 
             $backupLog = json_decode($log, true);
@@ -594,6 +607,47 @@ class Backups extends Component
         }
 
         $backup->assetFileName = json_encode($assetFileNames);
+
+        // Config Files
+        $configFiles = [];
+
+        if ($settings->enableConfigFiles) {
+            $configFiles[] = ["key" => "translations", "path" => Craft::$app->getPath()->getSiteTranslationsPath()];
+            $configFiles[] = ["key" => "configFolder", "path" => Craft::$app->getPath()->getConfigPath()];
+            $craftPath = CRAFT_BASE_PATH;
+            $configFiles[] = ["key" => "composerFile", "path" => $craftPath.DIRECTORY_SEPARATOR.'composer.json'];
+        }
+        // Adding the assets
+        $configFileNames = [];
+        foreach ($configFiles as $key => $configFile) {
+            // Check if the path exists
+            if (is_dir($configFile['path']) || is_file($configFile['path'])) {
+                // So we need store assets files as json could be more than one
+                $configName = 'config-'.$configFile['key'].'-'.$backupId.$compress;
+                $configFileName = $configName;
+
+                if ($this->applyCompress()) {
+                    $configFileName = $configFileName ? $configFileName.self::BZ2 : null;
+                }
+
+                $configFileName = $this->getEncryptFileName($encrypt, $configFileName);
+
+                $configFilesBackup = new DirectoryBackup();
+                $configFilesBackup->name = 'Config'.$key;
+                $configFilesBackup->path = $configFile['path'];
+                $configFilesBackup->fileName = $configName;
+                $configFilesBackup->dirName = $this->getConfigFilesPath();
+                $configFilesBackup->syncs = $syncs;
+                $configFilesBackup->encrypt = $encrypt;
+
+                $config->addBackup($configFilesBackup);
+                $configFileNames[] = $configFileName;
+            } else {
+                Backup::error('Skipped the config file: '.$asset->id.' because the path does not exists');
+            }
+        }
+
+        $backup->configFileName = json_encode($configFileNames);
 
         // TEMPLATES
         if ($settings->enableTemplates) {
@@ -934,6 +988,15 @@ class Backups extends Component
     public function getAssetsPath()
     {
         return $this->getBasePath().'assets'.DIRECTORY_SEPARATOR;
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function getConfigFilesPath()
+    {
+        return $this->getBasePath().'config'.DIRECTORY_SEPARATOR;
     }
 
     /**

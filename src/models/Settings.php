@@ -57,6 +57,17 @@ class Settings extends Model
      * @var bool
      */
     public $excludeTemplates = 'cpresources,';
+
+    // Config FIles
+    /**
+     * @var bool
+     */
+    public $enableConfigFiles = false;
+
+    /**
+     * @var bool
+     */
+    public $excludeConfigFiles = 'cpresources,';
     // Logs
     /**
      * @var bool
