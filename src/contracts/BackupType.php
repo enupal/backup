@@ -26,7 +26,7 @@ abstract class BackupType
     public $encrypt;
 
     /**
-     * @var array
+     * @var mixed
      */
     public $settings;
 

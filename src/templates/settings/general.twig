@@ -61,6 +61,20 @@
                 errors: settings.getErrors('backupsAmount')
             }) }}
 
+            <hr>
+
+            {{ forms.textField({
+                label: "Max Execution Time (seconds)"|t('enupal-backup'),
+                id: 'maxExecutionTime',
+                instructions: 'This option sets the time to reserve for the Enupal Backup execution. If the execution of the Backup takes longer than this time, execution will be stopped and it will be returned to the Craft Queue for later retry. '|t('enupal-backup'),
+                name: 'maxExecutionTime',
+                value: settings.maxExecutionTime,
+                size: 10,
+                autofocus: true,
+                required: true,
+                errors: settings.getErrors('maxExecutionTime')
+            }) }}
+
         {% endnamespace %}
 
     </div>

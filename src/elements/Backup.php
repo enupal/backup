@@ -360,7 +360,7 @@ class Backup extends Element
                 }
             case 'dateCreated':
                 {
-                    return $this->dateCreated->format("Y-m-d H:i");
+                    return $this->dateCreated->/** @scrutinizer ignore-call */ format("Y-m-d H:i");
                 }
         }
 
@@ -464,23 +464,23 @@ class Backup extends Element
         $total = 0;
 
         if ($this->assetSize) {
-            $total += $this->assetSize;
+            $total += (int)$this->assetSize;
         }
 
         if ($this->configSize) {
-            $total += $this->configSize;
+            $total += (int)$this->configSize;
         }
 
         if ($this->templateSize) {
-            $total += $this->templateSize;
+            $total += (int)$this->templateSize;
         }
 
         if ($this->databaseSize) {
-            $total += $this->databaseSize;
+            $total += (int)$this->databaseSize;
         }
 
         if ($this->logSize) {
-            $total += $this->logSize;
+            $total += (int)$this->logSize;
         }
 
         if ($total == 0) {

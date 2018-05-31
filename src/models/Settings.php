@@ -307,13 +307,19 @@ class Settings extends Model
     public $notificationReplyToEmail;
 
     /**
+     * @var integer
+     */
+    public $maxExecutionTime = 3600;
+
+    /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
             ['backupsAmount', 'integer', 'min' => 1, 'on' => 'general'],
-            ['backupsAmount', 'required', 'on' => 'general'],
+            ['maxExecutionTime', 'integer', 'min' => 300, 'on' => 'general'],
+            [['backupsAmount', 'maxExecutionTime'], 'required', 'on' => 'general'],
             [
                 ['enableDatabase', 'enableTemplates', 'enableLocalVolumes', 'enableLogs'],
                 BackupFilesValidator::class, 'on' => 'backupFiles'

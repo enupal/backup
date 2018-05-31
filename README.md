@@ -22,6 +22,7 @@ Fully integrated Backup solution for Craft CMS
 * Templates
 * Assets
 * Logs
+* Config files (composer.json file, `config/` and `translations/` folders)
 
 ### Schedule your backups
 
@@ -43,7 +44,11 @@ https://enupal.com/en/craft-plugins/enupal-backup/docs/
 
 Via Email:
 
-Send us a note at: info@enupal.com
+Send us a note at: support@enupal.com
+
+or
+
+Create an [issue](https://github.com/enupal/backup/issues) on Github
 
 ------------------------------------------------------------
 

@@ -30,7 +30,7 @@ use craft\records\Element;
  * @property string $logSize
  * @property string $databaseSize
  * @property integer $backupStatusId
- * @property integer $logMessage
+ * @property string $logMessage
  * @property bool $aws
  * @property bool $dropbox
  * @property bool $rsync

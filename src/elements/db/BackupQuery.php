@@ -70,7 +70,7 @@ class BackupQuery extends ElementQuery
     {
         $this->joinElementTable('enupalbackup_backups');
 
-        $this->query->select([
+        $this->query->/** @scrutinizer ignore-call */ select([
             'enupalbackup_backups.backupId',
             'enupalbackup_backups.time',
             'enupalbackup_backups.databaseFileName',
@@ -94,7 +94,7 @@ class BackupQuery extends ElementQuery
         ]);
 
         if ($this->backupId) {
-            $this->subQuery->andWhere(Db::parseParam(
+            $this->subQuery->/** @scrutinizer ignore-call */ andWhere(Db::parseParam(
                 'enupalbackup_backups.backupId', $this->backupId)
             );
         }
