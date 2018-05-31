@@ -59,10 +59,13 @@ class BackupsController extends BaseController
                         $zip->addFile($backup->getTemplateFile(), $filename);
                     }
 
-                    if ($backup->getAssetFile()) {
-                        $filename = pathinfo($backup->getAssetFile(), PATHINFO_BASENAME);
-
-                        $zip->addFile($backup->getAssetFile(), $filename);
+                    $assetFiles = [];
+                    $backup->getAssetFiles($assetFiles);
+                    foreach ($assetFiles as $assetFile) {
+                        if (is_file($assetFile)) {
+                            $filename = pathinfo($assetFile, PATHINFO_BASENAME);
+                            $zip->addFile($assetFile, $filename);
+                        }
                     }
 
                     if ($backup->getLogFile()) {
@@ -100,6 +103,8 @@ class BackupsController extends BaseController
                             $addAssetPath = true;
                         }
                     }
+
+                    $zip->close();
 
                     if ($addAssetPath){
                         $filePath = $zipPath;
@@ -237,6 +242,7 @@ class BackupsController extends BaseController
 
     /**
      * @param $zipPath
+     * @return ZipArchive
      * @throws \Exception
      */
     private function getZip($zipPath)
@@ -254,5 +260,7 @@ class BackupsController extends BaseController
         if ($zip->open($zipPath, ZipArchive::CREATE) !== true) {
             throw new \Exception('Cannot create zip at '.$zipPath);
         }
+
+        return $zip;
     }
 }

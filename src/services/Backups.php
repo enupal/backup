@@ -359,8 +359,17 @@ class Backups extends Component
                 $backup->logSize = filesize($backup->getLogFile());
             }
 
-            if (is_file($backup->getAssetFile())) {
-                $backup->assetSize = filesize($backup->getAssetFile());
+            $assetFiles = [];
+            $assetFileSizes = 0;
+            $backup->getAssetFiles($assetFiles);
+            foreach ($assetFiles as $assetFile) {
+                if (is_file($assetFile)) {
+                    $assetFileSizes += filesize($assetFile);
+                }
+            }
+
+            if ($assetFileSizes) {
+                $backup->assetSize = $assetFileSizes;
             }
 
             $backupLog = json_decode($log, true);
@@ -563,10 +572,10 @@ class Backups extends Component
                     $assetFileName = $assetName;
 
                     if ($this->applyCompress()) {
-                        $assetFileName = $backup->assetFileName ? $backup->assetFileName.self::BZ2 : null;
+                        $assetFileName = $assetFileName ? $assetFileName.self::BZ2 : null;
                     }
 
-                    $assetFileName = $this->getEncryptFileName($encrypt, $backup->assetFileName);
+                    $assetFileName = $this->getEncryptFileName($encrypt, $assetFileName);
 
                     $assetBackup = new DirectoryBackup();
                     $assetBackup->name = 'Asset'.$asset->id;
@@ -583,6 +592,7 @@ class Backups extends Component
                 }
             }
         }
+
         $backup->assetFileName = json_encode($assetFileNames);
 
         // TEMPLATES

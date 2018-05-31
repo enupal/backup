@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\migrations;
+namespace enupal\backup\migrations;
 
 use craft\db\Migration;
 use craft\db\Query;
