@@ -79,6 +79,8 @@ class BackupQuery extends ElementQuery
             'enupalbackup_backups.assetSize',
             'enupalbackup_backups.templateFileName',
             'enupalbackup_backups.templateSize',
+            'enupalbackup_backups.configFileName',
+            'enupalbackup_backups.configSize',
             'enupalbackup_backups.logFileName',
             'enupalbackup_backups.logSize',
             'enupalbackup_backups.backupStatusId',

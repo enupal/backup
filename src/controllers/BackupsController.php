@@ -68,6 +68,15 @@ class BackupsController extends BaseController
                         }
                     }
 
+                    $configFiles = [];
+                    $backup->getConfigFiles($configFiles);
+                    foreach ($configFiles as $configFile) {
+                        if (is_file($configFile)) {
+                            $filename = pathinfo($configFile, PATHINFO_BASENAME);
+                            $zip->addFile($configFile, $filename);
+                        }
+                    }
+
                     if ($backup->getLogFile()) {
                         $filename = pathinfo($backup->getLogFile(), PATHINFO_BASENAME);
 
@@ -107,6 +116,29 @@ class BackupsController extends BaseController
                     $zip->close();
 
                     if ($addAssetPath){
+                        $filePath = $zipPath;
+                    }
+                    break;
+                case 'config':
+                    $configFiles = [];
+                    $backup->getConfigFiles($configFiles);
+
+                    $zipPath = Craft::$app->getPath()->getTempPath().DIRECTORY_SEPARATOR.'config-files-'.$backup->backupId.'.zip';
+                    $addConfigPath = false;
+
+                    $zip = $this->getZip($zipPath);
+
+                    foreach ($configFiles as $configFile) {
+                        if (is_file($configFile)) {
+                            $filename = pathinfo($configFile, PATHINFO_BASENAME);
+                            $zip->addFile($configFile, $filename);
+                            $addConfigPath = true;
+                        }
+                    }
+
+                    $zip->close();
+
+                    if ($addConfigPath){
                         $filePath = $zipPath;
                     }
                     break;

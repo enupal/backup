@@ -36,6 +36,7 @@
 
 			{{ forms.lightswitchField({
 				label: "Database"|t('enupal-backup'),
+                instructions: 'Backup your database',
 				id: 'enableDatabase',
 				name: 'enableDatabase',
 				on: settings.enableDatabase,
@@ -61,6 +62,7 @@
 			<hr>
 			{{ forms.lightswitchField({
 				label: "Templates"|t('enupal-backup'),
+                instructions: 'Backup your template files: <b>templates/</b> folder',
 				id: 'enableTemplates',
 				name: 'enableTemplates',
 				on: settings.enableTemplates,
@@ -85,7 +87,7 @@
 			<hr>
 			{{ forms.lightswitchField({
 				label: "Assets"|t('enupal-backup'),
-				instructions: 'Just local volumes are supported',
+				instructions: 'Backup your assets: just <b>local</b> volumes are supported',
 				id: 'enableLocalVolumes',
 				name: 'enableLocalVolumes',
 				on: settings.enableLocalVolumes,
@@ -117,6 +119,18 @@
 				offLabel: "Off"|t('enupal-backup'),
 				errors: settings.getErrors('enableLogs'),
 			}) }}
+
+		<hr>
+            {{ forms.lightswitchField({
+                label: "Config Files"|t('enupal-backup'),
+                instructions: 'Backup your config files: <b>composer.json</b> file, <b>config/</b> and <b>translations/</b> folders',
+                id: 'enableConfigFiles',
+                name: 'enableConfigFiles',
+                on: settings.enableConfigFiles,
+                onLabel: "On"|t('enupal-backup'),
+                offLabel: "Off"|t('enupal-backup'),
+                errors: settings.getErrors('enableConfigFiles'),
+            }) }}
 
 		{% endnamespace %}
 
