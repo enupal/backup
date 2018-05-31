@@ -49,7 +49,7 @@ class Install extends Migration
             'time' => $this->string(),
             'databaseFileName' => $this->string(),
             'databaseSize' => $this->string(),
-            'assetFileName' => $this->string(),
+            'assetFileName' => $this->text(),
             'assetSize' => $this->string(),
             'templateFileName' => $this->string(),
             'templateSize' => $this->string(),
