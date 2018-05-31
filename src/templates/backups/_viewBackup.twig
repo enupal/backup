@@ -10,213 +10,308 @@
 {% extends "enupal-backup/_layouts/base" %}
 {% import "_includes/forms" as forms %}
 {% set crumbs = [
-	{ label: "Backups"|t('enupal-backup'), url: cpUrl('enupal-backup/backups') }
+    { label: "Backups"|t('enupal-backup'), url: cpUrl('enupal-backup/backups') }
 ] %}
 
 {% set title = 'Backup: '~backup.backupId %}
 
 {% block actionButton %}
-	{% if backup.backupStatusId == 2 %}
-	<div class="bootstrap-iso downloads-content">
-		<form id="database-template" method="post" accept-charset="UTF-8">
-			<input type="hidden" name="action" value="enupal-backup/backups/download">
-			<input type="hidden" name="type" value="all">
-			<input type="hidden" name="backupId" value="{{backup.id}}">
-			{{ csrfInput() }}
-			<button type="submit" class="bbtn bbtn-success-craft btn-full">
-				<i class="fa fa-cloud-download fa-lg"></i> <b>Download All</b>
-			</button>
-		</form>
-	</div>
-	{%endif%}
+    {% if backup.backupStatusId == 2 %}
+        <div class="bootstrap-iso downloads-content">
+            <form id="database-template" method="post" accept-charset="UTF-8">
+                <input type="hidden" name="action"
+                       value="enupal-backup/backups/download">
+                <input type="hidden" name="type" value="all">
+                <input type="hidden" name="backupId" value="{{ backup.id }}">
+                {{ csrfInput() }}
+                <button type="submit" class="bbtn bbtn-success-craft btn-full">
+                    <i class="fa fa-cloud-download fa-lg"></i> <b>Download
+                        All</b>
+                </button>
+            </form>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
 
-	{% if namespace is not defined %}{% set namespace = 'fields' %}{% endif %}
-		<div id="fields" class="pane">
-			<div class="bootstrap-iso downloads-content">
-				<div class="row">
-					{% set downloadTitle = "Download Section"|t('enupal-backup') %}
-					{% set titleHeader = "<i class='fa fa-check-square-o' aria-hidden='true'></i> "~downloadTitle %}
-					{% set runningMessage = "The Backup is running, but you can download the backup files."|t('enupal-backup') %}
-                    {% set errorMessage = "An error occurred during Backup: "|t('enupal-backup') %}
-					{% if backup.backupStatusId == 1 %} {% set titleHeader = "<i class='fa fa-circle-o-notch fa-spin fa fa-fw'></i>"~runningMessage %} {% elseif backup.backupStatusId == 3  %} {% set titleHeader =  "<i class='fa fa-times' aria-hidden='true'></i> "~errorMessage %} {% endif %}
+    {% if namespace is not defined %}{% set namespace = 'fields' %}{% endif %}
+    <div id="fields" class="pane">
+        <div class="bootstrap-iso downloads-content">
+            <div class="row">
+                {% set downloadTitle = "Download Section"|t('enupal-backup') %}
+                {% set titleHeader = "<i class='fa fa-check-square-o' aria-hidden='true'></i> "~downloadTitle %}
+                {% set runningMessage = "The Backup is running, but you can download the backup files."|t('enupal-backup') %}
+                {% set errorMessage = "An error occurred during Backup: "|t('enupal-backup') %}
+                {% if backup.backupStatusId == 1 %} {% set titleHeader = "<i class='fa fa-circle-o-notch fa-spin fa fa-fw'></i>"~runningMessage %} {% elseif backup.backupStatusId == 3 %} {% set titleHeader =  "<i class='fa fa-times' aria-hidden='true'></i> "~errorMessage %} {% endif %}
 
-					<div class="field">
-						<div class="heading">
-							<label>
-								{{titleHeader|markdown}}
-							</label>
-						</div>
-					</div>
-					<section class="cards-section text-center">
-						<div class="">
-							<div id="cards-wrapper" class="cards-wrapper row container-fluid">
-								{% if backup.backupStatusId != 3 %}
-									{% if backup.databaseFileName %}
-										<div class="item item-green col-md-4 col-xl-3 col-sm-12">
-											<div class="item-inner">
-												<div class="icon-holder">
-													<i class="fa fa-database fa-2x backup-icon" aria-hidden="true"></i>
-												</div><!--//icon-holder-->
-												<h3 class="title">{{"Database"|t("enupal-backup")}}</h3>
-												<form id="database-template" method="post" accept-charset="UTF-8">
-													<input type="hidden" name="action" value="enupal-backup/backups/download">
-													<input type="hidden" name="type" value="database">
-													<input type="hidden" name="backupId" value="{{backup.id}}">
-													{{ csrfInput() }}
-													<button type="submit" class="bbtn bbtn-success-craft downloand-backup btn-full">
-														<i class="fa fa-cloud-download fa-lg"></i> <b>{{"Download"|t}}</b>
-													</button>
-												</form>
-												<p class="intro">{% if backup.backupStatusId %}
-												<h4><span style="font-size: 11px;" class="label size-label"> {{craft.enupalbackup.getSizeFormatted(backup.databaseSize)}}</span></h4>
-											{% endif %}</p>
-											</div><!--//item-inner-->
-										</div><!--//item-->
-									{% endif %}
-									{% if backup.templateFileName %}
-										{# TEMPLATES #}
-										<div class="item item-green col-md-4 col-xl-3 col-sm-12">
-											<div class="item-inner">
-												<div class="icon-holder">
-													<i class="fa fa-file-code-o fa-2x backup-icon" aria-hidden="true"></i>
-												</div><!--//icon-holder-->
-												<h3 class="title">{{"Templates"|t('enupal-backup')}}</h3>
-												<form id="form-template" method="post" accept-charset="UTF-8">
-													<input type="hidden" name="action" value="enupal-backup/backups/download">
-													<input type="hidden" name="type" value="template">
-													<input type="hidden" name="backupId" value="{{backup.id}}">
-													{{ csrfInput() }}
-													<button type="submit" class="bbtn bbtn-success-craft downloand-backup btn-full">
-														<i class="fa fa-cloud-download fa-lg"></i> <b>{{"Download"|t}}</b>
-													</button>
-												</form>
-												<p class="intro">
-												{% if backup.backupStatusId %}
-													<h4>
-														<span style="font-size: 11px;" class="label size-label">
-														{{craft.enupalbackup.getSizeFormatted(backup.templateSize)}}
+                <div class="field">
+                    <div class="heading">
+                        <label>
+                            {{ titleHeader|markdown }}
+                        </label>
+                    </div>
+                </div>
+                <section class="cards-section text-center">
+                    <div class="">
+                        <div id="cards-wrapper"
+                             class="cards-wrapper row container-fluid">
+                            {% if backup.backupStatusId != 3 %}
+                                {% if backup.databaseFileName %}
+                                    <div class="item item-green col-md-4 col-xl-3 col-sm-12">
+                                        <div class="item-inner">
+                                            <div class="icon-holder">
+                                                <i class="fa fa-database fa-2x backup-icon"
+                                                   aria-hidden="true"></i>
+                                            </div><!--//icon-holder-->
+                                            <h3 class="title">{{ "Database"|t("enupal-backup") }}</h3>
+                                            <form id="database-template"
+                                                  method="post"
+                                                  accept-charset="UTF-8">
+                                                <input type="hidden"
+                                                       name="action"
+                                                       value="enupal-backup/backups/download">
+                                                <input type="hidden" name="type"
+                                                       value="database">
+                                                <input type="hidden"
+                                                       name="backupId"
+                                                       value="{{ backup.id }}">
+                                                {{ csrfInput() }}
+                                                <button type="submit"
+                                                        class="bbtn bbtn-success-craft downloand-backup btn-full">
+                                                    <i class="fa fa-cloud-download fa-lg"></i>
+                                                    <b>{{ "Download"|t }}</b>
+                                                </button>
+                                            </form>
+                                            <p class="intro">{% if backup.backupStatusId %}
+                                            <h4><span style="font-size: 11px;"
+                                                      class="label size-label"> {{ craft.enupalbackup.getSizeFormatted(backup.databaseSize) }}</span>
+                                            </h4>
+                                            {% endif %}</p>
+                                        </div><!--//item-inner-->
+                                    </div><!--//item-->
+                                {% endif %}
+                                {% if backup.templateFileName %}
+                                    {# TEMPLATES #}
+                                    <div class="item item-green col-md-4 col-xl-3 col-sm-12">
+                                        <div class="item-inner">
+                                            <div class="icon-holder">
+                                                <i class="fa fa-file-code-o fa-2x backup-icon"
+                                                   aria-hidden="true"></i>
+                                            </div><!--//icon-holder-->
+                                            <h3 class="title">{{ "Templates"|t('enupal-backup') }}</h3>
+                                            <form id="form-template"
+                                                  method="post"
+                                                  accept-charset="UTF-8">
+                                                <input type="hidden"
+                                                       name="action"
+                                                       value="enupal-backup/backups/download">
+                                                <input type="hidden" name="type"
+                                                       value="template">
+                                                <input type="hidden"
+                                                       name="backupId"
+                                                       value="{{ backup.id }}">
+                                                {{ csrfInput() }}
+                                                <button type="submit"
+                                                        class="bbtn bbtn-success-craft downloand-backup btn-full">
+                                                    <i class="fa fa-cloud-download fa-lg"></i>
+                                                    <b>{{ "Download"|t }}</b>
+                                                </button>
+                                            </form>
+                                            <p class="intro">
+                                                {% if backup.backupStatusId %}
+                                            <h4>
+														<span style="font-size: 11px;"
+                                                              class="label size-label">
+														{{ craft.enupalbackup.getSizeFormatted(backup.templateSize) }}
 														</span>
-													</h4>
-                                                {% endif %}
-												</p>
-											</div><!--//item-inner-->
-										</div><!--//item-->
-									{% endif %}
-									{% if backup.assetFileName %}
-										<div class="item item-green col-md-4 col-xl-3 col-sm-12">
-											<div class="item-inner">
-												<div class="icon-holder">
-													<i class="fa fa-picture-o fa-2x backup-icon" aria-hidden="true"></i>
-												</div><!--//icon-holder-->
-												<h3 class="title">{{"Assets"|t("enupal-backup")}}</h3>
-												<form id="database-template" method="post" accept-charset="UTF-8">
-													<input type="hidden" name="action" value="enupal-backup/backups/download">
-													<input type="hidden" name="type" value="asset">
-													<input type="hidden" name="backupId" value="{{backup.id}}">
-													{{ csrfInput() }}
-													<button type="submit" class="bbtn bbtn-success-craft downloand-backup btn-full">
-														<i class="fa fa-cloud-download fa-lg"></i> <b>{{"Download"|t('enupal-backup')}}</b>
-													</button>
-												</form>
-												<p class="intro">
-													{% if backup.backupStatusId %}
-												<h4><span style="font-size: 11px;" class="label size-label">{{craft.enupalbackup.getSizeFormatted(backup.assetSize)}}</span></h4>
-											{% endif %}</p>
-											</div><!--//item-inner-->
-										</div><!--//item-->
-									{% endif %}
-									{% if backup.logFileName %}
-										<div class="item item-green col-md-4 col-xl-3 col-sm-12">
-											<div class="item-inner">
-												<div class="icon-holder">
-													<i class="fa fa-file-text-o fa-2x backup-icon" aria-hidden="true"></i>
-												</div><!--//icon-holder-->
-												<h3 class="title">{{"Logs"|t('enupal-backup')}}</h3>
-												<form id="database-template" method="post" accept-charset="UTF-8">
-													<input type="hidden" name="action" value="enupal-backup/backups/download">
-													<input type="hidden" name="type" value="logs">
-													<input type="hidden" name="backupId" value="{{backup.id}}">
-													{{ csrfInput() }}
-													<button type="submit" class="bbtn bbtn-success-craft downloand-backup btn-full">
-														<i class="fa fa-cloud-download fa-lg"></i> <b>{{"Download"|t('enupal-backup')}}</b>
-													</button>
-												</form>
-												<p class="intro">{% if backup.backupStatusId %}
-												<h4><span style="font-size: 11px;" class="label size-label"> {{craft.enupalbackup.getSizeFormatted(backup.logSize)}}</span></h4>
-											{% endif %}</p>
-											</div><!--//item-inner-->
-										</div><!--//item-->
-									{% endif %}
-								{% else %}
-									<div id="error1" class="modal">
-										<div id="modal" class="body" style="height: 100%;">
-											<header class="header">
-												<h2>Error</h2>
-											</header>
-											<div style="padding: 15px; width: 100%;  overflow: auto; height: calc(100% - 66px); position: absolute; top: 66px; left: 0;" class="error">
-												{{backup.logMessage}}
-											</div>
-										</div>
-									</div>
+                                            </h4>
+                                            {% endif %}
+                                            </p>
+                                        </div><!--//item-inner-->
+                                    </div><!--//item-->
+                                {% endif %}
+                                {% if backup.assetFileName %}
+                                    <div class="item item-green col-md-4 col-xl-3 col-sm-12">
+                                        <div class="item-inner">
+                                            <div class="icon-holder">
+                                                <i class="fa fa-picture-o fa-2x backup-icon"
+                                                   aria-hidden="true"></i>
+                                            </div><!--//icon-holder-->
+                                            <h3 class="title">{{ "Assets"|t("enupal-backup") }}</h3>
+                                            <form id="database-template"
+                                                  method="post"
+                                                  accept-charset="UTF-8">
+                                                <input type="hidden"
+                                                       name="action"
+                                                       value="enupal-backup/backups/download">
+                                                <input type="hidden" name="type"
+                                                       value="asset">
+                                                <input type="hidden"
+                                                       name="backupId"
+                                                       value="{{ backup.id }}">
+                                                {{ csrfInput() }}
+                                                <button type="submit"
+                                                        class="bbtn bbtn-success-craft downloand-backup btn-full">
+                                                    <i class="fa fa-cloud-download fa-lg"></i>
+                                                    <b>{{ "Download"|t('enupal-backup') }}</b>
+                                                </button>
+                                            </form>
+                                            <p class="intro">
+                                                {% if backup.backupStatusId %}
+                                            <h4><span style="font-size: 11px;"
+                                                      class="label size-label">{{ craft.enupalbackup.getSizeFormatted(backup.assetSize) }}</span>
+                                            </h4>
+                                            {% endif %}</p>
+                                        </div><!--//item-inner-->
+                                    </div><!--//item-->
+                                {% endif %}
+                                {% if backup.configFileName %}
+                                    <div class="item item-green col-md-4 col-xl-3 col-sm-12">
+                                        <div class="item-inner">
+                                            <div class="icon-holder">
+                                                <i class="fa fa-cog fa-2x backup-icon"
+                                                   aria-hidden="true"></i>
+                                            </div><!--//icon-holder-->
+                                            <h3 class="title">{{ "Config Files"|t("enupal-backup") }}</h3>
+                                            <form id="database-template"
+                                                  method="post"
+                                                  accept-charset="UTF-8">
+                                                <input type="hidden"
+                                                       name="action"
+                                                       value="enupal-backup/backups/download">
+                                                <input type="hidden" name="type"
+                                                       value="config">
+                                                <input type="hidden"
+                                                       name="backupId"
+                                                       value="{{ backup.id }}">
+                                                {{ csrfInput() }}
+                                                <button type="submit"
+                                                        class="bbtn bbtn-success-craft downloand-backup btn-full">
+                                                    <i class="fa fa-cloud-download fa-lg"></i>
+                                                    <b>{{ "Download"|t('enupal-backup') }}</b>
+                                                </button>
+                                            </form>
+                                            <p class="intro">
+                                                {% if backup.backupStatusId %}
+                                            <h4><span style="font-size: 11px;"
+                                                      class="label size-label">{{ craft.enupalbackup.getSizeFormatted(backup.configSize) }}</span>
+                                            </h4>
+                                            {% endif %}</p>
+                                        </div><!--//item-inner-->
+                                    </div><!--//item-->
+                                {% endif %}
+                                {% if backup.logFileName %}
+                                    <div class="item item-green col-md-4 col-xl-3 col-sm-12">
+                                        <div class="item-inner">
+                                            <div class="icon-holder">
+                                                <i class="fa fa-file-text-o fa-2x backup-icon"
+                                                   aria-hidden="true"></i>
+                                            </div><!--//icon-holder-->
+                                            <h3 class="title">{{ "Logs"|t('enupal-backup') }}</h3>
+                                            <form id="database-template"
+                                                  method="post"
+                                                  accept-charset="UTF-8">
+                                                <input type="hidden"
+                                                       name="action"
+                                                       value="enupal-backup/backups/download">
+                                                <input type="hidden" name="type"
+                                                       value="logs">
+                                                <input type="hidden"
+                                                       name="backupId"
+                                                       value="{{ backup.id }}">
+                                                {{ csrfInput() }}
+                                                <button type="submit"
+                                                        class="bbtn bbtn-success-craft downloand-backup btn-full">
+                                                    <i class="fa fa-cloud-download fa-lg"></i>
+                                                    <b>{{ "Download"|t('enupal-backup') }}</b>
+                                                </button>
+                                            </form>
+                                            <p class="intro">{% if backup.backupStatusId %}
+                                            <h4><span style="font-size: 11px;"
+                                                      class="label size-label"> {{ craft.enupalbackup.getSizeFormatted(backup.logSize) }}</span>
+                                            </h4>
+                                            {% endif %}</p>
+                                        </div><!--//item-inner-->
+                                    </div><!--//item-->
+                                {% endif %}
+                            {% else %}
+                                <div id="error1" class="modal">
+                                    <div id="modal" class="body"
+                                         style="height: 100%;">
+                                        <header class="header">
+                                            <h2>Error</h2>
+                                        </header>
+                                        <div style="padding: 15px; width: 100%;  overflow: auto; height: calc(100% - 66px); position: absolute; top: 66px; left: 0;"
+                                             class="error">
+                                            {{ backup.logMessage }}
+                                        </div>
+                                    </div>
+                                </div>
 
-									<div id="log1" class="modal">
-										<div id="modal" class="body" style="height: 100%;">
-											<header class="header">
-												<h2>Log</h2>
-											</header>
-											<div style="padding: 15px; width: 100%;  overflow: auto; height: calc(100% - 66px); position: absolute; top: 66px; left: 0;" class="warning">
-												{% if log is defined %}
-													{{log}}
-												{% endif %}
-											</div>
-										</div>
-									</div>
-									<br><br>
-									<ul class="text-left">
-										<li><a id="showError1" href="#erro1">Show Error</a></li>
-										<li>
-											{% if log is defined %}
-												<a id="loginfo" href="#loginfo">Show log</a>
-												<br>
-												<br>
-											{% endif %}
-										</li>
-									</ul>
-								{% endif %}
-							</div><!--//cards-->
-						</div><!--//container-->
-					</section><!--//cards-section-->
-					</div>
-			</div>
-		</div>
+                                <div id="log1" class="modal">
+                                    <div id="modal" class="body"
+                                         style="height: 100%;">
+                                        <header class="header">
+                                            <h2>Log</h2>
+                                        </header>
+                                        <div style="padding: 15px; width: 100%;  overflow: auto; height: calc(100% - 66px); position: absolute; top: 66px; left: 0;"
+                                             class="warning">
+                                            {% if log is defined %}
+                                                {{ log }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <br><br>
+                                <ul class="text-left">
+                                    <li><a id="showError1" href="#erro1">Show
+                                            Error</a></li>
+                                    <li>
+                                        {% if log is defined %}
+                                            <a id="loginfo" href="#loginfo">Show
+                                                log</a>
+                                            <br>
+                                            <br>
+                                        {% endif %}
+                                    </li>
+                                </ul>
+                            {% endif %}
+                        </div><!--//cards-->
+                    </div><!--//container-->
+                </section><!--//cards-section-->
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block details %}
-	<div>
-		{% include "enupal-backup/backups/_sidebar/settings" %}
+    <div>
+        {% include "enupal-backup/backups/_sidebar/settings" %}
 
-		<div class="deletebackup field">
-			<div class="heading"></div>
-			<div class="input">
-				<div class="right">
-					<form method="post" accept-charset="UTF-8">
-					{{ csrfInput() }}
-					<input type="hidden" name="id" value="{{backup.id}}">
-					<input type="button" class="btn small formsubmit" value="Delete" data-action="enupal-backup/backups/delete-backup" data-confirm="Are you sure you want to delete this backup, all of it's files, and all of it's data?" data-redirect="{{('enupal-backup/backups')|hash}}">
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
+        <div class="deletebackup field">
+            <div class="heading"></div>
+            <div class="input">
+                <div class="right">
+                    <form method="post" accept-charset="UTF-8">
+                        {{ csrfInput() }}
+                        <input type="hidden" name="id" value="{{ backup.id }}">
+                        <input type="button" class="btn small formsubmit"
+                               value="Delete"
+                               data-action="enupal-backup/backups/delete-backup"
+                               data-confirm="Are you sure you want to delete this backup, all of it's files, and all of it's data?"
+                               data-redirect="{{ ('enupal-backup/backups')|hash }}">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% do view.registerAssetBundle("enupal\\backup\\web\\assets\\BackupAsset") %}
 {% do view.registerAssetBundle("enupal\\backup\\web\\assets\\FontAwesomeAsset") %}
 {% js %}
-	$(document).ready(function() {
-	new EnupalBackup();
-	});
+    $(document).ready(function() {
+    new EnupalBackup();
+    });
 {% endjs %}

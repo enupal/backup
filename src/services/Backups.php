@@ -374,7 +374,7 @@ class Backups extends Component
             // config files
             $configFiles = [];
             $configFileSizes = 0;
-            $backup->getAssetFiles($configFiles);
+            $backup->getConfigFiles($configFiles);
             foreach ($configFiles as $configFile) {
                 if (is_file($configFile)) {
                     $configFileSizes += filesize($configFile);
@@ -614,8 +614,16 @@ class Backups extends Component
         if ($settings->enableConfigFiles) {
             $configFiles[] = ["key" => "translations", "path" => Craft::$app->getPath()->getSiteTranslationsPath()];
             $configFiles[] = ["key" => "configFolder", "path" => Craft::$app->getPath()->getConfigPath()];
-            $craftPath = CRAFT_BASE_PATH;
-            $configFiles[] = ["key" => "composerFile", "path" => $craftPath.DIRECTORY_SEPARATOR.'composer.json'];
+            // Lets copy the composer file  to a temp folder for security reasons
+            $tempConfigFolder = Craft::$app->getPath()->getTempPath().DIRECTORY_SEPARATOR.'enupal-backup-composer'.DIRECTORY_SEPARATOR;
+            $tempConfigFile = $tempConfigFolder. 'composer.json';
+            $composerFile = CRAFT_BASE_PATH.DIRECTORY_SEPARATOR.'composer.json';
+            if (!file_exists($tempConfigFile)) {
+                mkdir(dirname($tempConfigFile), 0777, true);
+            }
+            copy($composerFile, $tempConfigFile);
+
+            $configFiles[] = ["key" => "composerFile", "path" => $tempConfigFolder];
         }
         // Adding the assets
         $configFileNames = [];
