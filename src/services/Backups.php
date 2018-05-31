@@ -515,8 +515,6 @@ class Backups extends Component
 
         // let's create the Backup Element
         $backup->databaseFileName = $dbFileName;
-
-        //$backup->assetFileName = $settings->enableLocalVolumes ? $assetName : null;
         $backup->templateFileName = $settings->enableTemplates ? $templateName : null;
         $backup->logFileName = $settings->enableLogs ? $logName : null;
 
@@ -547,18 +545,93 @@ class Backups extends Component
                 ' Errors: '.json_encode($backup->getErrors()));
         }
 
-        // DATABASE
-        if ($settings->enableDatabase) {
-            $databaseBackup = new DatabaseBackup();
-            $databaseBackup->name = 'Database';
-            $databaseBackup->fileName = $dbFileName;
-            $databaseBackup->syncs = $syncs;
-            $databaseBackup->encrypt = $encrypt;
+        $this->getDatabaseConfigFormat($config, $settings, $dbFileName, $syncs, $encrypt);
+        $this->getAssetsConfigFormat($backup, $config, $settings, $syncs, $encrypt);
+        $this->getConfigFilesFormat($backup, $config, $settings, $syncs, $encrypt);
+        $this->getTemplatesConfigFormat($config, $settings, $templateName, $syncs, $encrypt);
+        $this->getLogsConfigFormat($config, $settings, $logName, $syncs, $encrypt);
 
-            $config->addBackup($databaseBackup);
+        $configFile = $this->getConfigPath();
+
+        if (!file_exists($this->getBasePath())) {
+            mkdir($this->getBasePath(), 0777, true);
         }
-        // END DATABASE
 
+        file_put_contents($configFile, $config->getConfig(true));
+
+        return $configFile;
+    }
+
+    /**
+     * @param $backup BackupElement
+     * @param $config BackupConfig
+     * @param $settings
+     * @param $syncs
+     * @param $encrypt
+     * @throws Exception
+     */
+    private function getConfigFilesFormat($backup, $config, $settings, $syncs, $encrypt)
+    {
+        // Config Files
+        $configFiles = [];
+
+        if ($settings->enableConfigFiles) {
+            $configFiles[] = ["key" => "translations", "path" => Craft::$app->getPath()->getSiteTranslationsPath()];
+            $configFiles[] = ["key" => "configFolder", "path" => Craft::$app->getPath()->getConfigPath()];
+            // Lets copy the composer file  to a temp folder for security reasons
+            $tempConfigFolder = Craft::$app->getPath()->getTempPath().DIRECTORY_SEPARATOR.'enupal-backup-composer'.DIRECTORY_SEPARATOR;
+            $tempConfigFile = $tempConfigFolder. 'composer.json';
+            $composerFile = CRAFT_BASE_PATH.DIRECTORY_SEPARATOR.'composer.json';
+            if (!file_exists($tempConfigFile)) {
+                mkdir(dirname($tempConfigFile), 0777, true);
+            }
+            copy($composerFile, $tempConfigFile);
+
+            $configFiles[] = ["key" => "composerFile", "path" => $tempConfigFolder];
+        }
+        // Adding the assets
+        $configFileNames = [];
+        foreach ($configFiles as $key => $configFile) {
+            // Check if the path exists
+            if (is_dir($configFile['path']) || is_file($configFile['path'])) {
+                // So we need store assets files as json could be more than one
+                $configName = 'config-'.$configFile['key'].'-'.$backup->backupId.$this->getCompressType();
+                $configFileName = $configName;
+
+                if ($this->applyCompress()) {
+                    $configFileName = $configFileName ? $configFileName.self::BZ2 : null;
+                }
+
+                $configFileName = $this->getEncryptFileName($encrypt, $configFileName);
+
+                $configFilesBackup = new DirectoryBackup();
+                $configFilesBackup->name = 'Config'.$key;
+                $configFilesBackup->path = $configFile['path'];
+                $configFilesBackup->fileName = $configName;
+                $configFilesBackup->dirName = $this->getConfigFilesPath();
+                $configFilesBackup->syncs = $syncs;
+                $configFilesBackup->encrypt = $encrypt;
+
+                $config->addBackup($configFilesBackup);
+                $configFileNames[] = $configFileName;
+            } else {
+                Backup::error('Skipped the config file: '.$configFile['path'].' because the path does not exists');
+            }
+        }
+
+        $backup->configFileName = json_encode($configFileNames);
+    }
+
+    /**
+     * @param $backup BackupElement
+     * @param $config BackupConfig
+     * @param $settings
+     * @param $syncs
+     * @param $encrypt
+     * @throws Exception
+     */
+    private function getAssetsConfigFormat($backup, $config, $settings, $syncs, $encrypt)
+    {
         // ASSETS
         $assets = [];
 
@@ -581,7 +654,7 @@ class Backups extends Component
                 // Check if the path exists
                 if (is_dir($asset->getRootPath())) {
                     // So we need store assets files as json could be more than one
-                    $assetName = 'assets-'.$asset->handle.'-'.$backupId.$compress;
+                    $assetName = 'assets-'.$asset->handle.'-'.$backup->backupId.$this->getCompressType();
                     $assetFileName = $assetName;
 
                     if ($this->applyCompress()) {
@@ -607,71 +680,19 @@ class Backups extends Component
         }
 
         $backup->assetFileName = json_encode($assetFileNames);
+    }
 
-        // Config Files
-        $configFiles = [];
 
-        if ($settings->enableConfigFiles) {
-            $configFiles[] = ["key" => "translations", "path" => Craft::$app->getPath()->getSiteTranslationsPath()];
-            $configFiles[] = ["key" => "configFolder", "path" => Craft::$app->getPath()->getConfigPath()];
-            // Lets copy the composer file  to a temp folder for security reasons
-            $tempConfigFolder = Craft::$app->getPath()->getTempPath().DIRECTORY_SEPARATOR.'enupal-backup-composer'.DIRECTORY_SEPARATOR;
-            $tempConfigFile = $tempConfigFolder. 'composer.json';
-            $composerFile = CRAFT_BASE_PATH.DIRECTORY_SEPARATOR.'composer.json';
-            if (!file_exists($tempConfigFile)) {
-                mkdir(dirname($tempConfigFile), 0777, true);
-            }
-            copy($composerFile, $tempConfigFile);
-
-            $configFiles[] = ["key" => "composerFile", "path" => $tempConfigFolder];
-        }
-        // Adding the assets
-        $configFileNames = [];
-        foreach ($configFiles as $key => $configFile) {
-            // Check if the path exists
-            if (is_dir($configFile['path']) || is_file($configFile['path'])) {
-                // So we need store assets files as json could be more than one
-                $configName = 'config-'.$configFile['key'].'-'.$backupId.$compress;
-                $configFileName = $configName;
-
-                if ($this->applyCompress()) {
-                    $configFileName = $configFileName ? $configFileName.self::BZ2 : null;
-                }
-
-                $configFileName = $this->getEncryptFileName($encrypt, $configFileName);
-
-                $configFilesBackup = new DirectoryBackup();
-                $configFilesBackup->name = 'Config'.$key;
-                $configFilesBackup->path = $configFile['path'];
-                $configFilesBackup->fileName = $configName;
-                $configFilesBackup->dirName = $this->getConfigFilesPath();
-                $configFilesBackup->syncs = $syncs;
-                $configFilesBackup->encrypt = $encrypt;
-
-                $config->addBackup($configFilesBackup);
-                $configFileNames[] = $configFileName;
-            } else {
-                Backup::error('Skipped the config file: '.$asset->id.' because the path does not exists');
-            }
-        }
-
-        $backup->configFileName = json_encode($configFileNames);
-
-        // TEMPLATES
-        if ($settings->enableTemplates) {
-            $baseTemplatePath = Craft::$app->getPath()->getSiteTemplatesPath();
-            //@todo - add exclude templates
-            $templateBackup = new DirectoryBackup();
-            $templateBackup->name = 'Templates';
-            $templateBackup->path = $baseTemplatePath;
-            $templateBackup->fileName = $templateName;
-            $templateBackup->dirName = $this->getTemplatesPath();
-            $templateBackup->syncs = $syncs;
-            $templateBackup->encrypt = $encrypt;
-
-            $config->addBackup($templateBackup);
-        }
-
+    /**
+     * @param $config BackupConfig
+     * @param $settings
+     * @param $logName
+     * @param $syncs
+     * @param $encrypt
+     * @throws Exception
+     */
+    private function getLogsConfigFormat($config, $settings, $logName, $syncs, $encrypt)
+    {
         // LOGS
         if ($settings->enableLogs) {
             $baseLogPath = Craft::$app->getPath()->getLogPath();
@@ -687,16 +708,52 @@ class Backups extends Component
 
             $config->addBackup($logBackup);
         }
+    }
 
-        $configFile = $this->getConfigPath();
+    /**
+     * @param $config BackupConfig
+     * @param $settings
+     * @param $templateName
+     * @param $syncs
+     * @param $encrypt
+     * @throws Exception
+     */
+    private function getTemplatesConfigFormat($config, $settings, $templateName, $syncs, $encrypt)
+    {
+        // TEMPLATES
+        if ($settings->enableTemplates) {
+            $baseTemplatePath = Craft::$app->getPath()->getSiteTemplatesPath();
+            //@todo - add exclude templates
+            $templateBackup = new DirectoryBackup();
+            $templateBackup->name = 'Templates';
+            $templateBackup->path = $baseTemplatePath;
+            $templateBackup->fileName = $templateName;
+            $templateBackup->dirName = $this->getTemplatesPath();
+            $templateBackup->syncs = $syncs;
+            $templateBackup->encrypt = $encrypt;
 
-        if (!file_exists($this->getBasePath())) {
-            mkdir($this->getBasePath(), 0777, true);
+            $config->addBackup($templateBackup);
         }
+    }
 
-        file_put_contents($configFile, $config->getConfig(true));
+    /**
+     * @param $config BackupConfig
+     * @param $settings
+     * @param $dbFileName
+     * @param $syncs
+     * @param $encrypt
+     */
+    private function getDatabaseConfigFormat($config, $settings, $dbFileName, $syncs, $encrypt)
+    {
+        if ($settings->enableDatabase) {
+            $databaseBackup = new DatabaseBackup();
+            $databaseBackup->name = 'Database';
+            $databaseBackup->fileName = $dbFileName;
+            $databaseBackup->syncs = $syncs;
+            $databaseBackup->encrypt = $encrypt;
 
-        return $configFile;
+            $config->addBackup($databaseBackup);
+        } // DATABASE
     }
 
     /**
