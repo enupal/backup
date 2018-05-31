@@ -33,6 +33,9 @@ class Backups extends Component
 {
     protected $backupRecord;
 
+    // Bz2 extension file
+    const BZ2 = '.bz2';
+
     public function init()
     {
         if (is_null($this->backupRecord)) {
@@ -485,33 +488,32 @@ class Backups extends Component
         $syncs = $this->getSyncs($backupId);
         $encrypt = $this->getEncrypt();
         $dbFileName = 'database-'.$backupId.'.sql';
-        $assetName = 'assets-'.$backupId.$compress;
         $templateName = 'templates-'.$backupId.$compress;
         $logName = 'logs-'.$backupId.$compress;
 
         // let's create the Backup Element
         $backup->databaseFileName = $dbFileName;
 
-        $backup->assetFileName = $settings->enableLocalVolumes ? $assetName : null;
+        //$backup->assetFileName = $settings->enableLocalVolumes ? $assetName : null;
         $backup->templateFileName = $settings->enableTemplates ? $templateName : null;
         $backup->logFileName = $settings->enableLogs ? $logName : null;
 
         // Add compression if available
         if (!Backup::$app->settings->isWindows()) {
             // compress database just work on linux
-            $backup->databaseFileName .= '.bz2';
+            $backup->databaseFileName .= self::BZ2;
         }
 
         if ($this->applyCompress()) {
-            $backup->assetFileName = $backup->assetFileName ? $backup->assetFileName.'.bz2' : null;
-            $backup->templateFileName = $backup->templateFileName ? $backup->templateFileName.'.bz2' : null;
-            $backup->logFileName = $backup->logFileName ? $backup->logFileName.'.bz2' : null;
+            //$backup->assetFileName = $backup->assetFileName ? $backup->assetFileName.self::BZ2 : null;
+            $backup->templateFileName = $backup->templateFileName ? $backup->templateFileName.self::BZ2 : null;
+            $backup->logFileName = $backup->logFileName ? $backup->logFileName.self::BZ2 : null;
         }
 
         // Add encrypt extension if enabled
         $backup->databaseFileName = $this->getEncryptFileName($encrypt, $backup->databaseFileName);
         $backup->templateFileName = $this->getEncryptFileName($encrypt, $backup->templateFileName);
-        $backup->assetFileName = $this->getEncryptFileName($encrypt, $backup->assetFileName);
+        //$backup->assetFileName = $this->getEncryptFileName($encrypt, $backup->assetFileName);
         $backup->logFileName = $this->getEncryptFileName($encrypt, $backup->logFileName);
 
         if (!empty($encrypt)) {
@@ -550,25 +552,38 @@ class Backups extends Component
             }
         }
         // Adding the assets
+        $assetFileNames = [];
         foreach ($assets as $key => $asset) {
             // Supports local volumes for now.
             if (get_class($asset) == Local::class) {
                 // Check if the path exists
-                if (is_dir($asset->path)) {
+                if (is_dir($asset->getRootPath())) {
+                    // So we need store assets files as json could be more than one
+                    $assetName = 'assets-'.$asset->handle.'-'.$backupId.$compress;
+                    $assetFileName = $assetName;
+
+                    if ($this->applyCompress()) {
+                        $assetFileName = $backup->assetFileName ? $backup->assetFileName.self::BZ2 : null;
+                    }
+
+                    $assetFileName = $this->getEncryptFileName($encrypt, $backup->assetFileName);
+
                     $assetBackup = new DirectoryBackup();
                     $assetBackup->name = 'Asset'.$asset->id;
-                    $assetBackup->path = $asset->path;
+                    $assetBackup->path = $asset->getRootPath();
                     $assetBackup->fileName = $assetName;
                     $assetBackup->dirName = $this->getAssetsPath();
                     $assetBackup->syncs = $syncs;
                     $assetBackup->encrypt = $encrypt;
 
                     $config->addBackup($assetBackup);
+                    $assetFileNames[] = $assetFileName;
                 } else {
                     Backup::error('Skipped the volume: '.$asset->id.' because the path does not exists');
                 }
             }
         }
+        $backup->assetFileName = json_encode($assetFileNames);
 
         // TEMPLATES
         if ($settings->enableTemplates) {
@@ -835,9 +850,9 @@ class Backups extends Component
      */
     public function applyCompress()
     {
-        $settings = Backup::$app->settings->getSettings();
-
-        if (!Backup::$app->settings->isWindows() || ($settings->enablePathToTar && $settings->pathToTar)) {
+        // $settings = Backup::$app->settings->getSettings();
+        // Removes  || ($settings->enablePathToTar && $settings->pathToTar because is generating problems in windows lets default to tar
+        if (!Backup::$app->settings->isWindows()) {
             return true;
         }
 

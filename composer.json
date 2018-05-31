@@ -2,7 +2,7 @@
   "name": "enupal/backup",
   "description": "Fully integrated Backup solution for Craft CMS",
   "type": "craft-plugin",
-  "version": "1.0.13",
+  "version": "1.1.0",
   "keywords": [
     "craft",
     "cms",
@@ -39,7 +39,6 @@
   "extra": {
     "name": "Enupal Backup",
     "handle": "enupal-backup",
-    "schemaVersion": "1.0.0",
     "hasSettings": true,
     "changelogUrl": "https://raw.githubusercontent.com/enupal/backup/master/CHANGELOG.md",
     "developer": "Enupal",

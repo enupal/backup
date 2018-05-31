@@ -390,7 +390,12 @@ class Backup extends Element
         return $base.$this->logFileName;
     }
 
-    public function getAssetFile()
+    /**
+     * @param $files
+     * @return null
+     * @throws \yii\base\Exception
+     */
+    public function getAssetFiles(&$files)
     {
         $base = BackupPlugin::$app->backups->getAssetsPath();
 
@@ -398,9 +403,12 @@ class Backup extends Element
             return null;
         }
 
-        return $base.$this->assetFileName;
-    }
+        $assetFiles = json_decode($this->assetFileName, true);
 
+        foreach ($assetFiles as $assetFile) {
+            $files[] = $base.$assetFile;
+        }
+    }
 
     public function getTotalSize()
     {
@@ -480,7 +488,7 @@ class Backup extends Element
         $files = [];
         $files[] = $this->getDatabaseFile();
         $files[] = $this->getTemplateFile();
-        $files[] = $this->getAssetFile();
+        $this->getAssetFiles($files);
         $files[] = $this->getLogFile();
         $files[] = BackupPlugin::$app->backups->getLogPath($this->backupId);
 

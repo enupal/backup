@@ -45,19 +45,7 @@ class BackupsController extends BaseController
 
                     $zipPath = Craft::$app->getPath()->getTempPath().DIRECTORY_SEPARATOR.$backup->backupId.'.zip';
 
-                    if (is_file($zipPath)) {
-                        try {
-                            FileHelper::unlink($zipPath);
-                        } catch (\Exception $e) {
-                            Backup::error("Unable to delete the file \"{$zipPath}\": ".$e->getMessage());
-                        }
-                    }
-
-                    $zip = new ZipArchive();
-
-                    if ($zip->open($zipPath, ZipArchive::CREATE) !== true) {
-                        throw new \Exception('Cannot create zip at '.$zipPath);
-                    }
+                    $zip = $this->getZip($zipPath);
 
                     if ($backup->getDatabaseFile()) {
                         $filename = pathinfo($backup->getDatabaseFile(), PATHINFO_BASENAME);
@@ -97,7 +85,25 @@ class BackupsController extends BaseController
                     $filePath = $backup->getLogFile();
                     break;
                 case 'asset':
-                    $filePath = $backup->getAssetFile();
+                    $assetFiles = [];
+                    $backup->getAssetFiles($assetFiles);
+
+                    $zipPath = Craft::$app->getPath()->getTempPath().DIRECTORY_SEPARATOR.'assets-'.$backup->backupId.'.zip';
+                    $addAssetPath = false;
+
+                    $zip = $this->getZip($zipPath);
+
+                    foreach ($assetFiles as $assetFile) {
+                        if (is_file($assetFile)) {
+                            $filename = pathinfo($assetFile, PATHINFO_BASENAME);
+                            $zip->addFile($assetFile, $filename);
+                            $addAssetPath = true;
+                        }
+                    }
+
+                    if ($addAssetPath){
+                        $filePath = $zipPath;
+                    }
                     break;
             }
 
@@ -171,9 +177,19 @@ class BackupsController extends BaseController
             $backup->logFileName = null;
         }
 
-        if (!is_file($backup->getAssetFile())) {
-            $backup->assetFileName = null;
+        $assetFiles = [];
+        $backup->getAssetFiles($assetFiles);
+
+        $assetFileName = null;
+        foreach ($assetFiles as $assetFile) {
+            if (is_file($assetFile)) {
+                // If we have a least one file we should allow download it.
+                $assetFileName = "assets";
+                break;
+            }
         }
+
+        $backup->assetFileName = $assetFileName;
 
         $variables = [];
 
@@ -217,5 +233,26 @@ class BackupsController extends BaseController
         }
 
         return $this->redirectToPostedUrl($backup);
+    }
+
+    /**
+     * @param $zipPath
+     * @throws \Exception
+     */
+    private function getZip($zipPath)
+    {
+        if (is_file($zipPath)) {
+            try {
+                FileHelper::unlink($zipPath);
+            } catch (\Exception $e) {
+                Backup::error("Unable to delete the file \"{$zipPath}\": ".$e->getMessage());
+            }
+        }
+
+        $zip = new ZipArchive();
+
+        if ($zip->open($zipPath, ZipArchive::CREATE) !== true) {
+            throw new \Exception('Cannot create zip at '.$zipPath);
+        }
     }
 }
