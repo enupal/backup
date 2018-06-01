@@ -1,5 +1,14 @@
 # Enupal Backup Changelog
 
+## 1.1.2 - 2018.05.31
+### Added
+- Added Config Files as option to backup
+- Added Max Execution setting
+
+### Fixed
+- Fixed bug where if added more that one asset just taken the last one
+- Fixed bug where if the Asset volume was using the `@webroot` alias in the path the asset was ignored
+
 ## 1.0.13 - 2018.05.03
 ### Improved
 - Improved Dropbox validation and instructions.

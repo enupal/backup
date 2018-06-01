@@ -24,10 +24,13 @@ use craft\records\Element;
  * @property string $assetSize
  * @property string $templateFileName
  * @property string $templateSize
+ * @property string $configFileName
+ * @property string $configSize
  * @property string $logFileName
  * @property string $logSize
  * @property string $databaseSize
  * @property integer $backupStatusId
+ * @property string $logMessage
  * @property bool $aws
  * @property bool $dropbox
  * @property bool $rsync

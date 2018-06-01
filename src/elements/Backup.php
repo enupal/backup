@@ -73,6 +73,16 @@ class Backup extends Element
     /**
      * @var string
      */
+    public $configFileName;
+
+    /**
+     * @var string
+     */
+    public $configSize;
+
+    /**
+     * @var string
+     */
     public $logFileName;
 
     /**
@@ -350,13 +360,17 @@ class Backup extends Element
                 }
             case 'dateCreated':
                 {
-                    return $this->dateCreated->format("Y-m-d H:i");
+                    return $this->dateCreated->/** @scrutinizer ignore-call */ format("Y-m-d H:i");
                 }
         }
 
         return parent::tableAttributeHtml($attribute);
     }
 
+    /**
+     * @return null|string
+     * @throws \yii\base\Exception
+     */
     public function getDatabaseFile()
     {
         $base = BackupPlugin::$app->backups->getDatabasePath();
@@ -368,6 +382,10 @@ class Backup extends Element
         return $base.$this->databaseFileName;
     }
 
+    /**
+     * @return null|string
+     * @throws \yii\base\Exception
+     */
     public function getTemplateFile()
     {
         $base = BackupPlugin::$app->backups->getTemplatesPath();
@@ -379,6 +397,10 @@ class Backup extends Element
         return $base.$this->templateFileName;
     }
 
+    /**
+     * @return null|string
+     * @throws \yii\base\Exception
+     */
     public function getLogFile()
     {
         $base = BackupPlugin::$app->backups->getLogsPath();
@@ -390,7 +412,34 @@ class Backup extends Element
         return $base.$this->logFileName;
     }
 
-    public function getAssetFile()
+    /**
+     * @param $files
+     * @return null
+     * @throws \yii\base\Exception
+     */
+    public function getConfigFiles(&$files)
+    {
+        $base = BackupPlugin::$app->backups->getConfigFilesPath();
+
+        if (!$this->configFileName) {
+            return null;
+        }
+
+        $configFiles = json_decode($this->configFileName, true);
+
+        foreach ($configFiles as $configFile) {
+            $files[] = $base.$configFile;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param $files
+     * @return null
+     * @throws \yii\base\Exception
+     */
+    public function getAssetFiles(&$files)
     {
         $base = BackupPlugin::$app->backups->getAssetsPath();
 
@@ -398,28 +447,40 @@ class Backup extends Element
             return null;
         }
 
-        return $base.$this->assetFileName;
+        $assetFiles = json_decode($this->assetFileName, true);
+
+        foreach ($assetFiles as $assetFile) {
+            $files[] = $base.$assetFile;
+        }
+
+        return null;
     }
 
-
+    /**
+     * @return string
+     */
     public function getTotalSize()
     {
         $total = 0;
 
         if ($this->assetSize) {
-            $total += $this->assetSize;
+            $total += (int)$this->assetSize;
+        }
+
+        if ($this->configSize) {
+            $total += (int)$this->configSize;
         }
 
         if ($this->templateSize) {
-            $total += $this->templateSize;
+            $total += (int)$this->templateSize;
         }
 
         if ($this->databaseSize) {
-            $total += $this->databaseSize;
+            $total += (int)$this->databaseSize;
         }
 
         if ($this->logSize) {
-            $total += $this->logSize;
+            $total += (int)$this->logSize;
         }
 
         if ($total == 0) {
@@ -455,6 +516,8 @@ class Backup extends Element
         $record->assetSize = $this->assetSize;
         $record->templateFileName = $this->templateFileName;
         $record->templateSize = $this->templateSize;
+        $record->configFileName = $this->configFileName;
+        $record->configSize = $this->configSize;
         $record->logFileName = $this->logFileName;
         $record->logSize = $this->logSize;
         $record->backupStatusId = $this->backupStatusId;
@@ -480,7 +543,8 @@ class Backup extends Element
         $files = [];
         $files[] = $this->getDatabaseFile();
         $files[] = $this->getTemplateFile();
-        $files[] = $this->getAssetFile();
+        $this->getAssetFiles($files);
+        $this->getConfigFiles($files);
         $files[] = $this->getLogFile();
         $files[] = BackupPlugin::$app->backups->getLogPath($this->backupId);
 
@@ -498,6 +562,9 @@ class Backup extends Element
         return true;
     }
 
+    /**
+     * @return string
+     */
     public function getStatusName()
     {
         $statuses = BackupStatus::getConstants();

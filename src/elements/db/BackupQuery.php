@@ -70,7 +70,7 @@ class BackupQuery extends ElementQuery
     {
         $this->joinElementTable('enupalbackup_backups');
 
-        $this->query->select([
+        $this->query->/** @scrutinizer ignore-call */ select([
             'enupalbackup_backups.backupId',
             'enupalbackup_backups.time',
             'enupalbackup_backups.databaseFileName',
@@ -79,6 +79,8 @@ class BackupQuery extends ElementQuery
             'enupalbackup_backups.assetSize',
             'enupalbackup_backups.templateFileName',
             'enupalbackup_backups.templateSize',
+            'enupalbackup_backups.configFileName',
+            'enupalbackup_backups.configSize',
             'enupalbackup_backups.logFileName',
             'enupalbackup_backups.logSize',
             'enupalbackup_backups.backupStatusId',
@@ -92,7 +94,7 @@ class BackupQuery extends ElementQuery
         ]);
 
         if ($this->backupId) {
-            $this->subQuery->andWhere(Db::parseParam(
+            $this->subQuery->/** @scrutinizer ignore-call */ andWhere(Db::parseParam(
                 'enupalbackup_backups.backupId', $this->backupId)
             );
         }

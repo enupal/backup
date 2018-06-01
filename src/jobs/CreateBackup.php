@@ -13,11 +13,12 @@ use craft\queue\BaseJob;
 use enupal\backup\elements\Backup as BackupElement;
 
 use enupal\backup\enums\BackupStatus;
+use yii\queue\RetryableJobInterface;
 
 /**
  * CreateBackup job
  */
-class CreateBackup extends BaseJob
+class CreateBackup extends BaseJob implements RetryableJobInterface
 {
     /**
      * @var BackupElement|null
@@ -60,6 +61,25 @@ class CreateBackup extends BaseJob
         }
         // let's dont return false if the backup fails we'll know it
         return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getTtr()
+    {
+        $settings = Backup::$app->settings->getSettings();
+        $maxExecutionTime = $settings->maxExecutionTime ?? 3600;
+
+        return $maxExecutionTime;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function canRetry($attempt, $error)
+    {
+        return ($attempt < 5) && ($error instanceof \Exception);
     }
 
     /**
