@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.1.3 - 2018.06.01
+### Fixed
+- Fixed scenario where Config Files download button should not be displayed
+
 ## 1.1.2 - 2018.05.31
 ### Added
 - Added Config Files as option to backup
