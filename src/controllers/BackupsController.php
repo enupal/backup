@@ -228,6 +228,20 @@ class BackupsController extends BaseController
 
         $backup->assetFileName = $assetFileName;
 
+        $configFiles = [];
+        $backup->getConfigFiles($configFiles);
+
+        $configFileName = null;
+        foreach ($configFiles as $configFile) {
+            if (is_file($configFile)) {
+                // If we have a least one file we should allow download it.
+                $configFileName = "config";
+                break;
+            }
+        }
+
+        $backup->configFileName = $configFileName;
+
         $variables = [];
 
         $variables['backup'] = $backup;
