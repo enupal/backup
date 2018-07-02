@@ -355,6 +355,10 @@ class Backups extends Component
                 $backup->templateSize = filesize($backup->getTemplateFile());
             }
 
+            if (is_file($backup->getWebFile())) {
+                $backup->webSize = filesize($backup->getWebFile());
+            }
+
             if (is_file($backup->getLogFile())) {
                 $backup->logSize = filesize($backup->getLogFile());
             }
@@ -733,7 +737,7 @@ class Backups extends Component
             $templateBackup->dirName = $this->getTemplatesPath();
             $templateBackup->syncs = $syncs;
             $templateBackup->encrypt = $encrypt;
-            
+
             if ($settings->excludeTemplates){
                 $templateBackup->exclude = $settings->excludeTemplates;
             }

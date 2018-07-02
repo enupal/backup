@@ -24,6 +24,8 @@ use craft\records\Element;
  * @property string $assetSize
  * @property string $templateFileName
  * @property string $templateSize
+ * @property string $webFileName
+ * @property string $webSize
  * @property string $configFileName
  * @property string $configSize
  * @property string $logFileName

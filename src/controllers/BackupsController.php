@@ -59,6 +59,12 @@ class BackupsController extends BaseController
                         $zip->addFile($backup->getTemplateFile(), $filename);
                     }
 
+                    if ($backup->getWebFile()) {
+                        $filename = pathinfo($backup->getWebFile(), PATHINFO_BASENAME);
+
+                        $zip->addFile($backup->getWebFile(), $filename);
+                    }
+
                     $assetFiles = [];
                     $backup->getAssetFiles($assetFiles);
                     foreach ($assetFiles as $assetFile) {
@@ -92,6 +98,9 @@ class BackupsController extends BaseController
                     break;
                 case 'template':
                     $filePath = $backup->getTemplateFile();
+                    break;
+                case 'webFolder':
+                    $filePath = $backup->getWebFile();
                     break;
                 case 'logs':
                     $filePath = $backup->getLogFile();
@@ -208,6 +217,10 @@ class BackupsController extends BaseController
 
         if (!is_file($backup->getTemplateFile())) {
             $backup->templateFileName = null;
+        }
+
+        if (!is_file($backup->getWebFile())) {
+            $backup->webFileName = null;
         }
 
         if (!is_file($backup->getLogFile())) {

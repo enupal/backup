@@ -166,6 +166,41 @@
                                         </div><!--//item-inner-->
                                     </div><!--//item-->
                                 {% endif %}
+                                {% if backup.webFileName %}
+                                    <div class="item item-green col-md-4 col-xl-3 col-sm-12">
+                                        <div class="item-inner">
+                                            <div class="icon-holder">
+                                                <i class="fa fa-picture-o fa-2x backup-icon"
+                                                   aria-hidden="true"></i>
+                                            </div><!--//icon-holder-->
+                                            <h3 class="title">{{ "Web Public Folder"|t("enupal-backup") }}</h3>
+                                            <form id="database-template"
+                                                  method="post"
+                                                  accept-charset="UTF-8">
+                                                <input type="hidden"
+                                                       name="action"
+                                                       value="enupal-backup/backups/download">
+                                                <input type="hidden" name="type"
+                                                       value="webFolder">
+                                                <input type="hidden"
+                                                       name="backupId"
+                                                       value="{{ backup.id }}">
+                                                {{ csrfInput() }}
+                                                <button type="submit"
+                                                        class="bbtn bbtn-success-craft downloand-backup btn-full">
+                                                    <i class="fa fa-cloud-download fa-lg"></i>
+                                                    <b>{{ "Download"|t('enupal-backup') }}</b>
+                                                </button>
+                                            </form>
+                                            <p class="intro">
+                                                {% if backup.backupStatusId %}
+                                            <h4><span style="font-size: 11px;"
+                                                      class="label size-label">{{ craft.enupalbackup.getSizeFormatted(backup.assetSize) }}</span>
+                                            </h4>
+                                            {% endif %}</p>
+                                        </div><!--//item-inner-->
+                                    </div><!--//item-->
+                                {% endif %}
                                 {% if backup.configFileName %}
                                     <div class="item item-green col-md-4 col-xl-3 col-sm-12">
                                         <div class="item-inner">
