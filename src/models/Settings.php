@@ -56,7 +56,7 @@ class Settings extends Model
     /**
      * @var bool
      */
-    public $excludeTemplates = 'cpresources,';
+    public $excludeTemplates = '';
 
     // Config FIles
     /**
@@ -78,6 +78,16 @@ class Settings extends Model
      * @var string
      */
     public $excludeLogs = 'enupalbackup,';
+    // Web folder
+    /**
+     * @var bool
+     */
+    public $enableWebFolder = false;
+
+    /**
+     * @var string
+     */
+    public $excludeWebFolder = 'cpresources,';
 
     // Local Volumes
     /**

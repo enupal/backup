@@ -132,6 +132,31 @@
                 errors: settings.getErrors('enableConfigFiles'),
             }) }}
 
+			<hr>
+            {{ forms.lightswitchField({
+                label: "Web Root Directory"|t('enupal-backup'),
+                instructions: 'Backup your public web folder. <b>Enabling this option could generate heavy backups</b>',
+                id: 'enableWebFolder',
+                name: 'enableWebFolder',
+                on: settings.enableWebFolder,
+                toggle: 'settings-enableWebFolder',
+                onLabel: "On"|t('enupal-backup'),
+                offLabel: "Off"|t('enupal-backup'),
+                errors: settings.getErrors('enableWebFolder'),
+            }) }}
+
+			<div id="settings-enableWebFolder" class="{% if not settings.enableWebFolder %}hidden{% endif %}">
+                {{ forms.textField({
+                    label: "Exclude Files"|t('enupal-backup'),
+                    instructions: "Comma separated list of paths to exclude."|t('enupal-backup'),
+                    id: 'excludeWebFolder',
+                    name: 'excludeWebFolder',
+                    value: settings.excludeWebFolder,
+                    autofocus: true,
+                    first: true
+                }) }}
+			</div>
+
 		{% endnamespace %}
 
 	</div>

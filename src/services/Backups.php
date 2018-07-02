@@ -355,6 +355,10 @@ class Backups extends Component
                 $backup->templateSize = filesize($backup->getTemplateFile());
             }
 
+            if (is_file($backup->getWebFile())) {
+                $backup->webSize = filesize($backup->getWebFile());
+            }
+
             if (is_file($backup->getLogFile())) {
                 $backup->logSize = filesize($backup->getLogFile());
             }
@@ -512,10 +516,12 @@ class Backups extends Component
         $dbFileName = 'database-'.$backupId.'.sql';
         $templateName = 'templates-'.$backupId.$compress;
         $logName = 'logs-'.$backupId.$compress;
+        $webFolderName = 'web-'.$backupId.$compress;
 
         // let's create the Backup Element
         $backup->databaseFileName = $dbFileName;
         $backup->templateFileName = $settings->enableTemplates ? $templateName : null;
+        $backup->webFileName = $settings->enableWebFolder ? $webFolderName : null;
         $backup->logFileName = $settings->enableLogs ? $logName : null;
 
         // Add compression if available
@@ -525,7 +531,7 @@ class Backups extends Component
         }
 
         if ($this->applyCompress()) {
-            //$backup->assetFileName = $backup->assetFileName ? $backup->assetFileName.self::BZ2 : null;
+            $backup->webFileName = $backup->webFileName ? $backup->webFileName.self::BZ2 : null;
             $backup->templateFileName = $backup->templateFileName ? $backup->templateFileName.self::BZ2 : null;
             $backup->logFileName = $backup->logFileName ? $backup->logFileName.self::BZ2 : null;
         }
@@ -533,7 +539,7 @@ class Backups extends Component
         // Add encrypt extension if enabled
         $backup->databaseFileName = $this->getEncryptFileName($encrypt, $backup->databaseFileName);
         $backup->templateFileName = $this->getEncryptFileName($encrypt, $backup->templateFileName);
-        //$backup->assetFileName = $this->getEncryptFileName($encrypt, $backup->assetFileName);
+        $backup->webFileName = $this->getEncryptFileName($encrypt, $backup->webFileName);
         $backup->logFileName = $this->getEncryptFileName($encrypt, $backup->logFileName);
 
         if (!empty($encrypt)) {
@@ -549,6 +555,7 @@ class Backups extends Component
         $this->getAssetsConfigFormat($backup, $config, $settings, $syncs, $encrypt);
         $this->getConfigFilesFormat($backup, $config, $settings, $syncs, $encrypt);
         $this->getTemplatesConfigFormat($config, $settings, $templateName, $syncs, $encrypt);
+        $this->getWebConfigFormat($config, $settings, $webFolderName, $syncs, $encrypt);
         $this->getLogsConfigFormat($config, $settings, $logName, $syncs, $encrypt);
 
         $configFile = $this->getConfigPath();
@@ -723,7 +730,6 @@ class Backups extends Component
         // TEMPLATES
         if ($settings->enableTemplates) {
             $baseTemplatePath = Craft::$app->getPath()->getSiteTemplatesPath();
-            //@todo - add exclude templates
             $templateBackup = new DirectoryBackup();
             $templateBackup->name = 'Templates';
             $templateBackup->path = $baseTemplatePath;
@@ -732,7 +738,41 @@ class Backups extends Component
             $templateBackup->syncs = $syncs;
             $templateBackup->encrypt = $encrypt;
 
+            if ($settings->excludeTemplates){
+                $templateBackup->exclude = $settings->excludeTemplates;
+            }
+
             $config->addBackup($templateBackup);
+        }
+    }
+
+    /**
+     * @param $config BackupConfig
+     * @param $settings
+     * @param $templateName
+     * @param $syncs
+     * @param $encrypt
+     * @throws Exception
+     */
+    private function getWebConfigFormat($config, $settings, $webFolderName, $syncs, $encrypt)
+    {
+        // TEMPLATES
+        if ($settings->enableWebFolder) {
+            $baseWebPath =  Craft::getAlias('@webroot');
+            $baseWebPath = FileHelper::normalizePath($baseWebPath);
+            $webFolderBackup = new DirectoryBackup();
+            $webFolderBackup->name = 'Web Folder';
+            $webFolderBackup->path = $baseWebPath;
+            $webFolderBackup->fileName = $webFolderName;
+            $webFolderBackup->dirName = $this->getWebFolderPath();
+            $webFolderBackup->syncs = $syncs;
+            $webFolderBackup->encrypt = $encrypt;
+
+            if ($settings->excludeWebFolder){
+                $webFolderBackup->exclude = $settings->excludeWebFolder;
+            }
+
+            $config->addBackup($webFolderBackup);
         }
     }
 
@@ -1071,6 +1111,15 @@ class Backups extends Component
     public function getTemplatesPath()
     {
         return $this->getBasePath().'templates'.DIRECTORY_SEPARATOR;
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function getWebFolderPath()
+    {
+        return $this->getBasePath().'web'.DIRECTORY_SEPARATOR;
     }
 
     /**

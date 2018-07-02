@@ -73,6 +73,16 @@ class Backup extends Element
     /**
      * @var string
      */
+    public $webFileName;
+
+    /**
+     * @var string
+     */
+    public $webSize;
+
+    /**
+     * @var string
+     */
     public $configFileName;
 
     /**
@@ -401,6 +411,21 @@ class Backup extends Element
      * @return null|string
      * @throws \yii\base\Exception
      */
+    public function getWebFile()
+    {
+        $base = BackupPlugin::$app->backups->getWebFolderPath();
+
+        if (!$this->webFileName) {
+            return null;
+        }
+
+        return $base.$this->webFileName;
+    }
+
+    /**
+     * @return null|string
+     * @throws \yii\base\Exception
+     */
     public function getLogFile()
     {
         $base = BackupPlugin::$app->backups->getLogsPath();
@@ -475,6 +500,10 @@ class Backup extends Element
             $total += (int)$this->templateSize;
         }
 
+        if ($this->webSize) {
+            $total += (int)$this->webSize;
+        }
+
         if ($this->databaseSize) {
             $total += (int)$this->databaseSize;
         }
@@ -516,6 +545,8 @@ class Backup extends Element
         $record->assetSize = $this->assetSize;
         $record->templateFileName = $this->templateFileName;
         $record->templateSize = $this->templateSize;
+        $record->webFileName = $this->webFileName;
+        $record->webSize = $this->webSize;
         $record->configFileName = $this->configFileName;
         $record->configSize = $this->configSize;
         $record->logFileName = $this->logFileName;
@@ -543,6 +574,7 @@ class Backup extends Element
         $files = [];
         $files[] = $this->getDatabaseFile();
         $files[] = $this->getTemplateFile();
+        $files[] = $this->getWebFile();
         $this->getAssetFiles($files);
         $this->getConfigFiles($files);
         $files[] = $this->getLogFile();
