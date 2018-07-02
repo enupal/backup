@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.1.5 - 2018.07.02
+### Added
+- Added support to backup the Web Root directory.
+
 ## 1.1.4 - 2018.06.01
 ### Improved
 - Improved readme file
