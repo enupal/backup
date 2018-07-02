@@ -42,9 +42,7 @@ https://enupal.com/en/craft-plugins/enupal-backup/docs/
 
 ## Enupal Backup Support
 
-Via Email:
-
-* Send us a note at: support@enupal.com
+* Via Email: Send us a note at support@enupal.com
 
 * Create an [issue](https://github.com/enupal/backup/issues) on Github
 
