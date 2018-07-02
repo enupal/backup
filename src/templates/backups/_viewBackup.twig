@@ -170,10 +170,10 @@
                                     <div class="item item-green col-md-4 col-xl-3 col-sm-12">
                                         <div class="item-inner">
                                             <div class="icon-holder">
-                                                <i class="fa fa-picture-o fa-2x backup-icon"
+                                                <i class="fa fa-folder-open fa-2x backup-icon"
                                                    aria-hidden="true"></i>
                                             </div><!--//icon-holder-->
-                                            <h3 class="title">{{ "Web Public Folder"|t("enupal-backup") }}</h3>
+                                            <h3 class="title">{{ "Web Root"|t("enupal-backup") }}</h3>
                                             <form id="database-template"
                                                   method="post"
                                                   accept-charset="UTF-8">
@@ -195,7 +195,7 @@
                                             <p class="intro">
                                                 {% if backup.backupStatusId %}
                                             <h4><span style="font-size: 11px;"
-                                                      class="label size-label">{{ craft.enupalbackup.getSizeFormatted(backup.assetSize) }}</span>
+                                                      class="label size-label">{{ craft.enupalbackup.getSizeFormatted(backup.webSize) }}</span>
                                             </h4>
                                             {% endif %}</p>
                                         </div><!--//item-inner-->
