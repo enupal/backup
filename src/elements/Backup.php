@@ -73,6 +73,16 @@ class Backup extends Element
     /**
      * @var string
      */
+    public $webFileName;
+
+    /**
+     * @var string
+     */
+    public $webSize;
+
+    /**
+     * @var string
+     */
     public $configFileName;
 
     /**
