@@ -9,6 +9,7 @@
 namespace enupal\backup\services;
 
 use Craft;
+use craft\db\Query;
 use yii\base\Component;
 use enupal\backup\Backup;
 use enupal\backup\elements\Backup as BackupElement;
@@ -263,7 +264,18 @@ class Backups extends Component
         $model = new SettingsModel();
         $settings = $model->getAttributes();
 
+        $primarySite = (new Query())
+            ->select(['baseUrl'])
+            ->from(['{{%sites}}'])
+            ->where(['primary' => 1])
+            ->one();
+
+        $primarySiteUrl = Craft::getAlias($primarySite['baseUrl']);
+
+        $settings['primarySiteUrl'] = $primarySiteUrl;
+
         $settings = json_encode($settings);
+
         Craft::$app->getDb()->createCommand()->update('{{%plugins}}', [
             'settings' => $settings
         ],

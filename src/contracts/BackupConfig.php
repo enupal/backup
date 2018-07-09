@@ -10,6 +10,7 @@ namespace enupal\backup\contracts;
 
 use enupal\backup\elements\Backup as BackupElement;
 use enupal\backup\Backup;
+use Craft;
 
 use craft\helpers\UrlHelper;
 
@@ -38,6 +39,15 @@ class BackupConfig
 
         $logPath = Backup::$app->backups->getLogPath($backup->backupId);
 
+        $baseUrl = 'enupal-backup/finished?backupId='.$backup->backupId;
+
+        $webhookUrl = UrlHelper::siteUrl($baseUrl);
+
+        if (Craft::$app->getRequest()->isConsoleRequest){
+            $settings = Backup::$app->settings->getSettings();
+            $webhookUrl = $settings->primarySiteUrl.'/'.$baseUrl;
+        }
+
         $this->config = [
             'verbose' => true,
             'logging' => [
@@ -48,7 +58,7 @@ class BackupConfig
                 [
                     'type' => 'webhook',
                     'options' => [
-                        'uri' => UrlHelper::siteUrl('enupal-backup/finished?backupId='.$backup->backupId)
+                        'uri' => $webhookUrl
                     ]
                 ]
             ],
