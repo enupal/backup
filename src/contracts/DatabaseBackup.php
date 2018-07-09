@@ -113,7 +113,7 @@ class DatabaseBackup extends BackupType
             $databaseBackup['source']['options']['database'] = $this->database;
 
             if ($this->settings->enablePathToPgdump && $this->settings->pathToPgdump) {
-                $databaseBackup['source']['options']['pathToPgdump'] = $this->settings->enablePathToPgdump;
+                $databaseBackup['source']['options']['pathToPgdump'] = $this->settings->pathToPgdump;
             }
         }
 
