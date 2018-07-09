@@ -75,6 +75,20 @@
                 errors: settings.getErrors('maxExecutionTime')
             }) }}
 
+            <hr>
+
+            {{ forms.textField({
+                label: "Primary Site Url"|t('enupal-backup'),
+                id: 'primarySiteUrl',
+                instructions: "As Enupal Backup runs as a console command, in that context the Site Url can't be accessed. In order to avoid problems with the webhook, please add a valid Url of your Site."|t('enupal-backup'),
+                name: 'primarySiteUrl',
+                placeholder: siteUrl,
+                value: settings.primarySiteUrl,
+                autofocus: true,
+                required: true,
+                errors: settings.getErrors('primarySiteUrl')
+            }) }}
+
         {% endnamespace %}
 
     </div>

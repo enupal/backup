@@ -322,12 +322,19 @@ class Settings extends Model
     public $maxExecutionTime = 3600;
 
     /**
+     * @var string
+     */
+    public $primarySiteUrl;
+
+    /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
             ['backupsAmount', 'integer', 'min' => 1, 'on' => 'general'],
+            ['primarySiteUrl', 'required', 'on' => 'general'],
+            ['primarySiteUrl', 'url', 'on' => 'general'],
             ['maxExecutionTime', 'integer', 'min' => 300, 'on' => 'general'],
             [['backupsAmount', 'maxExecutionTime'], 'required', 'on' => 'general'],
             [
