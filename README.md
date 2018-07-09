@@ -1,5 +1,5 @@
 <p align="center">
-	<a href="https://enupal.com/en/craft-plugins/enupal-backup/docs/" target="_blank">
+	<a href="https://enupal.com/craft-plugins/enupal-backup/docs/" target="_blank">
 	<img width="212" height="212" src="https://enupal.com/assets/docs/backup-icon.svg" alt="Enupal Backup"></a>
 </p>
 
@@ -39,7 +39,7 @@ Fully integrated Backup solution for Craft CMS
 
 ## Documentation
 
-https://enupal.com/en/craft-plugins/enupal-backup/docs/
+https://enupal.com/craft-plugins/enupal-backup/docs/
 
 ## Enupal Backup Support
 
@@ -52,7 +52,7 @@ https://enupal.com/en/craft-plugins/enupal-backup/docs/
 Brought to you by [enupal](https://enupal.com/en)
 
 <p align="center">
-	<a href="https://enupal.com/en" target="_blank">
+	<a href="https://enupal.com" target="_blank">
 	<img width="169" height="35" src="https://enupal.com/assets/docs/enupal-logo.png" alt="Enupal Backup"></a>
 </p>
 
