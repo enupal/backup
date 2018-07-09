@@ -1,5 +1,12 @@
 # Enupal Backup Changelog
 
+## 1.1.6 - 2018.07.09
+### Added
+- Added primarySiteUrl setting to avoid problems in console commands
+### Fixed
+- Fixed bug when adding PgDump Path
+- Fixed bug where finished webhook was not working on console commands
+
 ## 1.1.5 - 2018.07.02
 ### Added
 - Added support to backup the Web Root directory.
