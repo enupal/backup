@@ -23,6 +23,7 @@ Fully integrated Backup solution for Craft CMS
 * Assets
 * Logs
 * Config files (composer.json file, `config/` and `translations/` folders)
+* Web Root Directory. (Backup your public web folder)
 
 ### Schedule your backups
 
