@@ -1,5 +1,11 @@
 # Enupal Backup Changelog
 
+## 1.1.7 - 2018.07.13
+### Added
+- Added template overrides to notifications
+- Added  `beforeSendNotificationEmail` event
+- Added migration to finish all pending backups that stuck in progress for versions less than 1.1.5
+
 ## 1.1.6 - 2018.07.09
 ### Added
 - Added primarySiteUrl setting to avoid problems in console commands

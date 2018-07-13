@@ -43,7 +43,7 @@ class Backup extends Plugin
     /**
      * @inheritdoc
      */
-    public $schemaVersion = '1.1.6';
+    public $schemaVersion = '1.1.7';
 
     public function init()
     {
