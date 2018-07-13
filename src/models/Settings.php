@@ -299,6 +299,16 @@ class Settings extends Model
     /**
      * @var string
      */
+    public $emailTemplateOverride;
+
+    /**
+     * @var string
+     */
+    public $notificationSubject;
+
+    /**
+     * @var string
+     */
     public $notificationRecipients;
 
     /**

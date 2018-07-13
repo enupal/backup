@@ -75,20 +75,6 @@ class Backup extends Plugin
                 $variable->set('enupalbackup', BackupVariable::class);
             }
         );
-
-        Event::on(
-            SystemMessages::class,
-            SystemMessages::EVENT_REGISTER_MESSAGES,
-            function(RegisterEmailMessagesEvent $event) {
-                array_push($event->messages,
-                    [
-                        'key' => 'enupal_backup_notification',
-                        'subject' => 'Backup process completed',
-                        'body' => 'We are happy to inform you that the backup process has been completed. Backup Id: {{backup.backupId}}'
-                    ]
-                );
-            }
-        );
     }
 
     /**

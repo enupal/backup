@@ -10,6 +10,8 @@ namespace enupal\backup\services;
 
 use Craft;
 use craft\db\Query;
+use craft\mail\Message;
+use enupal\backup\events\NotificationEvent;
 use yii\base\Component;
 use enupal\backup\Backup;
 use enupal\backup\elements\Backup as BackupElement;
@@ -33,6 +35,24 @@ use craft\helpers\MailerHelper;
 class Backups extends Component
 {
     protected $backupRecord;
+
+    /**
+     * @event NotificationEvent The event that is triggered before a notification is send
+     *
+     * Plugins can get notified before a notification email is send
+     *
+     * ```php
+     * use enupal\backup\events\NotificationEvent;
+     * use enupal\backup\services\Backups;
+     * use yii\base\Event;
+     *
+     * Event::on(Backups::class, Backups::EVENT_BEFORE_SEND_NOTIFICATION_EMAIL, function(NotificationEvent $e) {
+     *      $message = $e->message;
+     *     // Do something
+     * });
+     * ```
+     */
+    const EVENT_BEFORE_SEND_NOTIFICATION_EMAIL = 'beforeSendNotificationEmail';
 
     // Bz2 extension file
     const BZ2 = '.bz2';
@@ -283,11 +303,6 @@ class Backups extends Component
                 'handle' => 'enupal-backup'
             ]
         )->execute();
-
-        $emailPath = Craft::getAlias('@enupal/backup/templates/_notification');
-        $templateEmailPath = Craft::$app->path->getSiteTemplatesPath();
-        $templateEmailPath = FileHelper::normalizePath($templateEmailPath."/_enupalBackupNotification");
-        FileHelper::copyDirectory($emailPath, $templateEmailPath);
     }
 
     /**
@@ -462,47 +477,82 @@ class Backups extends Component
         return false;
     }
 
+
     /**
      * Enupal Backup send notification service
      *
-     * @param $backup BackupElement
-     *
+     * @param BackupElement $backup
      * @return bool
+     * @throws Exception
+     * @throws \craft\web\twig\TemplateLoaderException
      */
     public function sendNotification(BackupElement $backup)
     {
-        $settings = new MailSettings();
-        $backupSettings = Backup::$app->settings->getSettings();
-        $templatePath = '_enupalBackupNotification/email';
-        $emailSettings = Craft::$app->getSystemSettings()->getSettings('email');
+        $settings = Backup::$app->settings->getSettings();
+        $variables = [];
+        $view = Craft::$app->getView();
+        $message = new Message();
+        $message->setFrom([$settings->notificationSenderEmail => $settings->notificationSenderName]);
+        $variables['backup'] = $backup;
+        $subject = $view->renderString($settings->notificationSubject, $variables);
+        $textBody = $view->renderString("We are happy to inform you that the backup process has been completed. Backup Id: {{backup.backupId}}", $variables);
 
-        $settings->fromEmail = $backupSettings->notificationSenderEmail;
-        $settings->fromName = $backupSettings->notificationSenderName;
-        $settings->template = $templatePath;
-        $settings->transportType = $emailSettings['transportType'];
-        $settings->transportSettings = $emailSettings['transportSettings'];
+        $originalPath = $view->getTemplatesPath();
 
-        $mailer = MailerHelper::createMailer($settings);
+        $template = 'email';
+        $templateOverride = null;
+        $extensions = ['.html', '.twig'];
 
-        $emails = explode(",", $backupSettings->notificationRecipients);
+        if ($settings->emailTemplateOverride){
+            // let's check if the file exists
+            $overridePath = $originalPath.DIRECTORY_SEPARATOR.$settings->emailTemplateOverride;
+            foreach ($extensions as $extension) {
+                if (file_exists($overridePath.$extension)){
+                    $templateOverride = $settings->emailTemplateOverride;
+                    $template = $templateOverride;
+                }
+            }
+        }
+
+        if (is_null($templateOverride)){
+            $defaultTemplate = Craft::getAlias('@enupal/backup/templates/_notification/');
+            $view->setTemplatesPath($defaultTemplate);
+        }
+
+        $htmlBody = $view->renderTemplate($template, $variables);
+
+        $view->setTemplatesPath($originalPath);
+
+        $message->setSubject($subject);
+        $message->setHtmlBody($htmlBody);
+        $message->setTextBody($textBody);
+        $message->setReplyTo($settings->notificationReplyToEmail);
+        // to emails
+        $emails =  array_map('trim', explode(',', $settings->notificationRecipients));
+        $message->setTo($emails);
+
+        $mailer = Craft::$app->getMailer();
+
+        $event = new NotificationEvent([
+            'message' => $message,
+        ]);
+
+        $this->trigger(self::EVENT_BEFORE_SEND_NOTIFICATION_EMAIL, $event);
 
         try {
-            $emailSent = $mailer
-                ->composeFromKey('enupal_backup_notification', ['backup' => $backup])
-                ->setTo($emails)
-                ->send();
+            $result = $mailer->send($message);
         } catch (\Throwable $e) {
             Craft::$app->getErrorHandler()->logException($e);
-            $emailSent = false;
+            $result = false;
         }
 
-        if ($emailSent) {
-            Backup::info('Notification Email sent successfully!');
-        } else {
-            Backup::error('There was an error sending the Notification email');
+        if (!$result) {
+            Craft::error('Unable to send notification email', __METHOD__);
         }
 
-        return $emailSent;
+        Craft::info('Notification email sent successfully', __METHOD__);
+
+        return $result;
     }
 
     /**

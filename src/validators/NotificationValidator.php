@@ -40,5 +40,9 @@ class NotificationValidator extends Validator
         if ($object->enableNotification && !$object->notificationReplyToEmail) {
             $this->addError($object, $attribute, Backup::t('Reply Email cannot be blank'));
         }
+
+        if ($object->enableNotification && !$object->notificationSubject) {
+            $this->addError($object, $attribute, Backup::t('Subject cannot be blank'));
+        }
     }
 }
