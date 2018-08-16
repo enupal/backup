@@ -180,9 +180,11 @@ class BackupsController extends BaseController
     {
         $this->requirePostRequest();
 
-        $response = Backup::$app->backups->executeEnupalBackup();
+        Backup::$app->backups->executeEnupalBackup();
 
-        return $this->asJson($response);
+        Craft::$app->getSession()->setNotice(Backup::t('Enupal Backup: running'));
+
+        return $this->redirectToPostedUrl();
     }
 
     /**
