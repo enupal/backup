@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.1.8 - 2018.08.16
+### Fixed
+- Fixed issue with Craft CMS 3.0.20
+
 ## 1.1.7 - 2018.07.13
 ### Added
 - Added template overrides to notifications
