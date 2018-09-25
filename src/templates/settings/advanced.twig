@@ -148,6 +148,17 @@
 				}) }}
 			</div>
 
+			<hr>
+            {{ forms.lightswitchField({
+                label: "Enable compress with bz2"|t('enupal-backup'),
+                id: 'compressWithBz2',
+                name: 'compressWithBz2',
+                on: settings.compressWithBz2,
+                toggle: 'settings-compressWithBz2',
+                onLabel: "On"|t('enupal-backup'),
+                offLabel: "Off"|t('enupal-backup')
+            }) }}
+
 		{% endnamespace %}
 
 	</div>
