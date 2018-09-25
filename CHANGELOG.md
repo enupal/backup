@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.1.10 - 2018.09.25
+### Improved
+- Improved code conventions.
+
 ## 1.1.9 - 2018.09.25
 ### Added
 - Added apply compress setting
