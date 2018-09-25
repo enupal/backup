@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.1.9 - 2018.09.25
+### Added
+- Added apply compress setting
+
 ## 1.1.8 - 2018.08.16
 ### Fixed
 - Fixed issue with Craft CMS 3.0.20
