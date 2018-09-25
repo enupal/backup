@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.1.11 - 2018.09.25
+### Improved
+- Improved code conventions and fixed bug where missing param.
+
 ## 1.1.10 - 2018.09.25
 ### Improved
 - Improved code conventions.
