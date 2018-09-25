@@ -644,7 +644,7 @@ class Backups extends Component
                 $configName = 'config-'.$configFile['key'].'-'.$backup->backupId.$this->getCompressType();
                 $configFileName = $configName;
 
-                if ($this->applyCompress()) {
+                if ($this->applyCompress($settings)) {
                     $configFileName = $configFileName ? $configFileName.self::BZ2 : null;
                 }
 
@@ -703,7 +703,7 @@ class Backups extends Component
                     $assetName = 'assets-'.$asset->handle.'-'.$backup->backupId.$this->getCompressType();
                     $assetFileName = $assetName;
 
-                    if ($this->applyCompress()) {
+                    if ($this->applyCompress($settings)) {
                         $assetFileName = $assetFileName ? $assetFileName.self::BZ2 : null;
                     }
 
