@@ -73,21 +73,44 @@ class Backups extends Component
      */
     public function executeEnupalBackup()
     {
-        $success = false;
+        $success = true;
         $response = [
             'success' => $success,
             'message' => 'queued'
         ];
 
-        $queue = Craft::$app->getQueue();
-
         // Add our CreateBackup job to the queue
-        $queue->push(new CreateBackup());
+        Craft::$app->queue->push(new CreateBackup());
 
-        // Let's try to call queue/run in background
-        $queue = Craft::$app->getQueue();
-        // Run the queue
-        $queue->run();
+        // if is Linux try to call queue/run in background
+        if (!Backup::$app->settings->isWindows()) {
+            // listen by console
+            $shellCommand = new ShellCommand();
+            $craftPath = CRAFT_BASE_PATH;
+            $phpPath = Backup::$app->backups->getPhpPath();
+            $command = 'cd'.
+                ' '.$craftPath;
+            $command .= ' && '.$phpPath.
+                ' craft'.
+                ' queue/run';
+            // linux
+            $command .= ' > /dev/null 2&1 &';
+            // windows does not work
+            //$command .= ' 1>> NUL 2>&1';
+            $shellCommand->setCommand($command);
+
+            // We have better error messages with exec
+            if (function_exists('exec')) {
+                $shellCommand->useExec = true;
+            }
+
+            $success = $shellCommand->execute();
+
+            $response = [
+                'success' => $success,
+                'message' => 'running'
+            ];
+        }
 
         return $response;
     }
