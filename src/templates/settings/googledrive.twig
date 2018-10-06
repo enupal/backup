@@ -1,0 +1,72 @@
+{#
+/**
+ * EnupalBackup plugin for Craft CMS 3.x
+ *
+ * @link      https://enupal.com/
+ * @copyright Copyright (c) 2017 Enupal
+ */
+#}
+
+{% extends "enupal-backup/_layouts/settings" %}
+{% import "_includes/forms" as forms %}
+
+{% set settings = craft.enupalbackup.getSettings() %}
+{% set fullPageForm = true %}
+{% set saveShortcutRedirect = 'enupal-backup/settings/dropbox' %}
+
+{% set saveButton %}
+    <div class="buttons">
+        <input class="btn submit" type="submit"
+               value="{{ 'Save'|t('enupal-backup') }}">
+    </div>
+{% endset %}
+
+{% set content %}
+
+    <input type="hidden" name="action"
+           value="enupal-backup/settings/save-settings">
+    <input type="hidden" name="backupScenario" value="dropbox">
+
+    <div id="settings-cp">
+
+        {% namespace 'settings' %}
+
+            {{ forms.lightswitchField({
+                label: "Enable Google Drive"|t('enupal-backup'),
+                id: 'enableGoogleDrive',
+                name: 'enableGoogleDrive',
+                on: settings.enableGoogleDrive,
+                onLabel: "On"|t('enupal-backup'),
+                offLabel: "Off"|t('enupal-backup')
+            }) }}
+
+            {{ forms.textField({
+                label: "Access token <span class='info'>- Go to <a href='https://www.dropbox.com/login?cont=https%3A%2F%2Fwww.dropbox.com%2Fdevelopers%2Fapps' target='_blank'> www.dropbox.com/developers/apps</a><br>- Click on 'Create app'<br>- Click on 'Dropbox api'<br>- Click on 'App Folder'<br>- Provide some app name 'my-dropbox-app'<br>- Click on 'Create app'<br>- Scroll down to 'Generated access token' and Click 'Generate' Click on generate</span>"|t('enupal-backup'),
+                id: 'dropboxToken',
+                name: 'dropboxToken',
+                instructions: "The dropbox access token. "|t('enupal-backup'),
+                value: settings.dropboxToken,
+                required: true,
+                type: 'password',
+                placeholder: "xxxxxxx"|t('enupal-backup'),
+                autofocus: true,
+                first: true,
+                errors: settings.getErrors('dropboxToken')
+            }) }}
+
+            {{ forms.textField({
+                label: "Path"|t('enupal-backup'),
+                id: 'dropboxPath',
+                name: 'dropboxPath',
+                instructions: "Directory where to store the backup in your dropbox account."|t('enupal-backup'),
+                value: settings.dropboxPath,
+                autofocus: true,
+                first: true,
+                errors: ''
+            }) }}
+
+        {% endnamespace %}
+
+    </div>
+
+{% endset %}

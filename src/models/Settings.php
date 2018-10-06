@@ -118,6 +118,28 @@ class Settings extends Model
      * @var string
      */
     public $dropboxPath = '/enupalbackup/';
+
+    // Google Drive Api
+    /**
+     * @var bool
+     */
+    public $enableGoogleDrive = false;
+
+    /**
+     * @var string
+     */
+    public $googleDriveSecret;
+
+    /**
+     * @var string
+     */
+    public $googleDriveAccess;
+
+    /**
+     * @var string
+     */
+    public $googleDriveParentId;
+
     // Amazon S3 Api
 
     /**
