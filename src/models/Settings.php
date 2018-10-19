@@ -128,17 +128,17 @@ class Settings extends Model
     /**
      * @var string
      */
-    public $googleDriveSecret;
+    public $googleDriveClientId;
 
     /**
      * @var string
      */
-    public $googleDriveAccess;
+    public $googleDriveClientSecret;
 
     /**
      * @var string
      */
-    public $googleDriveParentId;
+    public $googleDriveFolder = "enupalbackup";
 
     // Amazon S3 Api
 

@@ -40,26 +40,41 @@
                 offLabel: "Off"|t('enupal-backup')
             }) }}
 
+            {% if settings.googleDriveClientId and settings.googleDriveClientSecret %}
+                {% set client = craft.enupalbackup.createAccessClient() %}
+                <span class="warning"><a href="{{ client.createAuthUrl() }}">{{ "Complete authentication with google drive" }}</a> </span>
+            {% endif %}
+
             {{ forms.textField({
-                label: "Access token <span class='info'>- Go to <a href='https://www.dropbox.com/login?cont=https%3A%2F%2Fwww.dropbox.com%2Fdevelopers%2Fapps' target='_blank'> www.dropbox.com/developers/apps</a><br>- Click on 'Create app'<br>- Click on 'Dropbox api'<br>- Click on 'App Folder'<br>- Provide some app name 'my-dropbox-app'<br>- Click on 'Create app'<br>- Scroll down to 'Generated access token' and Click 'Generate' Click on generate</span>"|t('enupal-backup'),
-                id: 'dropboxToken',
-                name: 'dropboxToken',
-                instructions: "The dropbox access token. "|t('enupal-backup'),
-                value: settings.dropboxToken,
+                label: "Google Drive Client ID"|t('enupal-backup'),
+                id: 'googleDriveClientId',
+                name: 'googleDriveClientId',
+                instructions: "Please go to <a target='blank' href='https://console.developers.google.com/cloud-resource-manager'>the google console</a> click on Create Project"|t('enupal-backup'),
+                value: settings.googleDriveClientId,
                 required: true,
-                type: 'password',
-                placeholder: "xxxxxxx"|t('enupal-backup'),
                 autofocus: true,
                 first: true,
-                errors: settings.getErrors('dropboxToken')
+                errors: settings.getErrors('googleDriveClientId')
             }) }}
 
             {{ forms.textField({
-                label: "Path"|t('enupal-backup'),
-                id: 'dropboxPath',
-                name: 'dropboxPath',
-                instructions: "Directory where to store the backup in your dropbox account."|t('enupal-backup'),
-                value: settings.dropboxPath,
+                label: "Google Drive Client Secret"|t('enupal-backup'),
+                id: 'googleDriveClientSecret',
+                name: 'googleDriveClientSecret',
+                type: 'password',
+                instructions: "Follow the Google Drive Client id instructions"|t('enupal-backup'),
+                value: settings.googleDriveClientSecret,
+                autofocus: true,
+                first: true,
+                errors: ''
+            }) }}
+
+            {{ forms.textField({
+                label: "Google Drive Folder"|t('enupal-backup'),
+                id: 'googleDriveFolder',
+                name: 'googleDriveFolder',
+                instructions: "Where to store your backups?"|t('enupal-backup'),
+                value: settings.googleDriveFolder,
                 autofocus: true,
                 first: true,
                 errors: ''

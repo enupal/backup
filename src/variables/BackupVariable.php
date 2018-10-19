@@ -94,5 +94,14 @@ class BackupVariable
     {
         return Backup::$app->backups->getRandomStr();
     }
+
+    /**
+     * @return \Google_Client|null
+     */
+    public function createAccessClient()
+    {
+        return Backup::$app->settings->createAccessClient();
+    }
+
 }
 

@@ -10,8 +10,11 @@ namespace enupal\backup\services;
 
 use Craft;
 use craft\db\Query;
+use craft\helpers\UrlHelper;
 use yii\base\Component;
 use craft\volumes\Local;
+use Google_Client;
+use Google_Service_Drive;
 
 class Settings extends Component
 {
@@ -139,5 +142,30 @@ class Settings extends Component
     public function isWindows()
     {
         return defined('PHP_WINDOWS_VERSION_BUILD');
+    }
+
+    /**
+     * @return Google_Client|null
+     */
+    public function createAccessClient()
+    {
+        $settings = $this->getSettings();
+        $client = null;
+
+        if ($settings->googleDriveClientId && $settings->googleDriveClientSecret){
+            $client = new Google_Client();
+            $client->setApplicationName('phpbu');
+            #$client->setn
+            $client->setScopes(Google_Service_Drive::DRIVE);
+            $client->setClientId($settings->googleDriveClientId);
+            $client->setClientSecret($settings->googleDriveClientSecret);
+            #$client->setRedirectUri(UrlHelper::cpUrl()."/enupal-backup/settings/googledrive");
+            $client->setRedirectUri("https://enupal.com/admin/enupal-backup/settings/googledrive");
+            #http://craft3.test/enupal-backup/settings/googledrive
+            $client->setAuthConfig($secret);
+            $client->setAccessType('offline');
+        }
+
+        return $client;
     }
 }

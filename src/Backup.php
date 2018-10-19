@@ -15,8 +15,6 @@ use craft\web\UrlManager;
 use enupal\backup\services\App;
 use yii\base\Event;
 use craft\web\twig\variables\CraftVariable;
-use craft\services\SystemMessages;
-use craft\events\RegisterEmailMessagesEvent;
 
 use enupal\backup\variables\BackupVariable;
 use enupal\backup\models\Settings;
