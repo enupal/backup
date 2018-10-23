@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.1.12 - 2018.10.23
+### Added
+- Added compress with bzip2 setting to database
+
 ## 1.1.11 - 2018.09.25
 ### Improved
 - Improved code conventions and fixed bug where missing param.
