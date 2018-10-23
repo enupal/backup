@@ -38,6 +38,8 @@ class DirectoryBackup extends BackupType
      */
     public function getBackup()
     {
+        $settings = Backup::$app->settings->getSettings();
+
         $backup = [
             'name' => $this->name,
             'source' => [
@@ -71,7 +73,7 @@ class DirectoryBackup extends BackupType
         }
 
         // Compress on linux or if tar path is setup
-        if (Backup::$app->backups->applyCompress()) {
+        if (Backup::$app->backups->applyCompress($settings)) {
             $backup['target']['compress'] = 'bzip2';
         }
 

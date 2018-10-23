@@ -22,6 +22,11 @@ class Settings extends Model
 {
     // General
     /**
+     * @var int
+     */
+    public $compressWithBz2 = 1;
+
+    /**
      * @var string
      */
     public $pluginNameOverride;

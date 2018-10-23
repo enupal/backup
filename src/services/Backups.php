@@ -564,12 +564,12 @@ class Backups extends Component
         $backup->logFileName = $settings->enableLogs ? $logName : null;
 
         // Add compression if available
-        if (!Backup::$app->settings->isWindows()) {
+        if (!Backup::$app->settings->isWindows() && $settings->compressWithBz2) {
             // compress database just work on linux
             $backup->databaseFileName .= self::BZ2;
         }
 
-        if ($this->applyCompress()) {
+        if ($this->applyCompress($settings)) {
             $backup->webFileName = $backup->webFileName ? $backup->webFileName.self::BZ2 : null;
             $backup->templateFileName = $backup->templateFileName ? $backup->templateFileName.self::BZ2 : null;
             $backup->logFileName = $backup->logFileName ? $backup->logFileName.self::BZ2 : null;
@@ -644,7 +644,7 @@ class Backups extends Component
                 $configName = 'config-'.$configFile['key'].'-'.$backup->backupId.$this->getCompressType();
                 $configFileName = $configName;
 
-                if ($this->applyCompress()) {
+                if ($this->applyCompress($settings)) {
                     $configFileName = $configFileName ? $configFileName.self::BZ2 : null;
                 }
 
@@ -703,7 +703,7 @@ class Backups extends Component
                     $assetName = 'assets-'.$asset->handle.'-'.$backup->backupId.$this->getCompressType();
                     $assetFileName = $assetName;
 
-                    if ($this->applyCompress()) {
+                    if ($this->applyCompress($settings)) {
                         $assetFileName = $assetFileName ? $assetFileName.self::BZ2 : null;
                     }
 
@@ -1054,13 +1054,14 @@ class Backups extends Component
     }
 
     /**
+     * @param $settings
      * @return bool
      */
-    public function applyCompress()
+    public function applyCompress($settings)
     {
         // $settings = Backup::$app->settings->getSettings();
         // Removes  || ($settings->enablePathToTar && $settings->pathToTar because is generating problems in windows lets default to tar
-        if (!Backup::$app->settings->isWindows()) {
+        if (!Backup::$app->settings->isWindows() && $settings->compressWithBz2) {
             return true;
         }
 
