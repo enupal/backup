@@ -1,5 +1,21 @@
 # Enupal Backup Changelog
 
+## 1.1.12 - 2018.10.23
+### Added
+- Added compress with bzip2 setting to database
+
+## 1.1.11 - 2018.09.25
+### Improved
+- Improved code conventions and fixed bug where missing param.
+
+## 1.1.10 - 2018.09.25
+### Improved
+- Improved code conventions.
+
+## 1.1.9 - 2018.09.25
+### Added
+- Added apply compress setting
+
 ## 1.1.8 - 2018.08.16
 ### Fixed
 - Fixed issue with Craft CMS 3.0.20

@@ -125,8 +125,10 @@ class DatabaseBackup extends BackupType
             $databaseBackup['crypt'] = $this->encrypt;
         }
 
+        $settings = Backup::$app->settings->getSettings();
+
         // Compress on linux
-        if (!Backup::$app->settings->isWindows()) {
+        if (!Backup::$app->settings->isWindows() && $settings->compressWithBz2) {
             $databaseBackup['target']['compress'] = 'bzip2';
         }
 
