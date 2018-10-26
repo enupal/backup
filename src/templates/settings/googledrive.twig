@@ -12,7 +12,7 @@
 
 {% set settings = craft.enupalbackup.getSettings() %}
 {% set fullPageForm = true %}
-{% set saveShortcutRedirect = 'enupal-backup/settings/dropbox' %}
+{% set saveShortcutRedirect = 'enupal-backup/settings/googledrive' %}
 
 {% set saveButton %}
     <div class="buttons">
@@ -25,7 +25,7 @@
 
     <input type="hidden" name="action"
            value="enupal-backup/settings/save-settings">
-    <input type="hidden" name="backupScenario" value="dropbox">
+    <input type="hidden" name="backupScenario" value="googledrive">
 
     <div id="settings-cp">
 
@@ -33,6 +33,7 @@
 
             {{ forms.lightswitchField({
                 label: "Enable Google Drive"|t('enupal-backup'),
+                instructions: "Please go to <a target='blank' href='https://console.developers.google.com/cloud-resource-manager'>the google console</a> click on Create Project. Google Drive API -> Create Credentials -> Web Application. <br>Add the next redirect url: <b>"~craft.enupalbackup.getGoogleDriveRedirectUrl()~"<b>"|t('enupal-backup'),
                 id: 'enableGoogleDrive',
                 name: 'enableGoogleDrive',
                 on: settings.enableGoogleDrive,
@@ -41,15 +42,24 @@
             }) }}
 
             {% if settings.googleDriveClientId and settings.googleDriveClientSecret %}
-                {% set client = craft.enupalbackup.createAccessClient() %}
-                <span class="warning"><a href="{{ client.createAuthUrl() }}">{{ "Complete authentication with google drive" }}</a> </span>
+                {% set response = craft.enupalbackup.showNextStep() %}
+
+                {% if response %}
+                    {% set client = craft.enupalbackup.createAccessClient() %}
+                        <p><h4>{{ "One more step"|t('enupal-backup') }}</h4>
+                        <span class="warning"><a href="{{ client.createAuthUrl() }}">{{ "Complete authentication with google drive"|t('enupal-backup') }}</a> </span>
+                        </p>
+                    <hr>
+                {% else %}
+                    <p><h4>{{ "Google Drive successfully added"|t('enupal-backup')}} <i class="fa fa-check fa-fw" aria-hidden="true"></i> </h4></p>
+                    <hr>
+                {% endif %}
             {% endif %}
 
             {{ forms.textField({
                 label: "Google Drive Client ID"|t('enupal-backup'),
                 id: 'googleDriveClientId',
                 name: 'googleDriveClientId',
-                instructions: "Please go to <a target='blank' href='https://console.developers.google.com/cloud-resource-manager'>the google console</a> click on Create Project"|t('enupal-backup'),
                 value: settings.googleDriveClientId,
                 required: true,
                 autofocus: true,
@@ -62,7 +72,6 @@
                 id: 'googleDriveClientSecret',
                 name: 'googleDriveClientSecret',
                 type: 'password',
-                instructions: "Follow the Google Drive Client id instructions"|t('enupal-backup'),
                 value: settings.googleDriveClientSecret,
                 autofocus: true,
                 first: true,

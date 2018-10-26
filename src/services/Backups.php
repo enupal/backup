@@ -1144,6 +1144,15 @@ class Backups extends Component
      * @return string
      * @throws Exception
      */
+    public function getGoogleDriveAccessPath()
+    {
+        return $this->getBasePath().'googledriveaccess.json';
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
     public function getTempDatabasePath()
     {
         return Craft::$app->getPath()->getStoragePath().DIRECTORY_SEPARATOR.'enupalbackuptemp'.DIRECTORY_SEPARATOR;

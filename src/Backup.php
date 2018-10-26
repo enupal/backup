@@ -188,7 +188,10 @@ class Backup extends Plugin
                 'enupal-backup/webhook/finished',
 
             'enupal-backup/schedule' =>
-                'enupal-backup/webhook/schedule'
+                'enupal-backup/webhook/schedule',
+
+            'enupal-backup/google-drive/auth' =>
+                'enupal-backup/webhook/google-drive-auth'
         ];
     }
 }

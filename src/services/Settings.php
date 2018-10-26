@@ -154,18 +154,22 @@ class Settings extends Component
 
         if ($settings->googleDriveClientId && $settings->googleDriveClientSecret){
             $client = new Google_Client();
-            $client->setApplicationName('phpbu');
-            #$client->setn
+            $client->setApplicationName('Enupal Backup');
             $client->setScopes(Google_Service_Drive::DRIVE);
             $client->setClientId($settings->googleDriveClientId);
             $client->setClientSecret($settings->googleDriveClientSecret);
-            #$client->setRedirectUri(UrlHelper::cpUrl()."/enupal-backup/settings/googledrive");
-            $client->setRedirectUri("https://enupal.com/admin/enupal-backup/settings/googledrive");
-            #http://craft3.test/enupal-backup/settings/googledrive
-            $client->setAuthConfig($secret);
             $client->setAccessType('offline');
         }
 
         return $client;
+    }
+
+    /**
+     * @return string
+     * @throws \yii\base\Exception
+     */
+    public function getGoogleDriveRedirectUrl()
+    {
+        return UrlHelper::siteUrl("enupal-backup/google-drive/auth");
     }
 }

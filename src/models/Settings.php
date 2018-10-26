@@ -379,6 +379,10 @@ class Settings extends Model
                 BackupFilesValidator::class, 'on' => 'backupFiles'
             ],
             [
+                ['googleDriveClientId', 'googleDriveClientSecret'],
+                'required', 'on' => 'googledrive'
+            ],
+            [
                 ['enableLocalVolumes'],
                 AssetSourceValidator::class, 'on' => 'backupFiles'
             ],
