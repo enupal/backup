@@ -22,6 +22,7 @@ use enupal\backup\jobs\CreateBackup;
 use enupal\backup\contracts\BackupConfig;
 use enupal\backup\contracts\DatabaseBackup;
 use enupal\backup\contracts\DirectoryBackup;
+use Google_Service_Drive_DriveFile;
 
 use craft\helpers\FileHelper;
 use craft\errors\ShellCommandException;
@@ -29,8 +30,6 @@ use craft\volumes\Local;
 use craft\helpers\App as CraftApp;
 use mikehaertl\shellcommand\Command as ShellCommand;
 use yii\base\Exception;
-use craft\models\MailSettings;
-use craft\helpers\MailerHelper;
 
 class Backups extends Component
 {
@@ -996,8 +995,8 @@ class Backups extends Component
 
     /**
      * @param $backupId
-     *
      * @return array
+     * @throws Exception
      */
     private function getSyncs($backupId)
     {
@@ -1015,6 +1014,25 @@ class Backups extends Component
 
             $syncs[] = $dropbox;
         }
+
+        // Google Drive
+        if ($settings->enableGoogleDrive && Backup::$app->settings->hasAccessFile()) {
+
+            $parentId = $this->getGoogleDriveParentFolderId($settings, $backupId);
+            $secretFile = Backup::$app->settings->getSecretGoolgeDriveFile();
+
+            $googleDrive = [
+                'type' => 'googledrive',
+                'options' => [
+                    'secret' => $secretFile,
+                    'access' => $this->getGoogleDriveAccessPath(),
+                    'parentId' => $parentId
+                ]
+            ];
+
+            $syncs[] = $googleDrive;
+        }
+
         // AMAZON S3
         if ($settings->enableAmazon) {
             $amazon = [
@@ -1064,6 +1082,48 @@ class Backups extends Component
         }
 
         return $syncs;
+    }
+
+    /**
+     * @param $settings SettingsModel
+     * @param $backupId
+     * @return null
+     */
+    public function getGoogleDriveParentFolderId($settings, $backupId)
+    {
+        $folders = explode('/', $settings->googleDriveFolder);
+        $folders[] = $backupId;
+        $driveService = Backup::$app->settings->getGoogleDriveService();
+
+        $parent = null;
+
+        foreach ($folders as $folder) {
+            $metadata = [];
+
+            if (is_null($parent)){
+                // First iteration or first parent folder
+                $metadata = [
+                    'name' => $folder,
+                    'mimeType' => 'application/vnd.google-apps.folder'
+                ];
+
+            }else{
+                $metadata = [
+                    'name' => $folder,
+                    'mimeType' => 'application/vnd.google-apps.folder',
+                    'parents' => array($parent)
+                ];
+            }
+
+            $fileMetadata = new Google_Service_Drive_DriveFile($metadata);
+
+            $file = $driveService->files->create($fileMetadata, [
+                'fields' => 'id']);
+
+            $parent = $file->id;
+        }
+
+        return $parent;
     }
 
     /**
@@ -1147,6 +1207,15 @@ class Backups extends Component
     public function getGoogleDriveAccessPath()
     {
         return $this->getBasePath().'googledriveaccess.json';
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function getGoogleDriveSecretPath()
+    {
+        return $this->getBasePath().'googledrivesecret.json';
     }
 
     /**

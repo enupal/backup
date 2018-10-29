@@ -108,21 +108,10 @@ class BackupVariable
      * Check if we need to show the url auth for the next step
      *
      * @return bool
-     * @throws \yii\base\Exception
      */
     public function showNextStep()
     {
-        $accessFile = Backup::$app->backups->getGoogleDriveAccessPath();
-
-        if (file_exists($accessFile)){
-            $accessValue = file_get_contents($accessFile);
-            $result = json_decode($accessValue, true);
-            if (isset($result['access_token'])){
-                return false;
-            }
-        }
-
-        return true;
+        return !Backup::$app->settings->hasAccessFile();
     }
 
     /**

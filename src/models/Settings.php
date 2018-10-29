@@ -143,7 +143,7 @@ class Settings extends Model
     /**
      * @var string
      */
-    public $googleDriveFolder = "enupalbackup";
+    public $googleDriveFolder = "enupalbackup/";
 
     // Amazon S3 Api
 
