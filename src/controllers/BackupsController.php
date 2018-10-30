@@ -12,9 +12,7 @@ use Craft;
 use craft\web\Controller as BaseController;
 use yii\web\NotFoundHttpException;
 use yii\base\Exception;
-use yii\base\ErrorException;
 use craft\helpers\FileHelper;
-use mikehaertl\shellcommand\Command as ShellCommand;
 use ZipArchive;
 
 use enupal\backup\enums\BackupStatus;
@@ -174,6 +172,7 @@ class BackupsController extends BaseController
 
     /**
      * @return \yii\web\Response
+     * @throws \craft\errors\MissingComponentException
      * @throws \yii\web\BadRequestHttpException
      */
     public function actionRun()
@@ -204,7 +203,7 @@ class BackupsController extends BaseController
         // Get the Backup
         $backup = Backup::$app->backups->getBackupById($backupId);
 
-        if (!$backup) {
+        if (is_null($backup)) {
             throw new NotFoundHttpException(Backup::t('Backup not found'));
         }
 
@@ -268,6 +267,8 @@ class BackupsController extends BaseController
             $variables['log'] = $log;
         }
 
+        $variables['syncErrors'] = $this->getSyncErrors($backup->logMessage);
+
         return $this->renderTemplate('enupal-backup/backups/_viewBackup', $variables);
     }
 
@@ -323,5 +324,55 @@ class BackupsController extends BaseController
         }
 
         return $zip;
+    }
+
+    /**
+     * @param $log
+     * @return array
+     */
+    private function getSyncErrors($log)
+    {
+        $backupLog = json_decode($log, true);
+
+        $errorsMessages = [
+            'dropbox' => 'dropbox',
+            'amazon' => 'amazon',
+            'googleDrive' => 'googledrive',
+            'ftp' => 'ftp',
+            'softlayer' => 'softlayer',
+        ];
+
+        $syncErrors = [];
+
+        // Try to figure out if any sync fails
+        if (isset($backupLog['errors']) && $backupLog['errors']) {
+            foreach ($backupLog['errors'] as $error) {
+                foreach ($errorsMessages as $service => $errorMessage) {
+                    $finalError = '';
+
+                    if (isset($error['msg'])) {
+                        if (strpos(strtolower($error['msg']), $errorMessage) !== false) {
+                            $finalError .= $error['msg'];
+                        }
+                    }
+                    if (isset($error['message'])) {
+                        if (strpos(strtolower($error['message']), $errorMessage) !== false) {
+                            $finalError .= $error['message'];
+                        }
+                    }
+                    if (isset($error['file'])) {
+                        if (strpos(strtolower($error['file']), $errorMessage) !== false) {
+                            $finalError .= $error['file'] . ' * Line: '. $error['line'] ?? '';
+                        }
+                    }
+
+                    if ($finalError){
+                        $syncErrors[$service]['msg'] = $finalError;
+                    }
+                }
+            }
+        }
+
+        return $syncErrors;
     }
 }

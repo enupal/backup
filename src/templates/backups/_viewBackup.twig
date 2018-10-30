@@ -96,7 +96,7 @@
                                     <div class="item item-green col-md-4 col-xl-3 col-sm-12">
                                         <div class="item-inner">
                                             <div class="icon-holder">
-                                                <i class="fa fa-file-code-o fa-2x backup-icon"
+                                                <i class="fa fa-file-code fa-2x backup-icon"
                                                    aria-hidden="true"></i>
                                             </div><!--//icon-holder-->
                                             <h3 class="title">{{ "Templates"|t('enupal-backup') }}</h3>
@@ -120,13 +120,13 @@
                                             </form>
                                             <p class="intro">
                                                 {% if backup.backupStatusId %}
-                                            <h4>
-														<span style="font-size: 11px;"
-                                                              class="label size-label">
-														{{ craft.enupalbackup.getSizeFormatted(backup.templateSize) }}
-														</span>
-                                            </h4>
-                                            {% endif %}
+                                                <h4>
+                                                    <span style="font-size: 11px;"
+                                                          class="label size-label">
+                                                    {{ craft.enupalbackup.getSizeFormatted(backup.templateSize) }}
+                                                    </span>
+                                                </h4>
+                                                {% endif %}
                                             </p>
                                         </div><!--//item-inner-->
                                     </div><!--//item-->
@@ -135,7 +135,7 @@
                                     <div class="item item-green col-md-4 col-xl-3 col-sm-12">
                                         <div class="item-inner">
                                             <div class="icon-holder">
-                                                <i class="fa fa-picture-o fa-2x backup-icon"
+                                                <i class="fa fa-image fa-2x backup-icon"
                                                    aria-hidden="true"></i>
                                             </div><!--//icon-holder-->
                                             <h3 class="title">{{ "Assets"|t("enupal-backup") }}</h3>
@@ -240,7 +240,7 @@
                                     <div class="item item-green col-md-4 col-xl-3 col-sm-12">
                                         <div class="item-inner">
                                             <div class="icon-holder">
-                                                <i class="fa fa-file-text-o fa-2x backup-icon"
+                                                <i class="fa fa-file-alt fa-2x backup-icon"
                                                    aria-hidden="true"></i>
                                             </div><!--//icon-holder-->
                                             <h3 class="title">{{ "Logs"|t('enupal-backup') }}</h3>

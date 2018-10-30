@@ -11,7 +11,6 @@ namespace enupal\backup\elements;
 use Craft;
 use craft\base\Element;
 use craft\elements\db\ElementQueryInterface;
-use yii\base\ErrorHandler;
 use craft\helpers\UrlHelper;
 use craft\elements\actions\Delete;
 
@@ -129,6 +128,11 @@ class Backup extends Element
      * @var bool
      */
     public $softlayer = 0;
+
+    /**
+     * @var bool
+     */
+    public $googleDrive = 0;
 
     /**
      * @var bool
@@ -355,9 +359,9 @@ class Backup extends Element
                     $encryted = '&nbsp;<i class="fa fa-lock" aria-hidden="true"></i>';
 
                     if ($this->backupStatusId == BackupStatus::FINISHED) {
-                        $message = '<i class="fa fa-check-square-o" aria-hidden="true"></i>';
+                        $message = '<i class="fa fa-check-circle" aria-hidden="true"></i>';
                     } else if ($this->backupStatusId == BackupStatus::RUNNING) {
-                        $message = '<i class="fa fa-circle-o-notch fa-spin fa fa-fw"></i><span class="sr-only">Loading...</span>';
+                        $message = '<i class="fa fa-circle-notch fa-spin fa fa-fw"></i><span class="sr-only">Loading...</span>';
                     } else if ($this->backupStatusId == BackupStatus::ERROR) {
                         $message = '<i class="fa fa-times" aria-hidden="true"></i>';
                     }
@@ -557,6 +561,7 @@ class Backup extends Element
         $record->rsync = $this->rsync;
         $record->ftp = $this->ftp;
         $record->softlayer = $this->softlayer;
+        $record->googleDrive = $this->googleDrive;
         $record->isEncrypted = $this->isEncrypted;
         $record->logMessage = $this->logMessage;
 

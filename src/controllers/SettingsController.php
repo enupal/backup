@@ -18,6 +18,7 @@ class SettingsController extends BaseController
      * Save Plugin Settings
      *
      * @return null|\yii\web\Response
+     * @throws \craft\errors\MissingComponentException
      * @throws \yii\web\BadRequestHttpException
      */
     public function actionSaveSettings()
