@@ -1096,7 +1096,7 @@ class Backups extends Component
     {
         $driveService = Backup::$app->settings->getGoogleDriveService();
 
-        $parent = $settings->googleDriveFolder;
+        $parent = $settings->googleDriveFolder ?? 'root';
 
         if ($parent) {
             $metadata = [
@@ -1122,7 +1122,7 @@ class Backups extends Component
      */
     public function getGoogleDriveRootFolders()
     {
-        $options = [];
+        $options = ['' => Backup::t('Select a folder')];
         $driveService = Backup::$app->settings->getGoogleDriveService();
 
         $optParams = array(
