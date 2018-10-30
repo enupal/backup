@@ -179,6 +179,7 @@ class Settings extends Component
             $client->setScopes(Google_Service_Drive::DRIVE);
             $client->setClientId($settings->googleDriveClientId);
             $client->setClientSecret($settings->googleDriveClientSecret);
+            $client->setRedirectUri($this->getGoogleDriveRedirectUrl());
             $client->setAccessType('offline');
 
             // Load previously authorized token from a file, if it exists.

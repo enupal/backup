@@ -34,7 +34,6 @@
   },
   "require": {
     "craftcms/cms": "^3.0.0-RC1",
-    "mikehaertl/php-shellcommand": "~1.2.5",
     "google/apiclient":"^2.0"
   },
   "extra": {
