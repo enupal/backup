@@ -1085,72 +1085,41 @@ class Backups extends Component
     }
 
     /**
-     * @param $settings SettingsModel
+     * Create a sub folder in google drive with the $backupId name
+     *
+     * @param $settings
      * @param $backupId
-     * @return null
+     * @return mixed
+     * @throws Exception
      */
     public function getGoogleDriveParentFolderId($settings, $backupId)
     {
-        $folders = explode('/', $settings->googleDriveFolder);
-        $folders[] = $backupId;
         $driveService = Backup::$app->settings->getGoogleDriveService();
 
-        $parent = null;
+        $parent = $settings->googleDriveFolder;
 
-        foreach ($folders as $folder) {
-            $metadata = [];
+        if ($parent) {
+            $metadata = [
+                'name' => $backupId,
+                'mimeType' => 'application/vnd.google-apps.folder',
+                'parents' => array($parent)
+            ];
 
-            $folder = trim($folder);
+            $fileMetadata = new Google_Service_Drive_DriveFile($metadata);
 
-            if ($folder){
+            $file = $driveService->files->create($fileMetadata, [
+                'fields' => 'id']);
 
-                $optParams = array(
-                    'pageSize' => 1,
-                    'fields' => 'nextPageToken, files(id, name)',
-                    'q' => $parameters['q'] = "mimeType='application/vnd.google-apps.folder' and 'root' in parents and trashed=false",
-                );
-
-                if ($parent){
-                    $optParams['q'] .= " and '".$parent."' in parents";
-                }
-
-                $results = $driveService->files->listFiles($optParams);
-                $foldersTargets = $results->getFiles();
-                if (count($foldersTargets) > 0) {
-                    // The folder already exists so let's get the id and continue
-                    $folderTarget = $foldersTargets[0];
-                    $parent = $folderTarget->getId();
-
-                    continue;
-                }
-
-                if (is_null($parent)){
-                    // First iteration or first parent folder
-                    $metadata = [
-                        'name' => $folder,
-                        'mimeType' => 'application/vnd.google-apps.folder'
-                    ];
-
-                }else{
-                    $metadata = [
-                        'name' => $folder,
-                        'mimeType' => 'application/vnd.google-apps.folder',
-                        'parents' => array($parent)
-                    ];
-                }
-
-                $fileMetadata = new Google_Service_Drive_DriveFile($metadata);
-
-                $file = $driveService->files->create($fileMetadata, [
-                    'fields' => 'id']);
-
-                $parent = $file->id;
-            }
+            $parent = $file->id;
         }
 
         return $parent;
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function getGoogleDriveRootFolders()
     {
         $options = [];

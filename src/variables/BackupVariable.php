@@ -50,8 +50,7 @@ class BackupVariable
 
         return $options;
     }
-
-
+    
     /**
      * @return \enupal\backup\models\Settings|null
      */
@@ -97,17 +96,16 @@ class BackupVariable
 
     /**
      * @return \Google_Client|null
+     * @throws \yii\base\Exception
      */
     public function createAccessClient()
     {
         return Backup::$app->settings->createAccessClient();
     }
 
-
     /**
-     * Check if we need to show the url auth for the next step
-     *
      * @return bool
+     * @throws \yii\base\Exception
      */
     public function hasAccessFile()
     {
@@ -123,6 +121,10 @@ class BackupVariable
         return Backup::$app->settings->getGoogleDriveRedirectUrl();
     }
 
+    /**
+     * @return array
+     * @throws \yii\base\Exception
+     */
     public function getRootFolderOptions()
     {
         return Backup::$app->backups->getGoogleDriveRootFolders();
