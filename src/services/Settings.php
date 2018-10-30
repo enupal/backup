@@ -184,7 +184,26 @@ class Settings extends Component
             if (file_exists($accessFile)) {
                 $accessToken = json_decode(file_get_contents($accessFile), true);
                 $client->setAccessToken($accessToken);
+                $client = $this->checkRefreshToken($client, $accessFile, $accessToken);
             }
+        }
+
+        return $client;
+    }
+
+    /**
+     * @param $client
+     * @param $accessFile
+     * @param $accessToken
+     * @return mixed
+     */
+    public function checkRefreshToken($client, $accessFile, $accessToken)
+    {
+        if ($client->isAccessTokenExpired() && isset($accessToken['refresh_token'])){
+            $client->refreshToken($accessToken['refresh_token']);
+            $newAccessToken = $client->getAccessToken();
+
+            file_put_contents($accessFile, json_encode($newAccessToken));
         }
 
         return $client;
