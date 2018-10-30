@@ -159,6 +159,7 @@ class Settings extends Component
             $client->setScopes(Google_Service_Drive::DRIVE);
             $client->setClientId($settings->googleDriveClientId);
             $client->setClientSecret($settings->googleDriveClientSecret);
+            $client->setRedirectUri($this->getGoogleDriveRedirectUrl());
             $client->setAccessType('offline');
         }
 
@@ -174,13 +175,7 @@ class Settings extends Component
         $client = null;
 
         if ($settings->googleDriveClientId && $settings->googleDriveClientSecret){
-            $client = new Google_Client();
-            $client->setApplicationName('Enupal Backup');
-            $client->setScopes(Google_Service_Drive::DRIVE);
-            $client->setClientId($settings->googleDriveClientId);
-            $client->setClientSecret($settings->googleDriveClientSecret);
-            $client->setRedirectUri($this->getGoogleDriveRedirectUrl());
-            $client->setAccessType('offline');
+            $client = $this->createAccessClient();
 
             // Load previously authorized token from a file, if it exists.
             $accessFile = Backup::$app->backups->getGoogleDriveAccessPath();
