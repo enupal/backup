@@ -122,5 +122,10 @@ class BackupVariable
     {
         return Backup::$app->settings->getGoogleDriveRedirectUrl();
     }
+
+    public function getRootFolderOptions()
+    {
+        return Backup::$app->backups->getGoogleDriveRootFolders();
+    }
 }
 

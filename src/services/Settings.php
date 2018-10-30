@@ -147,6 +147,7 @@ class Settings extends Component
 
     /**
      * @return Google_Client|null
+     * @throws \yii\base\Exception
      */
     public function createAccessClient()
     {
@@ -168,6 +169,7 @@ class Settings extends Component
 
     /**
      * @return Google_Client|null
+     * @throws \yii\base\Exception
      */
     public function getGoogleDriveClient()
     {
@@ -190,6 +192,7 @@ class Settings extends Component
 
     /**
      * @return Google_Service_Drive
+     * @throws \yii\base\Exception
      */
     public function getGoogleDriveService()
     {
@@ -210,6 +213,7 @@ class Settings extends Component
 
     /**
      * @return bool
+     * @throws \yii\base\Exception
      */
     public function hasAccessFile()
     {
@@ -235,8 +239,6 @@ class Settings extends Component
         $settings = $this->getSettings();
         $secretFile = Backup::$app->backups->getGoogleDriveSecretPath();
 
-        #return $secretFile;
-
         $secret = [
             'installed' => [
                 'client_id' => $settings->googleDriveClientId,
@@ -252,6 +254,5 @@ class Settings extends Component
         file_put_contents($secretFile, json_encode($secret));
 
         return $secretFile;
-
     }
 }

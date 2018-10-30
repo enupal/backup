@@ -1100,30 +1100,75 @@ class Backups extends Component
         foreach ($folders as $folder) {
             $metadata = [];
 
-            if (is_null($parent)){
-                // First iteration or first parent folder
-                $metadata = [
-                    'name' => $folder,
-                    'mimeType' => 'application/vnd.google-apps.folder'
-                ];
+            $folder = trim($folder);
 
-            }else{
-                $metadata = [
-                    'name' => $folder,
-                    'mimeType' => 'application/vnd.google-apps.folder',
-                    'parents' => array($parent)
-                ];
+            if ($folder){
+
+                $optParams = array(
+                    'pageSize' => 1,
+                    'fields' => 'nextPageToken, files(id, name)',
+                    'q' => $parameters['q'] = "mimeType='application/vnd.google-apps.folder' and 'root' in parents and trashed=false",
+                );
+
+                if ($parent){
+                    $optParams['q'] .= " and '".$parent."' in parents";
+                }
+
+                $results = $driveService->files->listFiles($optParams);
+                $foldersTargets = $results->getFiles();
+                if (count($foldersTargets) > 0) {
+                    // The folder already exists so let's get the id and continue
+                    $folderTarget = $foldersTargets[0];
+                    $parent = $folderTarget->getId();
+
+                    continue;
+                }
+
+                if (is_null($parent)){
+                    // First iteration or first parent folder
+                    $metadata = [
+                        'name' => $folder,
+                        'mimeType' => 'application/vnd.google-apps.folder'
+                    ];
+
+                }else{
+                    $metadata = [
+                        'name' => $folder,
+                        'mimeType' => 'application/vnd.google-apps.folder',
+                        'parents' => array($parent)
+                    ];
+                }
+
+                $fileMetadata = new Google_Service_Drive_DriveFile($metadata);
+
+                $file = $driveService->files->create($fileMetadata, [
+                    'fields' => 'id']);
+
+                $parent = $file->id;
             }
-
-            $fileMetadata = new Google_Service_Drive_DriveFile($metadata);
-
-            $file = $driveService->files->create($fileMetadata, [
-                'fields' => 'id']);
-
-            $parent = $file->id;
         }
 
         return $parent;
+    }
+
+    public function getGoogleDriveRootFolders()
+    {
+        $options = [];
+        $driveService = Backup::$app->settings->getGoogleDriveService();
+
+        $optParams = array(
+            'fields' => 'nextPageToken, files(id, name)',
+            'q' => $parameters['q'] = "mimeType='application/vnd.google-apps.folder' and 'root' in parents and trashed=false"
+        );
+
+        $results = $driveService->files->listFiles($optParams);
+        $foldersTargets = $results->getFiles();
+
+        foreach ($foldersTargets as $foldersTarget) {
+            $options[$foldersTarget->getId()] = $foldersTarget->getName();
+        }
+
+        return $options;
     }
 
     /**

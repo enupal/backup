@@ -13,8 +13,8 @@
 {% set settings = craft.enupalbackup.getSettings() %}
 {% set fullPageForm = true %}
 {% set saveShortcutRedirect = 'enupal-backup/settings/googledrive' %}
-
-{% set saveButton %}
+{% set hasAccessSettings = false %}
+    {% set saveButton %}
     <div class="buttons">
         <input class="btn submit" type="submit"
                value="{{ 'Save'|t('enupal-backup') }}">
@@ -42,9 +42,9 @@
             }) }}
 
             {% if settings.googleDriveClientId and settings.googleDriveClientSecret %}
-                {% set response = craft.enupalbackup.showNextStep() %}
+                {% set hasAccessSettings = craft.enupalbackup.showNextStep() %}
 
-                {% if response %}
+                {% if hasAccessSettings %}
                     {% set client = craft.enupalbackup.createAccessClient() %}
                         <p><h4>{{ "One more step"|t('enupal-backup') }}</h4>
                         <span class="warning"><a href="{{ client.createAuthUrl() }}">{{ "Complete authentication with google drive"|t('enupal-backup') }}</a> </span>
@@ -78,16 +78,16 @@
                 errors: ''
             }) }}
 
-            {{ forms.textField({
-                label: "Google Drive Folder"|t('enupal-backup'),
-                id: 'googleDriveFolder',
-                name: 'googleDriveFolder',
-                instructions: "Where to store your backups?"|t('enupal-backup'),
-                value: settings.googleDriveFolder,
-                autofocus: true,
-                first: true,
-                errors: ''
-            }) }}
+            {% if hasAccessSettings %}
+                {{ forms.selectField({
+                    label: "Google Drive Folder"|t('enupal-backup'),
+                    id: 'googleDriveFolder',
+                    name: 'googleDriveFolder',
+                    options: craft.enupalbackup.getRootFolderOptions(),
+                    value: settings.googleDriveFolder,
+                    required: true,
+                }) }}
+            {% endif %}
 
         {% endnamespace %}
 
