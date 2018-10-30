@@ -235,8 +235,8 @@ class Settings extends Component
         $settings = $this->getSettings();
         $secretFile = Backup::$app->backups->getGoogleDriveSecretPath();
 
-        return $secretFile;
-        /*
+        #return $secretFile;
+
         $secret = [
             'installed' => [
                 'client_id' => $settings->googleDriveClientId,
@@ -252,6 +252,6 @@ class Settings extends Component
         file_put_contents($secretFile, json_encode($secret));
 
         return $secretFile;
-        */
+
     }
 }
