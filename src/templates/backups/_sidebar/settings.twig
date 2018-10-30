@@ -31,23 +31,37 @@
 		</div>
 		<hr>
 	{% endif %}
-	{% if backup.dropbox or backup.aws or backup.ftp or backup.softlayer %}
+	{% if backup.dropbox or backup.aws or backup.ftp or backup.softlayer or backup.googleDrive %}
 		<div class="field">
 			<div class="heading">
 				<label>{{"Uploaded to"|t('enupal-backup')}}</label>
 			</div>
 			<div class="input ltr">
 				{% if backup.dropbox %}
-						<i title="Dropbox" class="fa fa-dropbox fa-fw green" aria-hidden="true"></i>
+					<i title="Dropbox" class="fab fa-dropbox"></i>
+					{% if syncErrors.dropbox is defined %}
+						<span class='info'>Error - {{ syncErrors.dropbox.msg ?? '-' }}</span>
+					{% endif %}
+					<br>
 				{% endif %}
+                {% if backup.googleDrive %}
+					<i title="Google Drive" class="fab fa-google-drive"></i>
+                    {% if syncErrors.googleDrive is defined %}
+						<span class='info'>Error - {{ syncErrors.googleDrive.msg ?? '-' }}</span>
+                    {% endif %}
+					<br>
+                {% endif %}
 				{% if backup.aws %}
-					<i title="Amazon S3" class="fa fa-amazon fa-fw" aria-hidden="true"></i>
+					<i title="Amazon S3" class="fab fa-aws"></i>
+					<br>
 				{% endif %}
 				{% if backup.ftp %}
 					<i title="FTP" class="fa fa-folder-open fa-fw" aria-hidden="true"></i>
+					<br>
 				{% endif %}
 				{% if backup.softlayer %}
 					<i title="Softlayer Object Storage" class="fa fa-cloud fa-fw" aria-hidden="true"></i>
+					<br>
 				{% endif %}
 			</div>
 		</div>

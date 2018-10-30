@@ -425,49 +425,10 @@ class Backups extends Component
             $backup->aws = $settings->enableAmazon;
             $backup->ftp = $settings->enableFtp;
             $backup->softlayer = $settings->enableSos;
+            $backup->googleDrive = $settings->enableGoogleDrive;
 
             if (isset($backupLog['timestamp'])) {
                 $backup->time = $backupLog['timestamp'];
-            }
-
-            // Try to figure out if any sync fails
-            if (isset($backupLog['errors']) && $backupLog['errors']) {
-                foreach ($backupLog['errors'] as $error) {
-                    if (isset($error['msg'])) {
-                        // Dropbox
-                        if (strpos(strtolower($error['msg']), 'dropbox') !== false) {
-                            $backup->dropbox = false;
-                        }
-                    }
-
-                    if (isset($error['file'])) {
-                        // Dropbox
-                        if (strpos(strtolower($error['file']), 'dropbox') !== false) {
-                            $backup->dropbox = false;
-                        }
-                    }
-
-                    if (isset($error['message'])) {
-                        // Amazon
-                        if (strpos(strtolower($error['message']), 'amazon') !== false) {
-                            $backup->aws = false;
-                        }
-                    }
-
-                    if (isset($error['file'])) {
-                        // FTP
-                        if (strpos(strtolower($error['file']), 'ftp') !== false) {
-                            $backup->ftp = false;
-                        }
-                    }
-
-                    if (isset($error['file'])) {
-                        // SOFTLAYER
-                        if (strpos(strtolower($error['file']), 'softlayer') !== false) {
-                            $backup->softlayer = false;
-                        }
-                    }
-                }
             }
 
             return $this->saveBackup($backup);

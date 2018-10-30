@@ -38,6 +38,7 @@ use craft\records\Element;
  * @property bool $rsync
  * @property bool $ftp
  * @property bool $softlayer
+ * @property bool $googleDrive
  * @property bool $isEncrypted
  */
 class Backup extends ActiveRecord

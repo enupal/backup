@@ -133,6 +133,11 @@ class Backup extends Element
     /**
      * @var bool
      */
+    public $googleDrive = 0;
+
+    /**
+     * @var bool
+     */
     public $isEncrypted = 0;
 
     /**
@@ -557,6 +562,7 @@ class Backup extends Element
         $record->rsync = $this->rsync;
         $record->ftp = $this->ftp;
         $record->softlayer = $this->softlayer;
+        $record->googleDrive = $this->googleDrive;
         $record->isEncrypted = $this->isEncrypted;
         $record->logMessage = $this->logMessage;
 
