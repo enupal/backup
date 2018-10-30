@@ -13,7 +13,7 @@
 {% set settings = craft.enupalbackup.getSettings() %}
 {% set fullPageForm = true %}
 {% set saveShortcutRedirect = 'enupal-backup/settings/googledrive' %}
-{% set hasAccessSettings = false %}
+{% set hasAccessFile = false %}
     {% set saveButton %}
     <div class="buttons">
         <input class="btn submit" type="submit"
@@ -42,16 +42,16 @@
             }) }}
 
             {% if settings.googleDriveClientId and settings.googleDriveClientSecret %}
-                {% set hasAccessSettings = craft.enupalbackup.showNextStep() %}
+                {% set hasAccessFile = craft.enupalbackup.hasAccessFile() %}
 
-                {% if hasAccessSettings %}
-                    {% set client = craft.enupalbackup.createAccessClient() %}
-                        <p><h4>{{ "One more step"|t('enupal-backup') }}</h4>
-                        <span class="warning"><a href="{{ client.createAuthUrl() }}">{{ "Complete authentication with google drive"|t('enupal-backup') }}</a> </span>
-                        </p>
+                {% if hasAccessFile %}
+                    <p><h4>{{ "Google Drive successfully added"|t('enupal-backup')}} <i class="fa fa-check fa-fw" aria-hidden="true"></i> </h4></p>
                     <hr>
                 {% else %}
-                    <p><h4>{{ "Google Drive successfully added"|t('enupal-backup')}} <i class="fa fa-check fa-fw" aria-hidden="true"></i> </h4></p>
+                    {% set client = craft.enupalbackup.createAccessClient() %}
+                    <p><h4>{{ "One more step"|t('enupal-backup') }}</h4>
+                    <span class="warning"><a href="{{ client.createAuthUrl() }}">{{ "Complete authentication with google drive"|t('enupal-backup') }}</a> </span>
+                    </p>
                     <hr>
                 {% endif %}
             {% endif %}
@@ -78,7 +78,7 @@
                 errors: ''
             }) }}
 
-            {% if hasAccessSettings %}
+            {% if hasAccessFile %}
                 {{ forms.selectField({
                     label: "Google Drive Folder"|t('enupal-backup'),
                     id: 'googleDriveFolder',

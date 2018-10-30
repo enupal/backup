@@ -109,9 +109,9 @@ class BackupVariable
      *
      * @return bool
      */
-    public function showNextStep()
+    public function hasAccessFile()
     {
-        return !Backup::$app->settings->hasAccessFile();
+        return Backup::$app->settings->hasAccessFile();
     }
 
     /**
