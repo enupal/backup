@@ -12,9 +12,7 @@ use Craft;
 use craft\web\Controller as BaseController;
 use yii\web\NotFoundHttpException;
 use yii\base\Exception;
-use yii\base\ErrorException;
 use craft\helpers\FileHelper;
-use mikehaertl\shellcommand\Command as ShellCommand;
 use ZipArchive;
 
 use enupal\backup\enums\BackupStatus;
@@ -205,7 +203,7 @@ class BackupsController extends BaseController
         // Get the Backup
         $backup = Backup::$app->backups->getBackupById($backupId);
 
-        if (!$backup) {
+        if (is_null($backup)) {
             throw new NotFoundHttpException(Backup::t('Backup not found'));
         }
 

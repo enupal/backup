@@ -224,8 +224,6 @@ class Backups extends Component
      *
      * @return boolean
      * @throws Exception
-     * @throws ShellCommandException in case of failure
-     * @throws \Exception
      * @throws \Throwable
      * @throws \yii\db\Exception
      */
@@ -444,7 +442,6 @@ class Backups extends Component
      * @param BackupElement $backup
      * @return bool
      * @throws Exception
-     * @throws \craft\web\twig\TemplateLoaderException
      */
     public function sendNotification(BackupElement $backup)
     {
@@ -771,7 +768,7 @@ class Backups extends Component
     /**
      * @param $config BackupConfig
      * @param $settings
-     * @param $templateName
+     * @param $webFolderName
      * @param $syncs
      * @param $encrypt
      * @throws Exception
