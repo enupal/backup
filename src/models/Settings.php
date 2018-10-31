@@ -123,6 +123,28 @@ class Settings extends Model
      * @var string
      */
     public $dropboxPath = '/enupalbackup/';
+
+    // Google Drive Api
+    /**
+     * @var bool
+     */
+    public $enableGoogleDrive = false;
+
+    /**
+     * @var string
+     */
+    public $googleDriveClientId;
+
+    /**
+     * @var string
+     */
+    public $googleDriveClientSecret;
+
+    /**
+     * @var string
+     */
+    public $googleDriveFolder = "enupalbackup/";
+
     // Amazon S3 Api
 
     /**
@@ -355,6 +377,10 @@ class Settings extends Model
             [
                 ['enableDatabase', 'enableTemplates', 'enableLocalVolumes', 'enableLogs'],
                 BackupFilesValidator::class, 'on' => 'backupFiles'
+            ],
+            [
+                ['googleDriveClientId', 'googleDriveClientSecret'],
+                'required', 'on' => 'googledrive'
             ],
             [
                 ['enableLocalVolumes'],

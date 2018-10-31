@@ -15,8 +15,6 @@ use craft\web\UrlManager;
 use enupal\backup\services\App;
 use yii\base\Event;
 use craft\web\twig\variables\CraftVariable;
-use craft\services\SystemMessages;
-use craft\events\RegisterEmailMessagesEvent;
 
 use enupal\backup\variables\BackupVariable;
 use enupal\backup\models\Settings;
@@ -43,7 +41,7 @@ class Backup extends Plugin
     /**
      * @inheritdoc
      */
-    public $schemaVersion = '1.1.7';
+    public $schemaVersion = '1.2.0';
 
     public function init()
     {
@@ -190,7 +188,10 @@ class Backup extends Plugin
                 'enupal-backup/webhook/finished',
 
             'enupal-backup/schedule' =>
-                'enupal-backup/webhook/schedule'
+                'enupal-backup/webhook/schedule',
+
+            'enupal-backup/google-drive/auth' =>
+                'enupal-backup/webhook/google-drive-auth'
         ];
     }
 }

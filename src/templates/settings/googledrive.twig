@@ -1,0 +1,96 @@
+{#
+/**
+ * EnupalBackup plugin for Craft CMS 3.x
+ *
+ * @link      https://enupal.com/
+ * @copyright Copyright (c) 2017 Enupal
+ */
+#}
+
+{% extends "enupal-backup/_layouts/settings" %}
+{% import "_includes/forms" as forms %}
+
+{% set settings = craft.enupalbackup.getSettings() %}
+{% set fullPageForm = true %}
+{% set saveShortcutRedirect = 'enupal-backup/settings/googledrive' %}
+{% set hasAccessFile = false %}
+    {% set saveButton %}
+    <div class="buttons">
+        <input class="btn submit" type="submit"
+               value="{{ 'Save'|t('enupal-backup') }}">
+    </div>
+{% endset %}
+
+{% set content %}
+
+    <input type="hidden" name="action"
+           value="enupal-backup/settings/save-settings">
+    <input type="hidden" name="backupScenario" value="googledrive">
+
+    <div id="settings-cp">
+
+        {% namespace 'settings' %}
+
+            {{ forms.lightswitchField({
+                label: "Enable Google Drive"|t('enupal-backup'),
+                instructions: "Please go to <a target='blank' href='https://console.developers.google.com/cloud-resource-manager'>the google console</a> click on Create Project. Google Drive API -> Create Credentials -> Web Application. <br>Add the next redirect url: <b>"~craft.enupalbackup.getGoogleDriveRedirectUrl()~"<b>"|t('enupal-backup'),
+                id: 'enableGoogleDrive',
+                name: 'enableGoogleDrive',
+                on: settings.enableGoogleDrive,
+                onLabel: "On"|t('enupal-backup'),
+                offLabel: "Off"|t('enupal-backup')
+            }) }}
+
+            {% if settings.googleDriveClientId and settings.googleDriveClientSecret %}
+                {% set hasAccessFile = craft.enupalbackup.hasAccessFile() %}
+
+                {% if hasAccessFile %}
+                    <p><h4>{{ "Google Drive successfully added"|t('enupal-backup')}} <i class="fa fa-check fa-fw" aria-hidden="true"></i> </h4></p>
+                    <hr>
+                {% else %}
+                    {% set client = craft.enupalbackup.createAccessClient() %}
+                    <p><h4>{{ "One more step"|t('enupal-backup') }}</h4>
+                    <span class="warning"><a href="{{ client.createAuthUrl() }}">{{ "Complete authentication with google drive"|t('enupal-backup') }}</a> </span>
+                    </p>
+                    <hr>
+                {% endif %}
+            {% endif %}
+
+            {{ forms.textField({
+                label: "Google Drive Client ID"|t('enupal-backup'),
+                id: 'googleDriveClientId',
+                name: 'googleDriveClientId',
+                value: settings.googleDriveClientId,
+                required: true,
+                autofocus: true,
+                first: true,
+                errors: settings.getErrors('googleDriveClientId')
+            }) }}
+
+            {{ forms.textField({
+                label: "Google Drive Client Secret"|t('enupal-backup'),
+                id: 'googleDriveClientSecret',
+                name: 'googleDriveClientSecret',
+                type: 'password',
+                value: settings.googleDriveClientSecret,
+                autofocus: true,
+                first: true,
+                errors: ''
+            }) }}
+
+            {% if hasAccessFile %}
+                {{ forms.selectField({
+                    label: "Google Drive Folder"|t('enupal-backup'),
+                    id: 'googleDriveFolder',
+                    name: 'googleDriveFolder',
+                    instructions: 'Please go to your <a href="https://drive.google.com/drive/my-drive" target="_blank">google drive</a> and create a folder to store your backups.',
+                    options: craft.enupalbackup.getRootFolderOptions(),
+                    value: settings.googleDriveFolder
+                }) }}
+            {% endif %}
+
+        {% endnamespace %}
+
+    </div>
+
+{% endset %}

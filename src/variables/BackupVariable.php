@@ -50,8 +50,7 @@ class BackupVariable
 
         return $options;
     }
-
-
+    
     /**
      * @return \enupal\backup\models\Settings|null
      */
@@ -93,6 +92,42 @@ class BackupVariable
     public function getSecretKey()
     {
         return Backup::$app->backups->getRandomStr();
+    }
+
+    /**
+     * @return \Google_Client|null
+     * @throws \yii\base\Exception
+     */
+    public function createAccessClient()
+    {
+        return Backup::$app->settings->createAccessClient();
+    }
+
+    /**
+     * @return bool
+     * @throws \yii\base\Exception
+     */
+    public function hasAccessFile()
+    {
+        return Backup::$app->settings->hasAccessFile();
+    }
+
+    /**
+     * @return string
+     * @throws \yii\base\Exception
+     */
+    public function getGoogleDriveRedirectUrl()
+    {
+        return Backup::$app->settings->getGoogleDriveRedirectUrl();
+    }
+
+    /**
+     * @return array
+     * @throws \yii\base\Exception
+     */
+    public function getRootFolderOptions()
+    {
+        return Backup::$app->backups->getGoogleDriveRootFolders();
     }
 }
 

@@ -84,17 +84,16 @@ class CreateBackup extends BaseJob implements RetryableJobInterface
 
     /**
      * @param $error
-     *
-     * @return null
-     * @throws \Exception
+     * @return bool
      * @throws \Throwable
+     * @throws \craft\web\twig\TemplateLoaderException
      * @throws \yii\base\Exception
      * @throws \yii\db\Exception
      */
     private function updateBackupToError($error)
     {
         if (!$this->_backup) {
-            return null;
+            return false;
         }
 
         $settings = Backup::$app->settings->getSettings();
@@ -109,5 +108,7 @@ class CreateBackup extends BaseJob implements RetryableJobInterface
         if ($settings->enableNotification) {
             Backup::$app->backups->sendNotification($this->_backup);
         }
+
+        return true;
     }
 }

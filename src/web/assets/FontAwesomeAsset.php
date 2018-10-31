@@ -23,7 +23,7 @@ class FontAwesomeAsset extends AssetBundle
         // when this asset bundle is registered
 
         $this->css = [
-            'css/font/css/font-awesome.min.css'
+            'css/font-awesome/css/all.min.css'
         ];
 
         parent::init();

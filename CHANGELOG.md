@@ -1,5 +1,12 @@
 # Enupal Backup Changelog
 
+## 1.2.0 - 2018.10.30
+### Added
+- Added support to Google Drive
+
+### Improved
+- Improved sync error messages on view backup page
+
 ## 1.1.12 - 2018.10.23
 ### Added
 - Added compress with bzip2 setting to database

@@ -22,6 +22,7 @@ use enupal\backup\jobs\CreateBackup;
 use enupal\backup\contracts\BackupConfig;
 use enupal\backup\contracts\DatabaseBackup;
 use enupal\backup\contracts\DirectoryBackup;
+use Google_Service_Drive_DriveFile;
 
 use craft\helpers\FileHelper;
 use craft\errors\ShellCommandException;
@@ -29,8 +30,6 @@ use craft\volumes\Local;
 use craft\helpers\App as CraftApp;
 use mikehaertl\shellcommand\Command as ShellCommand;
 use yii\base\Exception;
-use craft\models\MailSettings;
-use craft\helpers\MailerHelper;
 
 class Backups extends Component
 {
@@ -73,21 +72,44 @@ class Backups extends Component
      */
     public function executeEnupalBackup()
     {
-        $success = false;
+        $success = true;
         $response = [
             'success' => $success,
             'message' => 'queued'
         ];
 
-        $queue = Craft::$app->getQueue();
-
         // Add our CreateBackup job to the queue
-        $queue->push(new CreateBackup());
+        Craft::$app->queue->push(new CreateBackup());
 
-        // Let's try to call queue/run in background
-        $queue = Craft::$app->getQueue();
-        // Run the queue
-        $queue->run();
+        // if is Linux try to call queue/run in background
+        if (!Backup::$app->settings->isWindows()) {
+            // listen by console
+            $shellCommand = new ShellCommand();
+            $craftPath = CRAFT_BASE_PATH;
+            $phpPath = Backup::$app->backups->getPhpPath();
+            $command = 'cd'.
+                ' '.$craftPath;
+            $command .= ' && '.$phpPath.
+                ' craft'.
+                ' queue/run';
+            // linux
+            $command .= ' > /dev/null 2&1 &';
+            // windows does not work
+            //$command .= ' 1>> NUL 2>&1';
+            $shellCommand->setCommand($command);
+
+            // We have better error messages with exec
+            if (function_exists('exec')) {
+                $shellCommand->useExec = true;
+            }
+
+            $success = $shellCommand->execute();
+
+            $response = [
+                'success' => $success,
+                'message' => 'running'
+            ];
+        }
 
         return $response;
     }
@@ -202,8 +224,6 @@ class Backups extends Component
      *
      * @return boolean
      * @throws Exception
-     * @throws ShellCommandException in case of failure
-     * @throws \Exception
      * @throws \Throwable
      * @throws \yii\db\Exception
      */
@@ -403,49 +423,10 @@ class Backups extends Component
             $backup->aws = $settings->enableAmazon;
             $backup->ftp = $settings->enableFtp;
             $backup->softlayer = $settings->enableSos;
+            $backup->googleDrive = $settings->enableGoogleDrive;
 
             if (isset($backupLog['timestamp'])) {
                 $backup->time = $backupLog['timestamp'];
-            }
-
-            // Try to figure out if any sync fails
-            if (isset($backupLog['errors']) && $backupLog['errors']) {
-                foreach ($backupLog['errors'] as $error) {
-                    if (isset($error['msg'])) {
-                        // Dropbox
-                        if (strpos(strtolower($error['msg']), 'dropbox') !== false) {
-                            $backup->dropbox = false;
-                        }
-                    }
-
-                    if (isset($error['file'])) {
-                        // Dropbox
-                        if (strpos(strtolower($error['file']), 'dropbox') !== false) {
-                            $backup->dropbox = false;
-                        }
-                    }
-
-                    if (isset($error['message'])) {
-                        // Amazon
-                        if (strpos(strtolower($error['message']), 'amazon') !== false) {
-                            $backup->aws = false;
-                        }
-                    }
-
-                    if (isset($error['file'])) {
-                        // FTP
-                        if (strpos(strtolower($error['file']), 'ftp') !== false) {
-                            $backup->ftp = false;
-                        }
-                    }
-
-                    if (isset($error['file'])) {
-                        // SOFTLAYER
-                        if (strpos(strtolower($error['file']), 'softlayer') !== false) {
-                            $backup->softlayer = false;
-                        }
-                    }
-                }
             }
 
             return $this->saveBackup($backup);
@@ -461,7 +442,6 @@ class Backups extends Component
      * @param BackupElement $backup
      * @return bool
      * @throws Exception
-     * @throws \craft\web\twig\TemplateLoaderException
      */
     public function sendNotification(BackupElement $backup)
     {
@@ -788,7 +768,7 @@ class Backups extends Component
     /**
      * @param $config BackupConfig
      * @param $settings
-     * @param $templateName
+     * @param $webFolderName
      * @param $syncs
      * @param $encrypt
      * @throws Exception
@@ -973,8 +953,8 @@ class Backups extends Component
 
     /**
      * @param $backupId
-     *
      * @return array
+     * @throws Exception
      */
     private function getSyncs($backupId)
     {
@@ -992,6 +972,25 @@ class Backups extends Component
 
             $syncs[] = $dropbox;
         }
+
+        // Google Drive
+        if ($settings->enableGoogleDrive && Backup::$app->settings->hasAccessFile()) {
+
+            $parentId = $this->getGoogleDriveParentFolderId($settings, $backupId);
+            $secretFile = Backup::$app->settings->getSecretGoolgeDriveFile();
+
+            $googleDrive = [
+                'type' => 'googledrive',
+                'options' => [
+                    'secret' => $secretFile,
+                    'access' => $this->getGoogleDriveAccessPath(),
+                    'parentId' => $parentId
+                ]
+            ];
+
+            $syncs[] = $googleDrive;
+        }
+
         // AMAZON S3
         if ($settings->enableAmazon) {
             $amazon = [
@@ -1041,6 +1040,62 @@ class Backups extends Component
         }
 
         return $syncs;
+    }
+
+    /**
+     * Create a sub folder in google drive with the $backupId name
+     *
+     * @param $settings
+     * @param $backupId
+     * @return mixed
+     * @throws Exception
+     */
+    public function getGoogleDriveParentFolderId($settings, $backupId)
+    {
+        $driveService = Backup::$app->settings->getGoogleDriveService();
+
+        $parent = $settings->googleDriveFolder ?? 'root';
+
+        if ($parent) {
+            $metadata = [
+                'name' => $backupId,
+                'mimeType' => 'application/vnd.google-apps.folder',
+                'parents' => array($parent)
+            ];
+
+            $fileMetadata = new Google_Service_Drive_DriveFile($metadata);
+
+            $file = $driveService->files->create($fileMetadata, [
+                'fields' => 'id']);
+
+            $parent = $file->id;
+        }
+
+        return $parent;
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function getGoogleDriveRootFolders()
+    {
+        $options = ['' => Backup::t('Select a folder')];
+        $driveService = Backup::$app->settings->getGoogleDriveService();
+
+        $optParams = array(
+            'fields' => 'nextPageToken, files(id, name)',
+            'q' => $parameters['q'] = "mimeType='application/vnd.google-apps.folder' and 'root' in parents and trashed=false"
+        );
+
+        $results = $driveService->files->listFiles($optParams);
+        $foldersTargets = $results->getFiles();
+
+        foreach ($foldersTargets as $foldersTarget) {
+            $options[$foldersTarget->getId()] = $foldersTarget->getName();
+        }
+
+        return $options;
     }
 
     /**
@@ -1115,6 +1170,24 @@ class Backups extends Component
     public function getBasePath()
     {
         return Craft::$app->getPath()->getStoragePath().DIRECTORY_SEPARATOR.'enupalbackup'.DIRECTORY_SEPARATOR;
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function getGoogleDriveAccessPath()
+    {
+        return $this->getBasePath().'googledriveaccess.json';
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function getGoogleDriveSecretPath()
+    {
+        return $this->getBasePath().'googledrivesecret.json';
     }
 
     /**
