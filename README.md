@@ -13,6 +13,7 @@ Fully integrated Backup solution for Craft CMS
 
 * Amazon S3
 * Dropbox
+* Google Drive
 * Softlayer Object Storage
 * FTP/SFTP.
 
