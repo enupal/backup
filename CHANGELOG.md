@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.2.1 - 2018.11.06
+### Improved
+- Improved Enupal Backup process
+
 ## 1.2.0 - 2018.10.30
 ### Added
 - Added support to Google Drive

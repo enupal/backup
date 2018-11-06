@@ -75,35 +75,16 @@ class Backups extends Component
         $success = true;
         $response = [
             'success' => $success,
-            'message' => 'queued'
+            'message' => 'running'
         ];
 
         // Add our CreateBackup job to the queue
         Craft::$app->queue->push(new CreateBackup());
 
-        // if is Linux try to call queue/run in background
-        if (!Backup::$app->settings->isWindows()) {
-            // listen by console
-            $shellCommand = new ShellCommand();
-            $craftPath = CRAFT_BASE_PATH;
-            $phpPath = Backup::$app->backups->getPhpPath();
-            $command = 'cd'.
-                ' '.$craftPath;
-            $command .= ' && '.$phpPath.
-                ' craft'.
-                ' queue/run';
-            // linux
-            $command .= ' > /dev/null 2&1 &';
-            // windows does not work
-            //$command .= ' 1>> NUL 2>&1';
-            $shellCommand->setCommand($command);
+        // Let's run the queue if is a webhook call
+        if (Craft::$app->getRequest()->getIsSiteRequest()) {
 
-            // We have better error messages with exec
-            if (function_exists('exec')) {
-                $shellCommand->useExec = true;
-            }
-
-            $success = $shellCommand->execute();
+            Craft::$app->queue->run();
 
             $response = [
                 'success' => $success,
@@ -257,6 +238,14 @@ class Backups extends Component
         $command .= ' --debug';
 
         $shellCommand->setCommand($command);
+
+        if (!Backup::$app->settings->isWindows()) {
+            // linux
+            $command .= ' > /dev/null 2&1 &';
+            // windows does not work
+            //$command .= ' 1>> NUL 2>&1';
+            $shellCommand->setCommand($command);
+        }
 
         // We have better error messages with exec
         if (function_exists('exec')) {
