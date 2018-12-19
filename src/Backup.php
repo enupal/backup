@@ -73,6 +73,10 @@ class Backup extends Plugin
                 $variable->set('enupalbackup', BackupVariable::class);
             }
         );
+
+        if (Craft::$app->getRequest()->getIsCpRequest()){
+            self::$app->backups->processPendingBackups();
+        }
     }
 
     /**

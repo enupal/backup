@@ -15,6 +15,7 @@ use yii\base\Component;
 use craft\volumes\Local;
 use Google_Client;
 use Google_Service_Drive;
+use enupal\backup\models\Settings as SettingsModel;
 use enupal\backup\Backup;
 
 class Settings extends Component
@@ -53,9 +54,17 @@ class Settings extends Component
      */
     public function getSettings()
     {
-        $backupPlugin = $this->getPlugin();
+        $pluginSettings =  (new Query())
+            ->select(['settings'])
+            ->from(['{{%plugins}}'])
+            ->where(['handle' => 'enupal-backup'])
+            ->one();
 
-        return $backupPlugin->getSettings();
+        $settings = new SettingsModel();
+
+        $settings->setAttributes(json_decode($pluginSettings['settings'], true), false);
+
+        return $settings;
     }
 
     /**
