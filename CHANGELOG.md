@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.2.2 - 2018.12.18
+### Added
+- Added the `Backup::$app->backups->processPendingBackups()` method. Called on Webhook calls and control panel requests
+
 ## 1.2.1 - 2018.11.06
 ### Improved
 - Improved Enupal Backup process

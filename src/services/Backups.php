@@ -12,6 +12,7 @@ use Craft;
 use craft\db\Query;
 use craft\mail\Message;
 use enupal\backup\events\NotificationEvent;
+use enupal\backup\jobs\ProcessPendingBackups;
 use yii\base\Component;
 use enupal\backup\Backup;
 use enupal\backup\elements\Backup as BackupElement;
@@ -424,6 +425,19 @@ class Backups extends Component
         return false;
     }
 
+    /**
+     * Trigger the pending backups Job
+     */
+    public function processPendingBackups()
+    {
+        $checkPendingBackups = new ProcessPendingBackups();
+        $pendingBackups = Backup::$app->backups->getPendingBackups();
+
+        if ($pendingBackups){
+            $checkPendingBackups->pendingBackups = $pendingBackups;
+            Craft::$app->queue->push($checkPendingBackups);
+        }
+    }
 
     /**
      * Enupal Backup send notification service
@@ -604,12 +618,10 @@ class Backups extends Component
 
             $configFiles[] = ["key" => "composerFile", "path" => $tempConfigFolder];
         }
-        // Adding the assets
+
         $configFileNames = [];
         foreach ($configFiles as $key => $configFile) {
-            // Check if the path exists
             if (is_dir($configFile['path']) || is_file($configFile['path'])) {
-                // So we need store assets files as json could be more than one
                 $configName = 'config-'.$configFile['key'].'-'.$backup->backupId.$this->getCompressType();
                 $configFileName = $configName;
 
@@ -856,8 +868,6 @@ class Backups extends Component
 
     /**
      * Performs a review to check the backups amount allowed
-     *
-     * @todo should we move this to a job?
      */
     public function checkBackupsAmount()
     {

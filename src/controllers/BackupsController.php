@@ -209,7 +209,6 @@ class BackupsController extends BaseController
 
         if ($backup->backupStatusId == BackupStatus::RUNNING) {
             Backup::$app->backups->updateBackupOnComplete($backup);
-            Backup::$app->backups->checkBackupsAmount();
         }
 
         if (!is_file($backup->getDatabaseFile())) {

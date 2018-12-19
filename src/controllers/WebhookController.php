@@ -27,30 +27,16 @@ class WebhookController extends BaseController
      *
      * @return mixed
      * @throws \Throwable
-     * @throws \craft\web\twig\TemplateLoaderException
      */
     public function actionFinished()
     {
         $backupId = Craft::$app->request->getParam('backupId');
         $backup = Backup::$app->backups->getBackupByBackupId($backupId);
-        $settings = Backup::$app->settings->getSettings();
         Backup::info("Request to finish backup: ".$backupId);
 
         if ($backup) {
             // we could check just this backup but let's check all pending backups
-            $pendingBackups = Backup::$app->backups->getPendingBackups();
-
-            foreach ($pendingBackups as $key => $backup) {
-                $result = Backup::$app->backups->updateBackupOnComplete($backup);
-                // let's send a notification
-                if ($result && $settings->enableNotification) {
-                    Backup::$app->backups->sendNotification($backup);
-                }
-
-                Backup::info("EnupalBackup: ".$backup->backupId." Status:".$backup->backupStatusId." (webhook)");
-            }
-
-            Backup::$app->backups->checkBackupsAmount();
+            Backup::$app->backups->processPendingBackups();
             Backup::$app->backups->deleteConfigFile();
         } else {
             Backup::error("Unable to finish the webhook backup with id: ".$backupId);
@@ -59,11 +45,11 @@ class WebhookController extends BaseController
         return $this->asJson(['success' => true]);
     }
 
-
     /**
      * WebHook to listen when a cronjob call EnupalBackup process
      *
      * @return \yii\web\Response
+     * @throws \Throwable
      */
     public function actionSchedule()
     {
@@ -75,6 +61,7 @@ class WebhookController extends BaseController
 
         if ($settings->enableWebhook) {
             if ($key == $settings->webhookSecretKey && $settings->webhookSecretKey) {
+                Backup::$app->backups->processPendingBackups();
                 $response = Backup::$app->backups->executeEnupalBackup();
             } else {
                 Backup::error("Wrong webhook key: ".$key);
