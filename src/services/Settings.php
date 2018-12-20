@@ -54,17 +54,9 @@ class Settings extends Component
      */
     public function getSettings()
     {
-        $pluginSettings =  (new Query())
-            ->select(['settings'])
-            ->from(['{{%plugins}}'])
-            ->where(['handle' => 'enupal-backup'])
-            ->one();
+        $backupPlugin = $this->getPlugin();
 
-        $settings = new SettingsModel();
-
-        $settings->setAttributes(json_decode($pluginSettings['settings'], true), false);
-
-        return $settings;
+        return $backupPlugin->getSettings();
     }
 
     /**
