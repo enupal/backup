@@ -12,6 +12,7 @@
 {% set elementType = 'enupal\\backup\\elements\\Backup' %}
 {% do view.registerAssetBundle("enupal\\backup\\web\\assets\\FontAwesomeAsset") %}
 {% block actionButton %}
+    {{ craft.enupalbackup.processPendingBackups() }}
     <div class="buttons">
         <form id="run-backup" method="post">
             {{ csrfInput() }}

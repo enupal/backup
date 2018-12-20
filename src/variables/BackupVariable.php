@@ -129,5 +129,13 @@ class BackupVariable
     {
         return Backup::$app->backups->getGoogleDriveRootFolders();
     }
+
+    /**
+     * Process pending backups
+     */
+    public function processPendingBackups()
+    {
+        Backup::$app->backups->processPendingBackups();
+    }
 }
 
