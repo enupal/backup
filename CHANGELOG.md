@@ -1,5 +1,10 @@
 # Enupal Backup Changelog
 
+## 1.2.3 - 2018.12.20
+### Fixed
+- Fixed error when installing or updating the plugin
+
+
 ## 1.2.2 - 2018.12.18
 ### Added
 - Added the `Backup::$app->backups->processPendingBackups()` method. Called on Webhook calls and control panel requests
