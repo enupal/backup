@@ -262,10 +262,6 @@ class Backups extends Component
         return $success;
     }
 
-    /**
-     * @throws Exception
-     * @throws \yii\db\Exception
-     */
     public function installDefaultValues()
     {
         $model = new SettingsModel();
@@ -281,15 +277,7 @@ class Backups extends Component
 
         $settings['primarySiteUrl'] = $primarySiteUrl;
 
-        $settings = json_encode($settings);
-
-        Craft::$app->getDb()->createCommand()->update('{{%plugins}}', [
-            'settings' => $settings
-        ],
-            [
-                'handle' => 'enupal-backup'
-            ]
-        )->execute();
+        Craft::$app->getPlugins()->savePluginSettings(Backup::getInstance(), $settings);
     }
 
     /**
