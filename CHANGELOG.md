@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.2.5 - 2019.01.22
+### Fixed
+- Fixed installation error on Craft 3.1
+
 ## 1.2.4 - 2018.12.22
 ### Fixed
 - Fixed `Column not found: 1054 Unknown column 'settings'` error on Craft 3.1
