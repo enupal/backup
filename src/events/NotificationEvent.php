@@ -9,6 +9,7 @@
 namespace enupal\backup\events;
 
 
+use enupal\backup\elements\Backup;
 use yii\base\Event;
 use craft\mail\Message;
 
@@ -24,5 +25,10 @@ class NotificationEvent extends Event
      * @var Message
      */
     public $message;
+
+    /**
+     * @var Backup
+     */
+    public $backup;
 
 }
