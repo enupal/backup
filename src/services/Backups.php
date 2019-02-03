@@ -47,6 +47,7 @@ class Backups extends Component
      * use yii\base\Event;
      *
      * Event::on(Backups::class, Backups::EVENT_BEFORE_SEND_NOTIFICATION_EMAIL, function(NotificationEvent $e) {
+     *      $backup = $e->backup;
      *      $message = $e->message;
      *     // Do something
      * });
@@ -483,6 +484,7 @@ class Backups extends Component
 
         $event = new NotificationEvent([
             'message' => $message,
+            'backup' => $backup
         ]);
 
         $this->trigger(self::EVENT_BEFORE_SEND_NOTIFICATION_EMAIL, $event);
@@ -494,11 +496,11 @@ class Backups extends Component
             $result = false;
         }
 
-        if (!$result) {
+        if ($result) {
+            Craft::info('Notification email sent successfully', __METHOD__);
+        }else{
             Craft::error('Unable to send notification email', __METHOD__);
         }
-
-        Craft::info('Notification email sent successfully', __METHOD__);
 
         return $result;
     }
