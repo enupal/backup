@@ -32,7 +32,7 @@ class WebhookController extends BaseController
     {
         $backupId = Craft::$app->request->getParam('backupId');
         $backup = Backup::$app->backups->getBackupByBackupId($backupId);
-        Backup::info("Request to finish backup: ".$backupId);
+        Craft::info("Request to finish backup: ".$backupId, __METHOD__);
 
         if ($backup) {
             // we could check just this backup but let's check all pending backups

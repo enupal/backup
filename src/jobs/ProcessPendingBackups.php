@@ -12,6 +12,7 @@ use enupal\backup\Backup;
 use enupal\backup\elements\Backup as BackupElement;
 use craft\queue\BaseJob;
 
+use enupal\backup\enums\BackupStatus;
 use yii\queue\RetryableJobInterface;
 use Craft;
 
@@ -50,15 +51,17 @@ class ProcessPendingBackups extends BaseJob implements RetryableJobInterface
 
         try {
             foreach ($this->pendingBackups as $key => $backup) {
-                $result = Backup::$app->backups->updateBackupOnComplete($backup);
+                Backup::$app->backups->updateBackupOnComplete($backup);
 
-                if ($result && $settings->enableNotification) {
+                if (($backup->backupStatusId == BackupStatus::FINISHED ||
+                    $backup->backupStatusId == BackupStatus::ERROR) &&
+                    $settings->enableNotification) {
                     Backup::$app->backups->sendNotification($backup);
                 }
 
                 $this->setProgress($queue, $step / $totalSteps);
                 $step++;
-                Backup::info("Enupal Backup: ".$backup->backupId." Status:".$backup->backupStatusId);
+                Craft::info("Enupal Backup: ".$backup->backupId." Status:".$backup->backupStatusId, __METHOD__);
             }
 
             Backup::$app->backups->checkBackupsAmount();
