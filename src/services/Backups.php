@@ -340,7 +340,7 @@ class Backups extends Component
      */
     public function updateBackupOnComplete(BackupElement $backup)
     {
-        // If the log have infomartion the backup is finished
+        // If the log have information the backup is finished
         $logPath = $this->getLogPath($backup->backupId);
         $log = file_exists($logPath) ? file_get_contents($logPath) : null;
         $settings = Backup::$app->settings->getSettings();

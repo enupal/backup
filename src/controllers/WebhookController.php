@@ -61,8 +61,8 @@ class WebhookController extends BaseController
 
         if ($settings->enableWebhook) {
             if ($key == $settings->webhookSecretKey && $settings->webhookSecretKey) {
-                Backup::$app->backups->processPendingBackups();
                 $response = Backup::$app->backups->executeEnupalBackup();
+                Backup::$app->backups->processPendingBackups();
             } else {
                 Backup::error("Wrong webhook key: ".$key);
             }
