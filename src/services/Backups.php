@@ -119,7 +119,7 @@ class Backups extends Component
             $command .= ' && ' . $phpPath .
                 ' craft' .
                 ' queue/run';
-            $command .= ' &';
+            $command .= ' > /dev/null &';
             $shellCommand->setCommand($command);
 
             // We have better error messages with exec

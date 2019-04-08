@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.2.8 - 2019.04.08
+### Improved
+- Improved Enupal Backup process on linux servers
+
 ## 1.2.7 - 2019.04.07
 ### Improved
 - Improved Enupal Backup process
