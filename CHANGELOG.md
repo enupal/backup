@@ -1,8 +1,12 @@
 # Enupal Backup Changelog
 
+## 1.2.7 - 2019.04.07
+### Improved
+- Improved Enupal Backup process
+
 ## 1.2.6 - 2019.02.02
 ### Added
-- Added `$backup` to the Notification email element. [More info](https://enupal.com/craft-plugins/enupal-backup/docs/development/events)
+- Added `$backup` to the Notification email event. [More info](https://enupal.com/craft-plugins/enupal-backup/docs/development/events)
 
 ## 1.2.5 - 2019.01.22
 ### Fixed

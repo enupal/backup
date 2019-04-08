@@ -77,16 +77,23 @@ class Backups extends Component
         $success = true;
         $response = [
             'success' => $success,
-            'message' => 'running'
+            'message' => 'queued'
         ];
 
         // Add our CreateBackup job to the queue
         Craft::$app->queue->push(new CreateBackup());
 
-        // Let's run the queue if is a webhook call
-        if (Craft::$app->getRequest()->getIsSiteRequest()) {
-
-            Craft::$app->queue->run();
+        if (Backup::$app->settings->isWindows()) {
+            if (Craft::$app->getRequest()->isSiteRequest){
+                Craft::$app->getQueue()->run();
+                $response = [
+                    'success' => $success,
+                    'message' => 'running'
+                ];
+            }
+        }else{
+            // if is Linux try to call queue/run in background
+            $success = $this->runQueueInBackground();
 
             $response = [
                 'success' => $success,
@@ -95,6 +102,35 @@ class Backups extends Component
         }
 
         return $response;
+    }
+
+    /**
+     * @return bool
+     */
+    public function runQueueInBackground()
+    {
+        $success = false;
+        if (!Backup::$app->settings->isWindows()) {
+            $shellCommand = new ShellCommand();
+            $craftPath = CRAFT_BASE_PATH;
+            $phpPath = Backup::$app->backups->getPhpPath();
+            $command = 'cd' .
+                ' ' . $craftPath;
+            $command .= ' && ' . $phpPath .
+                ' craft' .
+                ' queue/run';
+            $command .= ' &';
+            $shellCommand->setCommand($command);
+
+            // We have better error messages with exec
+            if (function_exists('exec')) {
+                $shellCommand->useExec = true;
+            }
+
+            $success = $shellCommand->execute();
+        }
+
+        return $success;
     }
 
     /**
@@ -340,7 +376,7 @@ class Backups extends Component
      */
     public function updateBackupOnComplete(BackupElement $backup)
     {
-        // If the log have infomartion the backup is finished
+        // If the log have information the backup is finished
         $logPath = $this->getLogPath($backup->backupId);
         $log = file_exists($logPath) ? file_get_contents($logPath) : null;
         $settings = Backup::$app->settings->getSettings();
@@ -425,6 +461,7 @@ class Backups extends Component
         if ($pendingBackups){
             $checkPendingBackups->pendingBackups = $pendingBackups;
             Craft::$app->queue->push($checkPendingBackups);
+            $this->runQueueInBackground();
         }
     }
 
@@ -433,7 +470,9 @@ class Backups extends Component
      *
      * @param BackupElement $backup
      * @return bool
-     * @throws Exception
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      */
     public function sendNotification(BackupElement $backup)
     {
