@@ -119,11 +119,12 @@ class Backups extends Component
             $command .= ' && ' . $phpPath .
                 ' craft' .
                 ' queue/run';
-            $command .= ' > /dev/null &';
+            $command .= ' > /dev/null 2&1 &';
             $shellCommand->setCommand($command);
 
             // We have better error messages with exec
             if (function_exists('exec')) {
+                Craft::info('useExec is enabled on running the queue on background.', __METHOD__);
                 $shellCommand->useExec = true;
             }
 
@@ -287,6 +288,7 @@ class Backups extends Component
 
         // We have better error messages with exec
         if (function_exists('exec')) {
+            Craft::info('useExec is enabled on Enupal Backup process', __METHOD__);
             $shellCommand->useExec = true;
         }
 
@@ -671,7 +673,7 @@ class Backups extends Component
                 $config->addBackup($configFilesBackup);
                 $configFileNames[] = $configFileName;
             } else {
-                Backup::error('Skipped the config file: '.$configFile['path'].' because the path does not exists');
+                Craft::error('Skipped the config file: '.$configFile['path'].' because the path does not exists'. __METHOD__);
             }
         }
 
@@ -730,7 +732,7 @@ class Backups extends Component
                     $config->addBackup($assetBackup);
                     $assetFileNames[] = $assetFileName;
                 } else {
-                    Backup::error('Skipped the volume: '.$asset->id.' because the path does not exists');
+                    Craft::error('Skipped the volume: '.$asset->id.' because the path does not exists', __METHOD__);
                 }
             }
         }
@@ -856,7 +858,7 @@ class Backups extends Component
             unlink($file);
         } else {
             // File not found.
-            Backup::error(Backup::t('Unable to delete the config file'));
+            Craft::error(Backup::t('Unable to delete the config file'), __METHOD__);
         }
     }
 
@@ -880,7 +882,7 @@ class Backups extends Component
 
             if (!$success) {
                 $transaction->rollback();
-                Backup::error("Couldn’t delete Backup on deletebackup service.");
+                Craft::error("Couldn’t delete Backup on deletebackup service.", __METHOD__);
 
                 return false;
             }
@@ -920,9 +922,9 @@ class Backups extends Component
                         $response = Craft::$app->elements->deleteElementById($backup->id);
 
                         if ($response) {
-                            Backup::info('EnupalBackup has deleted the backup Id: '.$backup->backupId);
+                            Craft::info('EnupalBackup has deleted the backup Id: '.$backup->backupId, __METHOD__);
                         } else {
-                            Backup::error('EnupalBackup has failed to delete the backup Id: '.$backup->backupId);
+                            Craft::error('EnupalBackup has failed to delete the backup Id: '.$backup->backupId, __METHOD__);
                         }
                     }
                 }
@@ -930,7 +932,7 @@ class Backups extends Component
         } catch (\Throwable $e) {
             $error = 'Enupal Backup Could not execute the checkBackupsAmount function: '.$e->getMessage().' --Trace: '.json_encode($e->getTrace());
 
-            Backup::error($error);
+            Craft::error($error, __METHOD__);
             return false;
         }
 

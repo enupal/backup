@@ -311,7 +311,7 @@ class BackupsController extends BaseController
             try {
                 FileHelper::unlink($zipPath);
             } catch (\Exception $e) {
-                Backup::error("Unable to delete the file \"{$zipPath}\": ".$e->getMessage());
+                Craft::error("Unable to delete the file \"{$zipPath}\": ".$e->getMessage(), __METHOD__);
             }
         }
 

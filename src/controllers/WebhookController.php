@@ -39,7 +39,7 @@ class WebhookController extends BaseController
             Backup::$app->backups->processPendingBackups();
             Backup::$app->backups->deleteConfigFile();
         } else {
-            Backup::error("Unable to finish the webhook backup with id: ".$backupId);
+            Craft::error("Unable to finish the webhook backup with id: ".$backupId. __METHOD__);
         }
 
         return $this->asJson(['success' => true]);
@@ -64,10 +64,10 @@ class WebhookController extends BaseController
                 $response = Backup::$app->backups->executeEnupalBackup();
                 Backup::$app->backups->processPendingBackups();
             } else {
-                Backup::error("Wrong webhook key: ".$key);
+                Craft::error("Wrong webhook key: ".$key, __METHOD__);
             }
         } else {
-            Backup::error("Webhook is disabled");
+            Craft::error("Webhook is disabled", __METHOD__);
         }
 
         return $this->asJson($response);
