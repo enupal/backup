@@ -13,12 +13,12 @@ use craft\queue\BaseJob;
 use enupal\backup\elements\Backup as BackupElement;
 
 use enupal\backup\enums\BackupStatus;
-use yii\queue\RetryableJobInterface;
+use Craft;
 
 /**
  * CreateBackup job
  */
-class CreateBackup extends BaseJob implements RetryableJobInterface
+class CreateBackup extends BaseJob
 {
     /**
      * @var BackupElement|null
@@ -63,30 +63,14 @@ class CreateBackup extends BaseJob implements RetryableJobInterface
         return true;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getTtr()
-    {
-        $settings = Backup::$app->settings->getSettings();
-        $maxExecutionTime = $settings->maxExecutionTime ?? 3600;
-
-        return $maxExecutionTime;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function canRetry($attempt, $error)
-    {
-        return ($attempt < 5) && ($error instanceof \Exception);
-    }
 
     /**
      * @param $error
      * @return bool
      * @throws \Throwable
-     * @throws \craft\web\twig\TemplateLoaderException
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      * @throws \yii\base\Exception
      * @throws \yii\db\Exception
      */
@@ -103,7 +87,7 @@ class CreateBackup extends BaseJob implements RetryableJobInterface
         Backup::$app->backups->saveBackup($this->_backup);
         Backup::$app->backups->checkBackupsAmount();
 
-        Backup::error($error);
+        Craft::error($error, __METHOD__);
 
         if ($settings->enableNotification) {
             Backup::$app->backups->sendNotification($this->_backup);

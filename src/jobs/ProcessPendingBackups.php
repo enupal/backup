@@ -19,7 +19,7 @@ use Craft;
 /**
  * ProcessPendingBackups job
  */
-class ProcessPendingBackups extends BaseJob implements RetryableJobInterface
+class ProcessPendingBackups extends BaseJob
 {
     /**
      * Backups to check if they are finished
@@ -66,28 +66,9 @@ class ProcessPendingBackups extends BaseJob implements RetryableJobInterface
 
             Backup::$app->backups->checkBackupsAmount();
         } catch (\Exception $e) {
-            Craft::$app->getErrorHandler()->logException($e);
+            Craft::error('Error on pending backups: '.$e->getMessage());
         }
 
         return true;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getTtr()
-    {
-        $settings = Backup::$app->settings->getSettings();
-        $maxExecutionTime = $settings->maxExecutionTime ?? 3600;
-
-        return $maxExecutionTime;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function canRetry($attempt, $error)
-    {
-        return ($attempt < 5) && ($error instanceof \Exception);
     }
 }
