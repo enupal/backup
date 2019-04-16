@@ -288,7 +288,7 @@ class Backups extends Component
 
         // We have better error messages with exec
         if (function_exists('exec')) {
-            Craft::info('useExec is enabled on Enupal Backup process', __METHOD__);
+            Craft::info('useExec is enabled on Enupal Backup process command: '.$command, __METHOD__);
             $shellCommand->useExec = true;
         }
 
