@@ -124,7 +124,7 @@ class Backups extends Component
 
             // We have better error messages with exec
             if (function_exists('exec')) {
-                Craft::info('useExec is enabled on running the queue on background.', __METHOD__);
+                Craft::info('useExec is enabled on running the queue on background: '.$command, __METHOD__);
                 $shellCommand->useExec = true;
             }
 
