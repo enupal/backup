@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.2.12 - 2019.05.04
+### Added
+- Added Port to FTP settings
+
 ## 1.2.11 - 2019.04.16
 ### Improved
 - Improved Enupal Backup log messages
