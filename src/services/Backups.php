@@ -1050,6 +1050,10 @@ class Backups extends Component
                 ]
             ];
 
+            if ($settings->ftpPort){
+                $ftp['options']['port'] = $settings->ftpPort;
+            }
+
             $syncs[] = $ftp;
         }
 
