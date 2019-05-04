@@ -75,6 +75,19 @@
             }) }}
 
             {{ forms.textField({
+                label: "Port"|t('enupal-backup'),
+                id: 'ftpPort',
+                name: 'ftpPort',
+                instructions: "The port you want do connect to."|t('enupal-backup'),
+                placeholder: "Default 22",
+                value: settings.ftpPort,
+                required: false,
+                autofocus: true,
+                first: true,
+                errors: ''
+            }) }}
+
+            {{ forms.textField({
                 label: "Password"|t('enupal-backup'),
                 id: 'ftpPassword',
                 name: 'ftpPassword',

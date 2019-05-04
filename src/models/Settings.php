@@ -211,6 +211,11 @@ class Settings extends Model
     /**
      * @var string
      */
+    public $ftpPort;
+
+    /**
+     * @var string
+     */
     public $ftpPath = 'enupalbackup/';
 
     // Softlayer Object Storage

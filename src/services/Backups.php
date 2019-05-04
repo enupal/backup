@@ -124,7 +124,7 @@ class Backups extends Component
 
             // We have better error messages with exec
             if (function_exists('exec')) {
-                Craft::info('useExec is enabled on running the queue on background.', __METHOD__);
+                Craft::info('useExec is enabled on running the queue on background: '.$command, __METHOD__);
                 $shellCommand->useExec = true;
             }
 
@@ -288,7 +288,7 @@ class Backups extends Component
 
         // We have better error messages with exec
         if (function_exists('exec')) {
-            Craft::info('useExec is enabled on Enupal Backup process', __METHOD__);
+            Craft::info('useExec is enabled on Enupal Backup process command: '.$command, __METHOD__);
             $shellCommand->useExec = true;
         }
 
@@ -1049,6 +1049,10 @@ class Backups extends Component
                     'path' => trim($settings->ftpPath.'/'.$backupId)
                 ]
             ];
+
+            if ($settings->ftpPort){
+                $ftp['options']['port'] = $settings->ftpPort;
+            }
 
             $syncs[] = $ftp;
         }
