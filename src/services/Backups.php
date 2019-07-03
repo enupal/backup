@@ -294,6 +294,8 @@ class Backups extends Component
 
         $success = $shellCommand->execute();
 
+        Craft::info('Enupal Backup Command result: '.$shellCommand->getOutput(), __METHOD__);
+
         if (!$success) {
             throw ShellCommandException::createFromCommand($shellCommand);
         }

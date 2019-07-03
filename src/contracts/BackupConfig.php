@@ -48,6 +48,11 @@ class BackupConfig
             $webhookUrl = $settings->primarySiteUrl.'/'.$baseUrl;
         }
 
+        $requestMethod = 'file_get_contents';
+        if ($settings->useCurl){
+            $requestMethod = 'curl';
+        }
+
         $this->config = [
             'verbose' => true,
             'logging' => [
@@ -58,7 +63,8 @@ class BackupConfig
                 [
                     'type' => 'webhook',
                     'options' => [
-                        'uri' => $webhookUrl
+                        'uri' => $webhookUrl,
+                        'requestMethod' => $requestMethod
                     ]
                 ]
             ],
