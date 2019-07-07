@@ -50,31 +50,31 @@
                 required: true,
             }) }}
 
-            {{ forms.textField({
+            {{ forms.autosuggestField({
                 label: "Host"|t('enupal-backup'),
                 id: 'ftpHost',
                 name: 'ftpHost',
                 instructions: "The host you want do copy your backups to."|t('enupal-backup'),
                 value: settings.ftpHost,
                 required: true,
-                autofocus: true,
-                first: true,
-                errors: ''
+                class: 'ltr',
+                suggestEnvVars: true,
+                errors: settings.getErrors('ftpHost')
             }) }}
 
-            {{ forms.textField({
+            {{ forms.autosuggestField({
                 label: "User"|t('enupal-backup'),
                 id: 'ftpUser',
                 name: 'ftpUser',
                 instructions: "The user you want to connect with."|t('enupal-backup'),
                 value: settings.ftpUser,
                 required: true,
-                autofocus: true,
-                first: true,
-                errors: ''
+                class: 'ltr',
+                suggestEnvVars: true,
+                errors: settings.getErrors('ftpUser')
             }) }}
 
-            {{ forms.textField({
+            {{ forms.autosuggestField({
                 label: "Port"|t('enupal-backup'),
                 id: 'ftpPort',
                 name: 'ftpPort',
@@ -82,33 +82,32 @@
                 placeholder: "Default 22",
                 value: settings.ftpPort,
                 required: false,
-                autofocus: true,
-                first: true,
-                errors: ''
+                class: 'ltr',
+                suggestEnvVars: true,
+                errors: settings.getErrors('ftpPort')
             }) }}
 
-            {{ forms.textField({
+            {{ forms.autosuggestField({
                 label: "Password"|t('enupal-backup'),
                 id: 'ftpPassword',
                 name: 'ftpPassword',
                 instructions: "The password to authenticate the user."|t('enupal-backup'),
                 value: settings.ftpPassword,
-                type: "password",
                 required: true,
-                autofocus: true,
-                first: true,
-                errors: ''
+                class: 'ltr',
+                suggestEnvVars: true,
+                errors: settings.getErrors('ftpPassword')
             }) }}
 
-            {{ forms.textField({
+            {{ forms.autosuggestField({
                 label: "Path"|t('enupal-backup'),
                 id: 'ftpPath',
                 name: 'ftpPath',
                 instructions: "The remote path where to copy the backup."|t('enupal-backup'),
                 value: settings.ftpPath,
-                autofocus: true,
-                first: true,
-                errors: ''
+                class: 'ltr',
+                suggestEnvVars: true,
+                errors: settings.getErrors('ftpPath')
             }) }}
 
         {% endnamespace %}

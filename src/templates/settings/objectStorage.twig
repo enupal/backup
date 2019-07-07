@@ -39,65 +39,64 @@
 				errors: settings.getErrors('enableSos'),
 			}) }}
 
-			{{ forms.textField({
+			{{ forms.autosuggestField({
 				label: "User"|t('enupal-backup'),
 				id: 'sosUser',
 				name: 'sosUser',
 				instructions: "The user you want to connect with."|t('enupal-backup'),
 				value: settings.sosUser,
 				required: true,
-				autofocus: true,
-				first: true,
-				errors: ''
+				class: 'ltr',
+				suggestEnvVars: true,
+				errors: settings.getErrors('sosUser')
 			}) }}
 
-			{{ forms.textField({
+			{{ forms.autosuggestField({
 				label: "Secret"|t('enupal-backup'),
 				id: 'sosSecret',
 				name: 'sosSecret',
 				instructions: "The api key to authenticate the user."|t('enupal-backup'),
 				value: settings.sosSecret,
 				required: true,
-				type: "password",
-				autofocus: true,
-				first: true,
-				errors: ''
+				class: 'ltr',
+				suggestEnvVars: true,
+				errors: settings.getErrors('sosSecret')
 			}) }}
 
-			{{ forms.textField({
+			{{ forms.autosuggestField({
 				label: "Host"|t('enupal-backup'),
 				id: 'sosHost',
 				name: 'sosHost',
 				instructions: "The host you want do copy your backups to."|t('enupal-backup'),
 				value: settings.sosHost,
 				required: true,
-				autofocus: true,
-				first: true,
-				errors: ''
+				class: 'ltr',
+				suggestEnvVars: true,
+				errors: settings.getErrors('sosHost')
 			}) }}
 
-			{{ forms.textField({
+			{{ forms.autosuggestField({
 				label: "Container"|t('enupal-backup'),
 				id: 'sosContainer',
 				name: 'sosContainer',
 				instructions: "The Object Storage Container where to put the backup."|t('enupal-backup'),
 				value: settings.sosContainer,
 				required: true,
-				autofocus: true,
-				first: true,
-				errors: ''
+				class: 'ltr',
+				suggestEnvVars: true,
+				errors: settings.getErrors('sosContainer')
 			}) }}
 
-			{{ forms.textField({
+			{{ forms.autosuggestField({
 				label: "Path"|t('enupal-backup'),
 				id: 'sosPath',
 				name: 'sosPath',
 				instructions: "The remote path where to copy the backup."|t('enupal-backup'),
 				value: settings.sosPath,
 				required: true,
-				autofocus: true,
-				first: true,
-				errors: ''
+				class: 'ltr',
+				suggestEnvVars: true,
+				errors: settings.getErrors('sosPath')
 			}) }}
 
 		{% endnamespace %}

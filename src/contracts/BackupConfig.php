@@ -42,9 +42,9 @@ class BackupConfig
         $baseUrl = 'enupal-backup/finished?backupId='.$backup->backupId;
 
         $webhookUrl = UrlHelper::siteUrl($baseUrl);
+        $settings = Backup::$app->settings->getSettings();
 
         if (Craft::$app->getRequest()->isConsoleRequest){
-            $settings = Backup::$app->settings->getSettings();
             $webhookUrl = $settings->primarySiteUrl.'/'.$baseUrl;
         }
 

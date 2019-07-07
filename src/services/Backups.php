@@ -999,8 +999,8 @@ class Backups extends Component
             $dropbox = [
                 'type' => 'dropbox',
                 'options' => [
-                    'token' => $settings->dropboxToken,
-                    'path' => trim($settings->dropboxPath.$backupId)
+                    'token' => trim(Craft::parseEnv($settings->dropboxToken)),
+                    'path' => trim(trim(Craft::parseEnv($settings->dropboxPath)).$backupId)
                 ]
             ];
 
@@ -1030,11 +1030,11 @@ class Backups extends Component
             $amazon = [
                 'type' => 'amazons3',
                 'options' => [
-                    'key' => $settings->amazonKey,
-                    'secret' => $settings->amazonSecret,
-                    'bucket' => $settings->amazonBucket,
-                    'region' => $settings->amazonRegion,
-                    'path' => trim($settings->amazonPath.$backupId),
+                    'key' => trim(Craft::parseEnv($settings->amazonKey)),
+                    'secret' => trim(Craft::parseEnv($settings->amazonSecret)),
+                    'bucket' => trim(Craft::parseEnv($settings->amazonBucket)),
+                    'region' => trim(Craft::parseEnv($settings->amazonRegion)),
+                    'path' => trim(trim(Craft::parseEnv($settings->amazonPath)).$backupId),
                     'useMultiPartUpload' => $settings->amazonUseMultiPartUpload
                 ]
             ];
@@ -1047,15 +1047,15 @@ class Backups extends Component
             $ftp = [
                 'type' => $settings->ftpType,
                 'options' => [
-                    'host' => $settings->ftpHost,
-                    'user' => $settings->ftpUser,
-                    'password' => $settings->ftpPassword,
-                    'path' => trim($settings->ftpPath.'/'.$backupId)
+                    'host' => trim(Craft::parseEnv($settings->ftpHost)),
+                    'user' => trim(Craft::parseEnv($settings->ftpUser)),
+                    'password' => trim(Craft::parseEnv($settings->ftpPassword)),
+                    'path' => trim(trim(Craft::parseEnv($settings->ftpPath)).'/'.$backupId)
                 ]
             ];
 
             if ($settings->ftpPort){
-                $ftp['options']['port'] = $settings->ftpPort;
+                $ftp['options']['port'] = trim(Craft::parseEnv($settings->ftpPort));
             }
 
             $syncs[] = $ftp;
@@ -1066,11 +1066,11 @@ class Backups extends Component
             $softlayer = [
                 'type' => 'softlayer',
                 'options' => [
-                    'host' => $settings->sosHost,
-                    'user' => $settings->sosUser,
-                    'secret' => $settings->sosSecret,
-                    'container' => $settings->sosContainer,
-                    'path' => trim($settings->sosPath.'/'.$backupId)
+                    'host' => trim(Craft::parseEnv($settings->sosHost)),
+                    'user' => trim(Craft::parseEnv($settings->sosUser)),
+                    'secret' => trim(Craft::parseEnv($settings->sosSecret)),
+                    'container' => trim(Craft::parseEnv($settings->sosContainer)),
+                    'path' => trim(trim(Craft::parseEnv($settings->sosPath)).'/'.$backupId)
                 ]
             ];
 
