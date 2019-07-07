@@ -265,6 +265,8 @@ class Backups extends Component
             throw new Exception("Could not create the Enupal Backup: the config file doesn't exist: ".$configFile);
         }
 
+        $consoleLogPath = Backup::$app->backups->getConsoleLogPath($backup->backupId);
+
         // Create the shell command
         $shellCommand = new ShellCommand();
         $command = 'cd'.
@@ -280,7 +282,7 @@ class Backups extends Component
 
         if (!Backup::$app->settings->isWindows()) {
             // linux
-            $command .= ' > /dev/null 2&1 &';
+            $command .= ' > '.$consoleLogPath.' 2&1 &';
             // windows does not work
             //$command .= ' 1>> NUL 2>&1';
             $shellCommand->setCommand($command);
@@ -1298,16 +1300,29 @@ class Backups extends Component
         return $this->getBasePath().'plugins'.DIRECTORY_SEPARATOR;
     }
 
+
     /**
      * @param $backupId
-     *
      * @return string
+     * @throws Exception
      */
     public function getLogPath($backupId)
     {
         $base = Craft::$app->getPath()->getLogPath().DIRECTORY_SEPARATOR.'enupalbackup'.DIRECTORY_SEPARATOR;
 
         return $base.$backupId.'.log';
+    }
+
+    /**
+     * @param $backupId
+     * @return string
+     * @throws Exception
+     */
+    public function getConsoleLogPath($backupId)
+    {
+        $base = Craft::$app->getPath()->getLogPath().DIRECTORY_SEPARATOR.'enupalbackup'.DIRECTORY_SEPARATOR;
+
+        return $base.'console-'.$backupId.'.log';
     }
 
     /**
