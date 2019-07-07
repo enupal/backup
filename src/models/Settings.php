@@ -22,6 +22,11 @@ class Settings extends Model
 {
     // General
     /**
+     * @var bool
+     */
+    public $useCurl = 0;
+
+    /**
      * @var int
      */
     public $compressWithBz2 = 1;
@@ -377,8 +382,7 @@ class Settings extends Model
             ['backupsAmount', 'integer', 'min' => 1, 'on' => 'general'],
             ['primarySiteUrl', 'required', 'on' => 'general'],
             ['primarySiteUrl', 'url', 'on' => 'general'],
-            ['maxExecutionTime', 'integer', 'min' => 300, 'on' => 'general'],
-            [['backupsAmount', 'maxExecutionTime'], 'required', 'on' => 'general'],
+            [['backupsAmount'], 'required', 'on' => 'general'],
             [
                 ['enableDatabase', 'enableTemplates', 'enableLocalVolumes', 'enableLogs'],
                 BackupFilesValidator::class, 'on' => 'backupFiles'

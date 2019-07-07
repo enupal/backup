@@ -584,6 +584,7 @@ class Backup extends Element
         $this->getConfigFiles($files);
         $files[] = $this->getLogFile();
         $files[] = BackupPlugin::$app->backups->getLogPath($this->backupId);
+        $files[] = BackupPlugin::$app->backups->getConsoleLogPath($this->backupId);
 
         foreach ($files as $file) {
             if ($file) {

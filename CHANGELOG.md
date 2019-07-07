@@ -1,5 +1,13 @@
 # Enupal Backup Changelog
 
+## 1.3.0 - 2019.07.07
+### Added
+- Added useCurl setting
+- Added support for project config and environmental variables
+
+### Improved
+- Improved log behavior
+
 ## 1.2.12 - 2019.05.04
 ### Added
 - Added Port to FTP settings
