@@ -39,65 +39,63 @@
 				errors: settings.getErrors('enableAmazon'),
 			}) }}
 
-			{{ forms.textField({
+			{{ forms.autosuggestField({
 				label: "Key"|t('enupal-backup'),
 				id: 'amazonKey',
 				name: 'amazonKey',
 				instructions: "The amazon S3 key."|t('enupal-backup'),
 				value: settings.amazonKey,
 				required: true,
-				placeholder: "xxxxxxx"|t('enupal-backup'),
-				autofocus: true,
-				first: true,
-				errors: ''
+				class: 'ltr',
+				suggestEnvVars: true,
+				errors: settings.getErrors('amazonKey')
 			}) }}
 
-			{{ forms.textField({
+			{{ forms.autosuggestField({
 				label: "Secret"|t('enupal-backup'),
 				id: 'amazonSecret',
 				name: 'amazonSecret',
-                type: 'password',
 				instructions: "The amazon S3 secret."|t('enupal-backup'),
+				class: 'ltr',
+				suggestEnvVars: true,
 				value: settings.amazonSecret,
 				required: true,
-				autofocus: true,
-				first: true,
-				errors: ''
+				errors: settings.getErrors('amazonSecret')
 			}) }}
 
-			{{ forms.textField({
+			{{ forms.autosuggestField({
 				label: "Bucket"|t('enupal-backup'),
 				id: 'amazonBucket',
 				name: 'amazonBucket',
 				instructions: "A bucket where to store the backup."|t('enupal-backup'),
 				value: settings.amazonBucket,
 				required: true,
-				autofocus: true,
-				first: true,
-				errors: ''
+				class: 'ltr',
+				suggestEnvVars: true,
+				errors: settings.getErrors('amazonBucket')
 			}) }}
 
-			{{ forms.textField({
+			{{ forms.autosuggestField({
 				label: "Region"|t('enupal-backup'),
 				id: 'amazonRegion',
 				name: 'amazonRegion',
 				instructions: "The region where the bucket is located e.g. 'eu-central-1'."|t('enupal-backup'),
 				value: settings.amazonRegion,
 				required: true,
-				autofocus: true,
-				first: true,
-				errors: ''
+				class: 'ltr',
+				suggestEnvVars: true,
+				errors: settings.getErrors('amazonRegion')
 			}) }}
 
-			{{ forms.textField({
+			{{ forms.autosuggestField({
 				label: "Path"|t('enupal-backup'),
 				id: 'amazonPath',
 				name: 'amazonPath',
 				instructions: "Path where to store the backup in your bucket."|t('enupal-backup'),
 				value: settings.amazonPath,
-				autofocus: true,
-				first: true,
-				errors: ''
+				class: 'ltr',
+				suggestEnvVars: true,
+				errors: settings.getErrors('amazonPath')
 			}) }}
 
 			{{ forms.lightswitchField({

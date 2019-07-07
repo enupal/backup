@@ -63,16 +63,14 @@
 
             <hr>
 
-            {{ forms.textField({
-                label: "Max Execution Time (seconds)"|t('enupal-backup'),
-                id: 'maxExecutionTime',
-                instructions: 'This option sets the time to reserve for the Enupal Backup execution. If the execution of the Backup takes longer than this time, execution will be stopped and it will be returned to the Craft Queue for later retry. '|t('enupal-backup'),
-                name: 'maxExecutionTime',
-                value: settings.maxExecutionTime,
-                size: 10,
-                autofocus: true,
-                required: true,
-                errors: settings.getErrors('maxExecutionTime')
+            {{ forms.lightswitchField({
+                label: "Use Curl"|t('enupal-backup'),
+                instructions: "Use curl instead of file_get_contents to notify that the backup is finished",
+                id: 'useCurl',
+                name: 'useCurl',
+                on: settings.useCurl,
+                onLabel: "On"|t('enupal-backup'),
+                offLabel: "Off"|t('enupal-backup')
             }) }}
 
             <hr>
