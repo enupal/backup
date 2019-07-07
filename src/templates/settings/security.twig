@@ -43,13 +43,14 @@
 				offLabel: "Off"|t('enupal-backup')
 			}) }}
 
-			{{ forms.textField({
+			{{ forms.autosuggestField({
 				label: "Password"|t('enupal-backup'),
 				id: 'opensslPassword',
 				name: 'opensslPassword',
 				instructions: "Secure password to encrypt with openssl"|t('enupal-backup'),
 				value: settings.opensslPassword,
-				type: "password",
+				class: 'ltr',
+				suggestEnvVars: true,
 				required: true,
 				errors: settings.getErrors('opensslPassword')
 			}) }}

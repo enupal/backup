@@ -972,7 +972,7 @@ class Backups extends Component
             $encrypt = [
                 'type' => 'openssl',
                 'options' => [
-                    'password' => $settings->opensslPassword,
+                    'password' => trim(Craft::parseEnv($settings->opensslPassword)),
                     'algorithm' => 'aes-256-cbc'
                 ]
             ];
