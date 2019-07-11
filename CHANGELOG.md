@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.3.1 - 2019.07.11
+### Added
+- Added support for Craft 3.2
+
 ## 1.3.0 - 2019.07.07
 ### Added
 - Added useCurl setting

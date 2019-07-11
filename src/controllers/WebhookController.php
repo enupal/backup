@@ -16,11 +16,10 @@ use enupal\backup\Backup;
 
 class WebhookController extends BaseController
 {
-    protected $allowAnonymous = ['actionFinished', 'actionSchedule', 'actionGoogleDriveAuth'];
+    protected $allowAnonymous = true;
 
     // Disable CSRF validation for the entire controller
     public $enableCsrfValidation = false;
-
 
     /**
      * WebHook to listen when a backup process finish up
