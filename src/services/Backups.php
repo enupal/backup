@@ -114,9 +114,9 @@ class Backups extends Component
             $shellCommand = new ShellCommand();
             $craftPath = CRAFT_BASE_PATH;
             $phpPath = Backup::$app->backups->getPhpPath();
-            $command = 'nohup cd' .
+            $command = 'cd' .
                 ' ' . $craftPath;
-            $command .= ' && ' . $phpPath .
+            $command .= ' && nohup ' . $phpPath .
                 ' craft' .
                 ' queue/run';
             $command .= ' > /dev/null 2>&1 &';
@@ -269,12 +269,12 @@ class Backups extends Component
 
         // Create the shell command
         $shellCommand = new ShellCommand();
-        $command = 'nohup cd'.
+        $command = 'cd'.
             ' '.$phpbuPath;
 
         $phpPath = $this->getPhpPath();
 
-        $command .= ' && '.$phpPath.' phpbu.phar';
+        $command .= ' && nohup '.$phpPath.' phpbu.phar';
         $command .= ' --configuration='.$configFile;
         $command .= ' --debug';
 
