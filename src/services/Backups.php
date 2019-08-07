@@ -119,7 +119,7 @@ class Backups extends Component
             $command .= ' && ' . $phpPath .
                 ' craft' .
                 ' queue/run';
-            $command .= ' > /dev/null 2&1 &';
+            $command .= ' > /dev/null 2>&1';
             $shellCommand->setCommand($command);
 
             // We have better error messages with exec
@@ -282,7 +282,7 @@ class Backups extends Component
 
         if (!Backup::$app->settings->isWindows()) {
             // linux
-            $command .= ' > '.$consoleLogPath.' 2&1 &';
+            $command .= ' > /dev/null 2>&1';
             // windows does not work
             //$command .= ' 1>> NUL 2>&1';
             $shellCommand->setCommand($command);
