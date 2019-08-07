@@ -114,12 +114,12 @@ class Backups extends Component
             $shellCommand = new ShellCommand();
             $craftPath = CRAFT_BASE_PATH;
             $phpPath = Backup::$app->backups->getPhpPath();
-            $command = 'cd' .
+            $command = 'nohup cd' .
                 ' ' . $craftPath;
             $command .= ' && ' . $phpPath .
                 ' craft' .
                 ' queue/run';
-            $command .= ' > /dev/null 2>&1';
+            $command .= ' > /dev/null 2>&1 &';
             $shellCommand->setCommand($command);
 
             // We have better error messages with exec
@@ -269,7 +269,7 @@ class Backups extends Component
 
         // Create the shell command
         $shellCommand = new ShellCommand();
-        $command = 'cd'.
+        $command = 'nohup cd'.
             ' '.$phpbuPath;
 
         $phpPath = $this->getPhpPath();
@@ -282,7 +282,7 @@ class Backups extends Component
 
         if (!Backup::$app->settings->isWindows()) {
             // linux
-            $command .= ' > /dev/null 2>&1';
+            $command .= ' > /dev/null 2>&1 &';
             // windows does not work
             //$command .= ' 1>> NUL 2>&1';
             $shellCommand->setCommand($command);
