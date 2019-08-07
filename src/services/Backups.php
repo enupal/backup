@@ -116,10 +116,10 @@ class Backups extends Component
             $phpPath = Backup::$app->backups->getPhpPath();
             $command = 'cd' .
                 ' ' . $craftPath;
-            $command .= ' && ' . $phpPath .
+            $command .= ' && nohup ' . $phpPath .
                 ' craft' .
                 ' queue/run';
-            $command .= ' > /dev/null 2>&1';
+            $command .= ' > /dev/null 2>&1 &';
             $shellCommand->setCommand($command);
 
             // We have better error messages with exec
@@ -274,7 +274,7 @@ class Backups extends Component
 
         $phpPath = $this->getPhpPath();
 
-        $command .= ' && '.$phpPath.' phpbu.phar';
+        $command .= ' && nohup '.$phpPath.' phpbu.phar';
         $command .= ' --configuration='.$configFile;
         $command .= ' --debug';
 
@@ -282,7 +282,7 @@ class Backups extends Component
 
         if (!Backup::$app->settings->isWindows()) {
             // linux
-            $command .= ' > /dev/null 2>&1';
+            $command .= ' > /dev/null 2>&1 &';
             // windows does not work
             //$command .= ' 1>> NUL 2>&1';
             $shellCommand->setCommand($command);
