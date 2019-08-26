@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.3.4 - 2019.08.26
+### Fixed
+- Fixed stalled enupal-backup tasks
+
 ## 1.3.3 - 2019.08.07
 ### Improved
 - Improved stalling "running" backups
