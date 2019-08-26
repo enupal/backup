@@ -116,7 +116,7 @@ class Backups extends Component
             $phpPath = Backup::$app->backups->getPhpPath();
             $command = 'cd' .
                 ' ' . $craftPath;
-            $command .= ' && nohup ' . $phpPath .
+            $command .= ' && ' . $phpPath .
                 ' craft' .
                 ' queue/run';
             $command .= ' > /dev/null 2>&1 &';
@@ -274,7 +274,7 @@ class Backups extends Component
 
         $phpPath = $this->getPhpPath();
 
-        $command .= ' && nohup '.$phpPath.' phpbu.phar';
+        $command .= ' && '.$phpPath.' phpbu.phar';
         $command .= ' --configuration='.$configFile;
         $command .= ' --debug';
 
