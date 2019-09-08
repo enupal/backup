@@ -84,14 +84,14 @@ class Backups extends Component
         Craft::$app->queue->push(new CreateBackup());
 
         if (Backup::$app->settings->isWindows()) {
-            if (Craft::$app->getRequest()->isSiteRequest){
+            if (Craft::$app->getRequest()->isSiteRequest) {
                 Craft::$app->getQueue()->run();
                 $response = [
                     'success' => $success,
                     'message' => 'running'
                 ];
             }
-        }else{
+        } else {
             // if is Linux try to call queue/run in background
             $success = $this->runQueueInBackground();
 
@@ -111,33 +111,56 @@ class Backups extends Component
     {
         $success = false;
         if (!Backup::$app->settings->isWindows()) {
+            $jobIds = $this->getEnupalBackupJobIds();
             $shellCommand = new ShellCommand();
-            $craftPath = CRAFT_BASE_PATH;
-            $phpPath = Backup::$app->backups->getPhpPath();
-            $command = 'cd' .
-                ' ' . $craftPath;
-            $command .= ' && ' . $phpPath .
-                ' craft' .
-                ' queue/run';
-            $command .= ' > /dev/null 2>&1 &';
-            $shellCommand->setCommand($command);
-
             // We have better error messages with exec
             if (function_exists('exec')) {
-                Craft::info('useExec is enabled on running the queue on background: '.$command, __METHOD__);
+                Craft::info('useExec is enabled on running the queue on background: ' . $command, __METHOD__);
                 $shellCommand->useExec = true;
             }
+            $craftPath = CRAFT_BASE_PATH;
+            $phpPath = Backup::$app->backups->getPhpPath();
 
-            $success = $shellCommand->execute();
+            foreach ($jobIds as $jobId){
+                $command = 'cd' .
+                    ' ' . $craftPath;
+                $command .= ' && ' . $phpPath .
+                    ' craft' .
+                    ' queue/exec '.$jobId;
+                $command .= ' > /dev/null 2>&1 &';
+                $shellCommand->setCommand($command);
+                $success = $shellCommand->execute();
+            }
         }
 
         return $success;
     }
 
     /**
+     * @return array
+     */
+    public function getEnupalBackupJobIds()
+    {
+        $enupalJobs = (new Query())
+            ->select(['job', 'id'])
+            ->from(['{{%queue}}'])
+            ->all();
+
+        $ids = [];
+
+        foreach ($enupalJobs as $job) {
+            if (strpos($job['job'], 'enupal') !== false) {
+                $ids[] = $job['id'];
+            }
+        }
+
+        return $ids;
+    }
+
+    /**
      * Returns a Backup model if one is found in the database by id
      *
-     * @param int      $id
+     * @param int $id
      * @param int|null $siteId
      *
      * @return array|BackupElement|null
@@ -158,7 +181,7 @@ class Backups extends Component
     /**
      * Returns a Backup model if one is found in the database by backupId
      *
-     * @param string   $backupId
+     * @param string $backupId
      * @param int|null $siteId
      *
      * @return array|BackupElement|null
@@ -187,6 +210,7 @@ class Backups extends Component
     /**
      * Returns all the Pending backups
      * s
+     *
      * @return array|BackupElement[]|null
      */
     public function getPendingBackups()
@@ -262,20 +286,20 @@ class Backups extends Component
         }
 
         if (!is_file($configFile)) {
-            throw new Exception("Could not create the Enupal Backup: the config file doesn't exist: ".$configFile);
+            throw new Exception("Could not create the Enupal Backup: the config file doesn't exist: " . $configFile);
         }
 
         $consoleLogPath = Backup::$app->backups->getConsoleLogPath($backup->backupId);
 
         // Create the shell command
         $shellCommand = new ShellCommand();
-        $command = 'cd'.
-            ' '.$phpbuPath;
+        $command = 'cd' .
+            ' ' . $phpbuPath;
 
         $phpPath = $this->getPhpPath();
 
-        $command .= ' && '.$phpPath.' phpbu.phar';
-        $command .= ' --configuration='.$configFile;
+        $command .= ' && ' . $phpPath . ' phpbu.phar';
+        $command .= ' --configuration=' . $configFile;
         $command .= ' --debug';
 
         $shellCommand->setCommand($command);
@@ -290,13 +314,13 @@ class Backups extends Component
 
         // We have better error messages with exec
         if (function_exists('exec')) {
-            Craft::info('useExec is enabled on Enupal Backup process command: '.$command, __METHOD__);
+            Craft::info('useExec is enabled on Enupal Backup process command: ' . $command, __METHOD__);
             $shellCommand->useExec = true;
         }
 
         $success = $shellCommand->execute();
 
-        Craft::info('Enupal Backup Command result: '.$shellCommand->getOutput(), __METHOD__);
+        Craft::info('Enupal Backup Command result: ' . $shellCommand->getOutput(), __METHOD__);
 
         if (!$success) {
             throw ShellCommandException::createFromCommand($shellCommand);
@@ -345,7 +369,7 @@ class Backups extends Component
         $randomStr = $this->getRandomStr();
         $date = date('YmdHis');
 
-        $backupId = strtolower($siteName.'_'.$date.'_'.$randomStr);
+        $backupId = strtolower($siteName . '_' . $date . '_' . $randomStr);
         $backup = new BackupElement();
         $backup->backupId = $backupId;
         $backup->backupStatusId = BackupStatus::STARTED;
@@ -366,7 +390,7 @@ class Backups extends Component
 
         $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
         $power = $size > 0 ? floor(log($size, 1024)) : 0;
-        return number_format($size / pow(1024, $power), 2, '.', ',').' '.$units[$power];
+        return number_format($size / pow(1024, $power), 2, '.', ',') . ' ' . $units[$power];
     }
 
     /**
@@ -464,7 +488,7 @@ class Backups extends Component
         $checkPendingBackups = new ProcessPendingBackups();
         $pendingBackups = Backup::$app->backups->getPendingBackups();
 
-        if ($pendingBackups){
+        if ($pendingBackups) {
             $checkPendingBackups->pendingBackups = $pendingBackups;
             Craft::$app->queue->push($checkPendingBackups);
             $this->runQueueInBackground();
@@ -497,18 +521,18 @@ class Backups extends Component
         $templateOverride = null;
         $extensions = ['.html', '.twig'];
 
-        if ($settings->emailTemplateOverride){
+        if ($settings->emailTemplateOverride) {
             // let's check if the file exists
-            $overridePath = $originalPath.DIRECTORY_SEPARATOR.$settings->emailTemplateOverride;
+            $overridePath = $originalPath . DIRECTORY_SEPARATOR . $settings->emailTemplateOverride;
             foreach ($extensions as $extension) {
-                if (file_exists($overridePath.$extension)){
+                if (file_exists($overridePath . $extension)) {
                     $templateOverride = $settings->emailTemplateOverride;
                     $template = $templateOverride;
                 }
             }
         }
 
-        if (is_null($templateOverride)){
+        if (is_null($templateOverride)) {
             $defaultTemplate = Craft::getAlias('@enupal/backup/templates/_notification/');
             $view->setTemplatesPath($defaultTemplate);
         }
@@ -522,7 +546,7 @@ class Backups extends Component
         $message->setTextBody($textBody);
         $message->setReplyTo($settings->notificationReplyToEmail);
         // to emails
-        $emails =  array_map('trim', explode(',', $settings->notificationRecipients));
+        $emails = array_map('trim', explode(',', $settings->notificationRecipients));
         $message->setTo($emails);
 
         $mailer = Craft::$app->getMailer();
@@ -543,7 +567,7 @@ class Backups extends Component
 
         if ($result) {
             Craft::info('Notification email sent successfully', __METHOD__);
-        }else{
+        } else {
             Craft::error('Unable to send notification email', __METHOD__);
         }
 
@@ -570,10 +594,10 @@ class Backups extends Component
         $compress = $this->getCompressType();
         $syncs = $this->getSyncs($backupId);
         $encrypt = $this->getEncrypt();
-        $dbFileName = 'database-'.$backupId.'.sql';
-        $templateName = 'templates-'.$backupId.$compress;
-        $logName = 'logs-'.$backupId.$compress;
-        $webFolderName = 'web-'.$backupId.$compress;
+        $dbFileName = 'database-' . $backupId . '.sql';
+        $templateName = 'templates-' . $backupId . $compress;
+        $logName = 'logs-' . $backupId . $compress;
+        $webFolderName = 'web-' . $backupId . $compress;
 
         // let's create the Backup Element
         $backup->databaseFileName = $dbFileName;
@@ -588,9 +612,9 @@ class Backups extends Component
         }
 
         if ($this->applyCompress($settings)) {
-            $backup->webFileName = $backup->webFileName ? $backup->webFileName.self::BZ2 : null;
-            $backup->templateFileName = $backup->templateFileName ? $backup->templateFileName.self::BZ2 : null;
-            $backup->logFileName = $backup->logFileName ? $backup->logFileName.self::BZ2 : null;
+            $backup->webFileName = $backup->webFileName ? $backup->webFileName . self::BZ2 : null;
+            $backup->templateFileName = $backup->templateFileName ? $backup->templateFileName . self::BZ2 : null;
+            $backup->logFileName = $backup->logFileName ? $backup->logFileName . self::BZ2 : null;
         }
 
         // Add encrypt extension if enabled
@@ -604,8 +628,8 @@ class Backups extends Component
         }
 
         if (!$this->saveBackup($backup)) {
-            throw new Exception('Unable to create the element record for the Backup: '.$backupId.
-                ' Errors: '.json_encode($backup->getErrors()));
+            throw new Exception('Unable to create the element record for the Backup: ' . $backupId .
+                ' Errors: ' . json_encode($backup->getErrors()));
         }
 
         $this->getDatabaseConfigFormat($config, $settings, $dbFileName, $syncs, $encrypt);
@@ -643,9 +667,9 @@ class Backups extends Component
             $configFiles[] = ["key" => "translations", "path" => Craft::$app->getPath()->getSiteTranslationsPath()];
             $configFiles[] = ["key" => "configFolder", "path" => Craft::$app->getPath()->getConfigPath()];
             // Lets copy the composer file  to a temp folder for security reasons
-            $tempConfigFolder = Craft::$app->getPath()->getTempPath().DIRECTORY_SEPARATOR.'enupal-backup-composer'.DIRECTORY_SEPARATOR;
-            $tempConfigFile = $tempConfigFolder. 'composer.json';
-            $composerFile = CRAFT_BASE_PATH.DIRECTORY_SEPARATOR.'composer.json';
+            $tempConfigFolder = Craft::$app->getPath()->getTempPath() . DIRECTORY_SEPARATOR . 'enupal-backup-composer' . DIRECTORY_SEPARATOR;
+            $tempConfigFile = $tempConfigFolder . 'composer.json';
+            $composerFile = CRAFT_BASE_PATH . DIRECTORY_SEPARATOR . 'composer.json';
             if (!file_exists($tempConfigFile)) {
                 mkdir(dirname($tempConfigFile), 0777, true);
             }
@@ -657,17 +681,17 @@ class Backups extends Component
         $configFileNames = [];
         foreach ($configFiles as $key => $configFile) {
             if (is_dir($configFile['path']) || is_file($configFile['path'])) {
-                $configName = 'config-'.$configFile['key'].'-'.$backup->backupId.$this->getCompressType();
+                $configName = 'config-' . $configFile['key'] . '-' . $backup->backupId . $this->getCompressType();
                 $configFileName = $configName;
 
                 if ($this->applyCompress($settings)) {
-                    $configFileName = $configFileName ? $configFileName.self::BZ2 : null;
+                    $configFileName = $configFileName ? $configFileName . self::BZ2 : null;
                 }
 
                 $configFileName = $this->getEncryptFileName($encrypt, $configFileName);
 
                 $configFilesBackup = new DirectoryBackup();
-                $configFilesBackup->name = 'Config'.$key;
+                $configFilesBackup->name = 'Config' . $key;
                 $configFilesBackup->path = $configFile['path'];
                 $configFilesBackup->fileName = $configName;
                 $configFilesBackup->dirName = $this->getConfigFilesPath();
@@ -677,7 +701,7 @@ class Backups extends Component
                 $config->addBackup($configFilesBackup);
                 $configFileNames[] = $configFileName;
             } else {
-                Craft::error('Skipped the config file: '.$configFile['path'].' because the path does not exists'. __METHOD__);
+                Craft::error('Skipped the config file: ' . $configFile['path'] . ' because the path does not exists' . __METHOD__);
             }
         }
 
@@ -716,17 +740,17 @@ class Backups extends Component
                 // Check if the path exists
                 if (is_dir($asset->getRootPath())) {
                     // So we need store assets files as json could be more than one
-                    $assetName = 'assets-'.$asset->handle.'-'.$backup->backupId.$this->getCompressType();
+                    $assetName = 'assets-' . $asset->handle . '-' . $backup->backupId . $this->getCompressType();
                     $assetFileName = $assetName;
 
                     if ($this->applyCompress($settings)) {
-                        $assetFileName = $assetFileName ? $assetFileName.self::BZ2 : null;
+                        $assetFileName = $assetFileName ? $assetFileName . self::BZ2 : null;
                     }
 
                     $assetFileName = $this->getEncryptFileName($encrypt, $assetFileName);
 
                     $assetBackup = new DirectoryBackup();
-                    $assetBackup->name = 'Asset'.$asset->id;
+                    $assetBackup->name = 'Asset' . $asset->id;
                     $assetBackup->path = $asset->getRootPath();
                     $assetBackup->fileName = $assetName;
                     $assetBackup->dirName = $this->getAssetsPath();
@@ -736,7 +760,7 @@ class Backups extends Component
                     $config->addBackup($assetBackup);
                     $assetFileNames[] = $assetFileName;
                 } else {
-                    Craft::error('Skipped the volume: '.$asset->id.' because the path does not exists', __METHOD__);
+                    Craft::error('Skipped the volume: ' . $asset->id . ' because the path does not exists', __METHOD__);
                 }
             }
         }
@@ -793,7 +817,7 @@ class Backups extends Component
             $templateBackup->syncs = $syncs;
             $templateBackup->encrypt = $encrypt;
 
-            if ($settings->excludeTemplates){
+            if ($settings->excludeTemplates) {
                 $templateBackup->exclude = $settings->excludeTemplates;
             }
 
@@ -813,7 +837,7 @@ class Backups extends Component
     {
         // TEMPLATES
         if ($settings->enableWebFolder) {
-            $baseWebPath =  Craft::getAlias('@webroot');
+            $baseWebPath = Craft::getAlias('@webroot');
             $baseWebPath = FileHelper::normalizePath($baseWebPath);
             $webFolderBackup = new DirectoryBackup();
             $webFolderBackup->name = 'Web Folder';
@@ -823,7 +847,7 @@ class Backups extends Component
             $webFolderBackup->syncs = $syncs;
             $webFolderBackup->encrypt = $encrypt;
 
-            if ($settings->excludeWebFolder){
+            if ($settings->excludeWebFolder) {
                 $webFolderBackup->exclude = $settings->excludeWebFolder;
             }
 
@@ -926,15 +950,15 @@ class Backups extends Component
                         $response = Craft::$app->elements->deleteElementById($backup->id);
 
                         if ($response) {
-                            Craft::info('EnupalBackup has deleted the backup Id: '.$backup->backupId, __METHOD__);
+                            Craft::info('EnupalBackup has deleted the backup Id: ' . $backup->backupId, __METHOD__);
                         } else {
-                            Craft::error('EnupalBackup has failed to delete the backup Id: '.$backup->backupId, __METHOD__);
+                            Craft::error('EnupalBackup has failed to delete the backup Id: ' . $backup->backupId, __METHOD__);
                         }
                     }
                 }
             }
         } catch (\Throwable $e) {
-            $error = 'Enupal Backup Could not execute the checkBackupsAmount function: '.$e->getMessage().' --Trace: '.json_encode($e->getTrace());
+            $error = 'Enupal Backup Could not execute the checkBackupsAmount function: ' . $e->getMessage() . ' --Trace: ' . json_encode($e->getTrace());
 
             Craft::error($error, __METHOD__);
             return false;
@@ -1000,7 +1024,7 @@ class Backups extends Component
                 'type' => 'dropbox',
                 'options' => [
                     'token' => trim(Craft::parseEnv($settings->dropboxToken)),
-                    'path' => trim(trim(Craft::parseEnv($settings->dropboxPath)).$backupId)
+                    'path' => trim(trim(Craft::parseEnv($settings->dropboxPath)) . $backupId)
                 ]
             ];
 
@@ -1034,7 +1058,7 @@ class Backups extends Component
                     'secret' => trim(Craft::parseEnv($settings->amazonSecret)),
                     'bucket' => trim(Craft::parseEnv($settings->amazonBucket)),
                     'region' => trim(Craft::parseEnv($settings->amazonRegion)),
-                    'path' => trim(trim(Craft::parseEnv($settings->amazonPath)).$backupId),
+                    'path' => trim(trim(Craft::parseEnv($settings->amazonPath)) . $backupId),
                     'useMultiPartUpload' => $settings->amazonUseMultiPartUpload
                 ]
             ];
@@ -1050,11 +1074,11 @@ class Backups extends Component
                     'host' => trim(Craft::parseEnv($settings->ftpHost)),
                     'user' => trim(Craft::parseEnv($settings->ftpUser)),
                     'password' => trim(Craft::parseEnv($settings->ftpPassword)),
-                    'path' => trim(trim(Craft::parseEnv($settings->ftpPath)).'/'.$backupId)
+                    'path' => trim(trim(Craft::parseEnv($settings->ftpPath)) . '/' . $backupId)
                 ]
             ];
 
-            if ($settings->ftpPort){
+            if ($settings->ftpPort) {
                 $ftp['options']['port'] = trim(Craft::parseEnv($settings->ftpPort));
             }
 
@@ -1070,7 +1094,7 @@ class Backups extends Component
                     'user' => trim(Craft::parseEnv($settings->sosUser)),
                     'secret' => trim(Craft::parseEnv($settings->sosSecret)),
                     'container' => trim(Craft::parseEnv($settings->sosContainer)),
-                    'path' => trim(trim(Craft::parseEnv($settings->sosPath)).'/'.$backupId)
+                    'path' => trim(trim(Craft::parseEnv($settings->sosPath)) . '/' . $backupId)
                 ]
             ];
 
@@ -1098,13 +1122,14 @@ class Backups extends Component
             $metadata = [
                 'name' => $backupId,
                 'mimeType' => 'application/vnd.google-apps.folder',
-                'parents' => array($parent)
+                'parents' => [$parent]
             ];
 
             $fileMetadata = new Google_Service_Drive_DriveFile($metadata);
 
             $file = $driveService->files->create($fileMetadata, [
-                'fields' => 'id']);
+                'fields' => 'id'
+            ]);
 
             $parent = $file->id;
         }
@@ -1121,10 +1146,10 @@ class Backups extends Component
         $options = ['' => Backup::t('Select a folder')];
         $driveService = Backup::$app->settings->getGoogleDriveService();
 
-        $optParams = array(
+        $optParams = [
             'fields' => 'nextPageToken, files(id, name)',
             'q' => $parameters['q'] = "mimeType='application/vnd.google-apps.folder' and 'root' in parents and trashed=false"
-        );
+        ];
 
         $results = $driveService->files->listFiles($optParams);
         $foldersTargets = $results->getFiles();
@@ -1183,7 +1208,7 @@ class Backups extends Component
      * For PHP 7, random_int is a PHP core function
      * For PHP 5.x, depends on https://github.com/paragonie/random_compat
      *
-     * @param int    $length   How many characters do we want?
+     * @param int $length How many characters do we want?
      * @param string $keyspace A string of all possible characters
      *                         to select from
      *
@@ -1207,7 +1232,7 @@ class Backups extends Component
      */
     public function getBasePath()
     {
-        return Craft::$app->getPath()->getStoragePath().DIRECTORY_SEPARATOR.'enupalbackup'.DIRECTORY_SEPARATOR;
+        return Craft::$app->getPath()->getStoragePath() . DIRECTORY_SEPARATOR . 'enupalbackup' . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -1216,7 +1241,7 @@ class Backups extends Component
      */
     public function getGoogleDriveAccessPath()
     {
-        return $this->getBasePath().'googledriveaccess.json';
+        return $this->getBasePath() . 'googledriveaccess.json';
     }
 
     /**
@@ -1225,7 +1250,7 @@ class Backups extends Component
      */
     public function getGoogleDriveSecretPath()
     {
-        return $this->getBasePath().'googledrivesecret.json';
+        return $this->getBasePath() . 'googledrivesecret.json';
     }
 
     /**
@@ -1234,7 +1259,7 @@ class Backups extends Component
      */
     public function getTempDatabasePath()
     {
-        return Craft::$app->getPath()->getStoragePath().DIRECTORY_SEPARATOR.'enupalbackuptemp'.DIRECTORY_SEPARATOR;
+        return Craft::$app->getPath()->getStoragePath() . DIRECTORY_SEPARATOR . 'enupalbackuptemp' . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -1243,7 +1268,7 @@ class Backups extends Component
      */
     public function getAssetsPath()
     {
-        return $this->getBasePath().'assets'.DIRECTORY_SEPARATOR;
+        return $this->getBasePath() . 'assets' . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -1252,7 +1277,7 @@ class Backups extends Component
      */
     public function getConfigFilesPath()
     {
-        return $this->getBasePath().'config'.DIRECTORY_SEPARATOR;
+        return $this->getBasePath() . 'config' . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -1261,7 +1286,7 @@ class Backups extends Component
      */
     public function getTemplatesPath()
     {
-        return $this->getBasePath().'templates'.DIRECTORY_SEPARATOR;
+        return $this->getBasePath() . 'templates' . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -1270,7 +1295,7 @@ class Backups extends Component
      */
     public function getWebFolderPath()
     {
-        return $this->getBasePath().'web'.DIRECTORY_SEPARATOR;
+        return $this->getBasePath() . 'web' . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -1279,7 +1304,7 @@ class Backups extends Component
      */
     public function getLogsPath()
     {
-        return $this->getBasePath().'logs'.DIRECTORY_SEPARATOR;
+        return $this->getBasePath() . 'logs' . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -1288,7 +1313,7 @@ class Backups extends Component
      */
     public function getDatabasePath()
     {
-        return $this->getBasePath().'databases'.DIRECTORY_SEPARATOR;
+        return $this->getBasePath() . 'databases' . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -1297,7 +1322,7 @@ class Backups extends Component
      */
     public function getPluginsPath()
     {
-        return $this->getBasePath().'plugins'.DIRECTORY_SEPARATOR;
+        return $this->getBasePath() . 'plugins' . DIRECTORY_SEPARATOR;
     }
 
 
@@ -1308,9 +1333,9 @@ class Backups extends Component
      */
     public function getLogPath($backupId)
     {
-        $base = Craft::$app->getPath()->getLogPath().DIRECTORY_SEPARATOR.'enupalbackup'.DIRECTORY_SEPARATOR;
+        $base = Craft::$app->getPath()->getLogPath() . DIRECTORY_SEPARATOR . 'enupalbackup' . DIRECTORY_SEPARATOR;
 
-        return $base.$backupId.'.log';
+        return $base . $backupId . '.log';
     }
 
     /**
@@ -1320,9 +1345,9 @@ class Backups extends Component
      */
     public function getConsoleLogPath($backupId)
     {
-        $base = Craft::$app->getPath()->getLogPath().DIRECTORY_SEPARATOR.'enupalbackup'.DIRECTORY_SEPARATOR;
+        $base = Craft::$app->getPath()->getLogPath() . DIRECTORY_SEPARATOR . 'enupalbackup' . DIRECTORY_SEPARATOR;
 
-        return $base.'console-'.$backupId.'.log';
+        return $base . 'console-' . $backupId . '.log';
     }
 
     /**
@@ -1332,7 +1357,7 @@ class Backups extends Component
     public function getConfigPath()
     {
         $base = $this->getBasePath();
-        $configFile = $base.'config.json';
+        $configFile = $base . 'config.json';
 
         return $configFile;
     }
