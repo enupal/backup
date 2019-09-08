@@ -115,7 +115,7 @@ class Backups extends Component
             $shellCommand = new ShellCommand();
             // We have better error messages with exec
             if (function_exists('exec')) {
-                Craft::info('useExec is enabled on running the queue on background: ' . $command, __METHOD__);
+                Craft::info('useExec is enabled on running the queue on background', __METHOD__);
                 $shellCommand->useExec = true;
             }
             $craftPath = CRAFT_BASE_PATH;
@@ -128,8 +128,11 @@ class Backups extends Component
                     ' craft' .
                     ' queue/exec '.$jobId;
                 $command .= ' > /dev/null 2>&1 &';
+
+                Craft::info('Queue Command: ' . $command, __METHOD__);
                 $shellCommand->setCommand($command);
                 $success = $shellCommand->execute();
+                Craft::info('Queue Command Result: ' . $success, __METHOD__);
             }
         }
 
