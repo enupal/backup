@@ -86,57 +86,15 @@ class Backups extends Component
         if (Backup::$app->settings->isWindows()) {
             if (Craft::$app->getRequest()->isSiteRequest) {
                 Craft::$app->getQueue()->run();
-                $response = [
-                    'success' => $success,
-                    'message' => 'running'
-                ];
+                $response['message'] = 'running';
             }
         } else {
-            // if is Linux try to call queue/run in background
-            $success = $this->runQueueInBackground();
-
-            $response = [
-                'success' => $success,
-                'message' => 'running'
-            ];
+            // if is Linux try to call queue/run
+            Craft::$app->getQueue()->run();
+            $response['message'] = 'running';
         }
 
         return $response;
-    }
-
-    /**
-     * @return bool
-     */
-    public function runQueueInBackground()
-    {
-        $success = false;
-        if (!Backup::$app->settings->isWindows()) {
-            $jobIds = $this->getEnupalBackupJobIds();
-            $shellCommand = new ShellCommand();
-            // We have better error messages with exec
-            if (function_exists('exec')) {
-                Craft::info('useExec is enabled on running the queue on background', __METHOD__);
-                $shellCommand->useExec = true;
-            }
-            $craftPath = CRAFT_BASE_PATH;
-            $phpPath = Backup::$app->backups->getPhpPath();
-
-            foreach ($jobIds as $jobId){
-                $command = 'cd' .
-                    ' ' . $craftPath;
-                $command .= ' && ' . $phpPath .
-                    ' craft' .
-                    ' queue/exec '.$jobId;
-                $command .= ' > /dev/null 2>&1 &';
-
-                Craft::info('Queue Command: ' . $command, __METHOD__);
-                $shellCommand->setCommand($command);
-                $success = $shellCommand->execute();
-                Craft::info('Queue Command Result: ' . $success, __METHOD__);
-            }
-        }
-
-        return $success;
     }
 
     /**
@@ -291,8 +249,6 @@ class Backups extends Component
         if (!is_file($configFile)) {
             throw new Exception("Could not create the Enupal Backup: the config file doesn't exist: " . $configFile);
         }
-
-        $consoleLogPath = Backup::$app->backups->getConsoleLogPath($backup->backupId);
 
         // Create the shell command
         $shellCommand = new ShellCommand();
@@ -494,7 +450,7 @@ class Backups extends Component
         if ($pendingBackups) {
             $checkPendingBackups->pendingBackups = $pendingBackups;
             Craft::$app->queue->push($checkPendingBackups);
-            $this->runQueueInBackground();
+            Craft::$app->queue->run();
         }
     }
 
@@ -1339,18 +1295,6 @@ class Backups extends Component
         $base = Craft::$app->getPath()->getLogPath() . DIRECTORY_SEPARATOR . 'enupalbackup' . DIRECTORY_SEPARATOR;
 
         return $base . $backupId . '.log';
-    }
-
-    /**
-     * @param $backupId
-     * @return string
-     * @throws Exception
-     */
-    public function getConsoleLogPath($backupId)
-    {
-        $base = Craft::$app->getPath()->getLogPath() . DIRECTORY_SEPARATOR . 'enupalbackup' . DIRECTORY_SEPARATOR;
-
-        return $base . 'console-' . $backupId . '.log';
     }
 
     /**
