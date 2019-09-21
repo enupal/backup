@@ -89,7 +89,7 @@ class Backups extends Component
                 $response['message'] = 'running';
             }
         } else {
-            // if is Linux try to call queue/run in background
+            // if is Linux try to call queue/run
             Craft::$app->getQueue()->run();
             $response['message'] = 'running';
         }
@@ -450,7 +450,7 @@ class Backups extends Component
         if ($pendingBackups) {
             $checkPendingBackups->pendingBackups = $pendingBackups;
             Craft::$app->queue->push($checkPendingBackups);
-            $this->runQueueInBackground();
+            Craft::$app->queue->run();
         }
     }
 
