@@ -111,7 +111,6 @@ class Backups extends Component
     {
         $success = false;
         if (!Backup::$app->settings->isWindows()) {
-            $jobIds = $this->getEnupalBackupJobIds();
             $shellCommand = new ShellCommand();
             // We have better error messages with exec
             if (function_exists('exec')) {
@@ -121,19 +120,17 @@ class Backups extends Component
             $craftPath = CRAFT_BASE_PATH;
             $phpPath = Backup::$app->backups->getPhpPath();
 
-            foreach ($jobIds as $jobId){
-                $command = 'cd' .
-                    ' ' . $craftPath;
-                $command .= ' && ' . $phpPath .
-                    ' craft' .
-                    ' queue/exec '.$jobId;
-                $command .= ' > /dev/null 2>&1 &';
+            $command = 'cd' .
+                ' ' . $craftPath;
+            $command .= ' && ' . $phpPath .
+                ' ./craft' .
+                ' queue/run';
+            $command .= ' > /dev/null 2>&1 &';
 
-                Craft::info('Queue Command: ' . $command, __METHOD__);
-                $shellCommand->setCommand($command);
-                $success = $shellCommand->execute();
-                Craft::info('Queue Command Result: ' . $success, __METHOD__);
-            }
+            Craft::info('Queue Command: ' . $command, __METHOD__);
+            $shellCommand->setCommand($command);
+            $success = $shellCommand->execute();
+            Craft::info('Queue Command Result: ' . $success, __METHOD__);
         }
 
         return $success;
@@ -291,8 +288,6 @@ class Backups extends Component
         if (!is_file($configFile)) {
             throw new Exception("Could not create the Enupal Backup: the config file doesn't exist: " . $configFile);
         }
-
-        $consoleLogPath = Backup::$app->backups->getConsoleLogPath($backup->backupId);
 
         // Create the shell command
         $shellCommand = new ShellCommand();
@@ -1339,18 +1334,6 @@ class Backups extends Component
         $base = Craft::$app->getPath()->getLogPath() . DIRECTORY_SEPARATOR . 'enupalbackup' . DIRECTORY_SEPARATOR;
 
         return $base . $backupId . '.log';
-    }
-
-    /**
-     * @param $backupId
-     * @return string
-     * @throws Exception
-     */
-    public function getConsoleLogPath($backupId)
-    {
-        $base = Craft::$app->getPath()->getLogPath() . DIRECTORY_SEPARATOR . 'enupalbackup' . DIRECTORY_SEPARATOR;
-
-        return $base . 'console-' . $backupId . '.log';
     }
 
     /**
