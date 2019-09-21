@@ -86,54 +86,15 @@ class Backups extends Component
         if (Backup::$app->settings->isWindows()) {
             if (Craft::$app->getRequest()->isSiteRequest) {
                 Craft::$app->getQueue()->run();
-                $response = [
-                    'success' => $success,
-                    'message' => 'running'
-                ];
+                $response['message'] = 'running';
             }
         } else {
             // if is Linux try to call queue/run in background
-            $success = $this->runQueueInBackground();
-
-            $response = [
-                'success' => $success,
-                'message' => 'running'
-            ];
+            Craft::$app->getQueue()->run();
+            $response['message'] = 'running';
         }
 
         return $response;
-    }
-
-    /**
-     * @return bool
-     */
-    public function runQueueInBackground()
-    {
-        $success = false;
-        if (!Backup::$app->settings->isWindows()) {
-            $shellCommand = new ShellCommand();
-            // We have better error messages with exec
-            if (function_exists('exec')) {
-                Craft::info('useExec is enabled on running the queue on background', __METHOD__);
-                $shellCommand->useExec = true;
-            }
-            $craftPath = CRAFT_BASE_PATH;
-            $phpPath = Backup::$app->backups->getPhpPath();
-
-            $command = 'cd' .
-                ' ' . $craftPath;
-            $command .= ' && ' . $phpPath .
-                ' ./craft' .
-                ' queue/run';
-            $command .= ' > /dev/null 2>&1 &';
-
-            Craft::info('Queue Command: ' . $command, __METHOD__);
-            $shellCommand->setCommand($command);
-            $success = $shellCommand->execute();
-            Craft::info('Queue Command Result: ' . $success, __METHOD__);
-        }
-
-        return $success;
     }
 
     /**
