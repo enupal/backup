@@ -27,6 +27,11 @@ class Settings extends Model
     public $useCurl = 0;
 
     /**
+     * @var bool
+     */
+    public $runJobInBackground = 0;
+
+    /**
      * @var int
      */
     public $compressWithBz2 = 1;

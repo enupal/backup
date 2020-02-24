@@ -87,6 +87,18 @@
                 errors: settings.getErrors('primarySiteUrl')
             }) }}
 
+            <hr>
+            {{ forms.lightswitchField({
+                label: "Run Backup job in Background"|t('enupal-backup'),
+                instructions: 'Enable this setting for heavy backups',
+                id: 'compressWithBz2',
+                name: 'runJobInBackground',
+                on: settings.runJobInBackground,
+                toggle: 'settings-runJobInBackground',
+                onLabel: "On"|t('enupal-backup'),
+                offLabel: "Off"|t('enupal-backup')
+            }) }}
+
         {% endnamespace %}
 
     </div>
