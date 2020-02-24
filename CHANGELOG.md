@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.3.6 - 2020.02.24
+### Added
+- Added the `runJobInBackground` setting
+
 ## 1.3.5 - 2019.09.20
 ### Fixed
 - Fixed failed enupal backup job tasks
