@@ -91,10 +91,22 @@
             {{ forms.lightswitchField({
                 label: "Run Backup job in Background"|t('enupal-backup'),
                 instructions: 'Enable this setting for heavy backups',
-                id: 'compressWithBz2',
+                id: 'runJobInBackground',
                 name: 'runJobInBackground',
                 on: settings.runJobInBackground,
                 toggle: 'settings-runJobInBackground',
+                onLabel: "On"|t('enupal-backup'),
+                offLabel: "Off"|t('enupal-backup')
+            }) }}
+
+            <hr>
+            {{ forms.lightswitchField({
+                label: "Use exec"|t('enupal-backup'),
+                instructions: 'Some linux distros has issues with exec use proc_open instead',
+                id: 'useExec',
+                name: 'useExec',
+                on: settings.useExec,
+                toggle: 'settings-enableExec',
                 onLabel: "On"|t('enupal-backup'),
                 offLabel: "Off"|t('enupal-backup')
             }) }}

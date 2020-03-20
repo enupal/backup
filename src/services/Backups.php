@@ -109,10 +109,12 @@ class Backups extends Component
     public function runQueueInBackground()
     {
         $success = false;
+        $settings = Backup::$app->settings->getSettings();
         if (!Backup::$app->settings->isWindows()) {
             $shellCommand = new ShellCommand();
             // We have better error messages with exec
-            if (function_exists('exec')) {
+            if (function_exists('exec') && $settings->useExec) {
+                $shellCommand->captureStdErr = false;
                 Craft::info('useExec is enabled on running the queue on background', __METHOD__);
                 $shellCommand->useExec = true;
             }
@@ -124,7 +126,7 @@ class Backups extends Component
             $command .= ' && ' . $phpPath .
                 ' ./craft' .
                 ' queue/run';
-            $command .= ' > /dev/null 2>&1 &';
+            //$command .= ' > /dev/null 2>&1 &';
 
             Craft::info('Queue Command: ' . $command, __METHOD__);
             $shellCommand->setCommand($command);
@@ -279,6 +281,7 @@ class Backups extends Component
         $configFile = Backup::$app->backups->getConfigJson($backup);
         // update the the backup to running
         $backup->backupStatusId = BackupStatus::RUNNING;
+        $settings = Backup::$app->settings->getSettings();
 
         if (!$this->saveBackup($backup)) {
             return false;
@@ -303,17 +306,19 @@ class Backups extends Component
 
         if (!Backup::$app->settings->isWindows()) {
             // linux
-            $command .= ' > /dev/null 2>&1 &';
+            //$command .= ' > /dev/null 2>&1 &';
+            $shellCommand->captureStdErr = false;
             // windows does not work
             //$command .= ' 1>> NUL 2>&1';
             $shellCommand->setCommand($command);
         }
 
         // We have better error messages with exec
-        if (function_exists('exec')) {
-            Craft::info('useExec is enabled on Enupal Backup process command: ' . $command, __METHOD__);
+        if (function_exists('exec') && $settings->useExec) {
+            Craft::info('useExec is enabled on Enupal Backup process', __METHOD__);
             $shellCommand->useExec = true;
         }
+        Craft::info('Enupal Backup process command: ' . $command, __METHOD__);
 
         $success = $shellCommand->execute();
 
