@@ -29,6 +29,16 @@ class Settings extends Model
     /**
      * @var bool
      */
+    public $useExec = 1;
+
+    /**
+     * @var bool
+     */
+    public $passPathToEnv = 1;
+
+    /**
+     * @var bool
+     */
     public $runJobInBackground = 0;
 
     /**
