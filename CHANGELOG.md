@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.3.7 - 2020.03.20
+### Added
+- Added the `useExec` setting
+
 ## 1.3.6 - 2020.02.24
 ### Added
 - Added the `runJobInBackground` setting
