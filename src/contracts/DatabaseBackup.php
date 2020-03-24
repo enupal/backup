@@ -10,6 +10,7 @@ namespace enupal\backup\contracts;
 
 use Craft;
 
+use craft\helpers\Db;
 use enupal\backup\Backup;
 
 class DatabaseBackup extends BackupType
@@ -53,14 +54,21 @@ class DatabaseBackup extends BackupType
     {
         $this->settings = Backup::$app->settings->getSettings();
         $dbConfig = Craft::$app->getConfig()->getDb();
-        $this->dbType = $dbConfig->driver == 'mysql' ? 'mysqldump' : 'pgdump';
+        $parsed = Db::parseDsn($dbConfig->dsn);
+        $database = $parsed['dbname'] ?? '';
+        $driver = $parsed['driver'] ?? '';
+
+        $username = !empty($parsed['user']) ? $parsed['user'] : $dbConfig->user;
+        $password = !empty($parsed['password']) ? $parsed['password'] : $dbConfig->password;
+
+        $this->dbType = $driver == 'mysql' ? 'mysqldump' : 'pgdump';
         $dbSchema = Craft::$app->getDb()->getSchema();
 
         $excludeTables = explode(",", $this->settings->excludeData);
         $this->ignoreTables = '';
 
         foreach ($excludeTables as $key => $excludeTable) {
-            $excludeTable = $dbConfig->database.'.'.$dbSchema->getRawTableName('{{%'.trim($excludeTable).'}}');
+            $excludeTable = $database.'.'.$dbSchema->getRawTableName('{{%'.trim($excludeTable).'}}');
 
             if ($key == 0) {
                 $this->ignoreTables .= $excludeTable;
@@ -69,11 +77,11 @@ class DatabaseBackup extends BackupType
             }
         }
 
-        $this->database = $dbConfig->database;
-        $this->host = $dbConfig->server;
-        $this->user = $dbConfig->user;
-        $this->password = $dbConfig->password;
-        $this->port = $dbConfig->port;
+        $this->database = $database;
+        $this->host = $parsed['host'] ?? '';
+        $this->user = $username;
+        $this->password = $password;
+        $this->port = $parsed['port'] ?? '';
         $this->dirName = Backup::$app->backups->getDatabasePath();
     }
 
