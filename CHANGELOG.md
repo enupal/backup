@@ -1,5 +1,9 @@
 # Enupal Backup Changelog
 
+## 1.4.0 - 2020.03.24
+### Added
+- Added support for Craft CMS 3.4.x
+
 ## 1.3.7 - 2020.03.20
 ### Added
 - Added the `useExec` setting
