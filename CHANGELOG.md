@@ -7,7 +7,7 @@
 ### Fixed
  - Fixed issue with Amazon SQS queue service
  
- ### Removed
+### Removed
  - Removed "Run job in background" setting
 
 ## 1.4.0 - 2020.03.24
