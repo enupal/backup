@@ -137,5 +137,10 @@ class BackupVariable
     {
         Backup::$app->backups->processPendingBackups();
     }
+
+    public function getCraftPath()
+    {
+        return CRAFT_BASE_PATH;
+    }
 }
 

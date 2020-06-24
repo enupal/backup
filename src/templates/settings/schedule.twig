@@ -13,6 +13,7 @@
 {% set settings = craft.enupalbackup.getSettings() %}
 {% set fullPageForm = true %}
 {% set saveShortcutRedirect = 'enupal-backup/settings/schedule' %}
+{% set craftPath = craft.enupalbackup.getCraftPath() %}
 
 {% set saveButton %}
 	<div class="buttons">
@@ -31,7 +32,7 @@
 		{% namespace 'settings' %}
 			{{ forms.field({
 				label: "Webhook"|t('enupal-backup')|upper,
-				instructions: "Enupal Backup provides you a webhook to schedule your backups, here is an example how to do it with <a target='_blank' href='https://de.wikipedia.org/wiki/Cron'>Cron.</a> Adding one of the following lines to your crontab will execute your backup every morning at 3:10 AM."|t('enupal-backup'),
+				instructions: "Enupal Backup provides you a webhook to schedule your backups, here is an example how to do it with <a target='_blank' href='https://de.wikipedia.org/wiki/Cron'>Cron.</a> Adding one of the following lines to your crontab will execute your backup every morning at 3:11 AM."|t('enupal-backup'),
 			}, null) }}
 			<hr>
 
@@ -78,7 +79,8 @@
 # *      *    *    *    *
 
 # Enupal Backup Webhook
-10     3    *    *    *  wget {{webhookUrl}} -O /dev/null
+10     3    *    *    *  curl --request GET '{{webhookUrl}}'
+11     3    *    *    *  cd {{ craftPath }} && php craft queue/run
 
 				</pre>
 		</div>
