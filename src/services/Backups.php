@@ -85,56 +85,7 @@ class Backups extends Component
         // Add our CreateBackup job to the queue
         Craft::$app->queue->push(new CreateBackup());
 
-        if (Backup::$app->settings->isWindows()) {
-            if (Craft::$app->getRequest()->isSiteRequest) {
-                Craft::$app->getQueue()->run();
-                $response['message'] = 'running';
-            }
-        } else {
-            // if is Linux try to call queue/run
-            if ($settings->runJobInBackground){
-                $this->runQueueInBackground();
-            }else{
-                Craft::$app->getQueue()->run();
-            }
-            $response['message'] = 'running';
-        }
-
         return $response;
-    }
-
-    /**
-     * @return bool
-     */
-    public function runQueueInBackground()
-    {
-        $success = false;
-        $settings = Backup::$app->settings->getSettings();
-        if (!Backup::$app->settings->isWindows()) {
-            $shellCommand = new ShellCommand();
-            // We have better error messages with exec
-            if (function_exists('exec') && $settings->useExec) {
-                $shellCommand->captureStdErr = false;
-                Craft::info('useExec is enabled on running the queue on background', __METHOD__);
-                $shellCommand->useExec = true;
-            }
-            $craftPath = CRAFT_BASE_PATH;
-            $phpPath = Backup::$app->backups->getPhpPath();
-
-            $command = 'cd' .
-                ' ' . $craftPath;
-            $command .= ' && ' . $phpPath .
-                ' ./craft' .
-                ' queue/run';
-            //$command .= ' > /dev/null 2>&1 &';
-
-            Craft::info('Queue Command: ' . $command, __METHOD__);
-            $shellCommand->setCommand($command);
-            $success = $shellCommand->execute();
-            Craft::info('Queue Command Result: ' . $success, __METHOD__);
-        }
-
-        return $success;
     }
 
     /**
@@ -344,7 +295,7 @@ class Backups extends Component
 
         $primarySiteUrl = Craft::getAlias($primarySite['baseUrl']);
 
-        $settings['primarySiteUrl'] = $primarySiteUrl;
+        $settings['primarySiteUrl'] = Craft::parseEnv(Craft::getAlias(rtrim(trim($primarySiteUrl), "/")));;
 
         Craft::$app->getPlugins()->savePluginSettings(Backup::getInstance(), $settings);
     }
@@ -493,7 +444,6 @@ class Backups extends Component
         if ($pendingBackups) {
             $checkPendingBackups->pendingBackups = $pendingBackups;
             Craft::$app->queue->push($checkPendingBackups);
-            Craft::$app->queue->run();
         }
     }
 
