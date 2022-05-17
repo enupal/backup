@@ -30,7 +30,7 @@ class CreateBackup extends BaseJob
      *
      * @return string
      */
-    protected function defaultDescription(): string
+    protected function defaultDescription(): ?string
     {
         return Backup::t('Creating backup');
     }
@@ -38,7 +38,7 @@ class CreateBackup extends BaseJob
     /**
      * @inheritdoc
      */
-    public function execute($queue)
+    public function execute($queue): void
     {
         $totalSteps = 2;
         $this->_backup = Backup::$app->backups->initializeBackup();

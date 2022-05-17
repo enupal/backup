@@ -16,7 +16,7 @@ use enupal\backup\Backup;
 
 class WebhookController extends BaseController
 {
-    protected $allowAnonymous = true;
+    protected array|int|bool $allowAnonymous = true;
 
     // Disable CSRF validation for the entire controller
     public $enableCsrfValidation = false;

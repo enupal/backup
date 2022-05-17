@@ -31,17 +31,17 @@ class Backup extends Plugin
     /**
      * @inheritdoc
      */
-    public $hasCpSection = true;
+    public bool $hasCpSection = true;
 
     /**
      * @inheritdoc
      */
-    public $hasCpSettings = true;
+    public bool $hasCpSettings = true;
 
     /**
      * @inheritdoc
      */
-    public $schemaVersion = '1.2.0';
+    public string $schemaVersion = '1.2.0';
 
     public function init()
     {
@@ -79,7 +79,7 @@ class Backup extends Plugin
      * @throws \yii\base\Exception
      * @throws \yii\db\Exception
      */
-    protected function afterInstall()
+    protected function afterInstall(): void
     {
         self::$app->backups->installDefaultValues();
     }
@@ -90,7 +90,7 @@ class Backup extends Plugin
      * @return bool Whether the plugin should be Uninstalled
      * @throws \Throwable
      */
-    protected function beforeUninstall(): bool
+    protected function beforeUninstall(): void
     {
         $backups = self::$app->backups->getAllBackups();
 
@@ -101,12 +101,12 @@ class Backup extends Plugin
         return true;
     }
 
-    protected function createSettingsModel()
+    protected function createSettingsModel(): ?\craft\base\Model
     {
         return new Settings();
     }
 
-    public function getCpNavItem()
+    public function getCpNavItem(): ?array
     {
         $parent = parent::getCpNavItem();
         return array_merge($parent, [
@@ -127,10 +127,10 @@ class Backup extends Plugin
      * Settings HTML
      *
      * @return string
-     * @throws \Twig_Error_Loader
+     * @throws \Twig\Error\LoaderError
      * @throws \yii\base\Exception
      */
-    protected function settingsHtml()
+    protected function settingsHtml(): ?string
     {
         return Craft::$app->getView()->renderTemplate('enupal-backup/settings/index');
     }
