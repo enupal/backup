@@ -30,7 +30,7 @@ class CreateBackup extends BaseJob
      *
      * @return string
      */
-    protected function defaultDescription(): string
+    protected function defaultDescription(): ?string
     {
         return Backup::t('Creating backup');
     }
@@ -38,7 +38,7 @@ class CreateBackup extends BaseJob
     /**
      * @inheritdoc
      */
-    public function execute($queue)
+    public function execute($queue): void
     {
         $totalSteps = 2;
         $this->_backup = Backup::$app->backups->initializeBackup();
@@ -59,8 +59,6 @@ class CreateBackup extends BaseJob
             $error = '02 - Could not create Enupal Backup: '.$e->getMessage().' --Trace: '.$e->getTraceAsString();
             $this->updateBackupToError($error);
         }
-        // let's dont return false if the backup fails we'll know it
-        return true;
     }
 
 

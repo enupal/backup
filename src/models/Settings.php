@@ -391,11 +391,10 @@ class Settings extends Model
     /**
      * @inheritdoc
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             ['backupsAmount', 'integer', 'min' => 1, 'on' => 'general'],
-            ['primarySiteUrl', 'required', 'on' => 'general'],
             ['primarySiteUrl', 'url', 'on' => 'general'],
             [['backupsAmount'], 'required', 'on' => 'general'],
             [

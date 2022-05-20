@@ -22,7 +22,7 @@ class App extends Component
      */
     public $settings;
 
-    public function init()
+    public function init(): void
     {
         $this->backups = new Backups();
         $this->settings = new Settings();

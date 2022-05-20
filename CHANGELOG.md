@@ -1,5 +1,10 @@
 # Enupal Backup Changelog
 
+## 2.0.0 - 2022.05.20
+
+### Added
+- Added Craft CMS 4 support
+
 ## 1.5.0 - 2020.06.24
 
 > {tip} This release fixes an issue with Amazon SQS queue service, if you have scheduled backups via Webhook you need to add an additional cronjob, instructions under Enupal Backup -> Settings -> Schedule [docs](https://docs.enupal.com/enupal-backup/schedule/webhook.html). We recommend update to this version as the performance is improved. Enjoy!

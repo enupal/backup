@@ -282,24 +282,6 @@ class Backups extends Component
         return $success;
     }
 
-    public function installDefaultValues()
-    {
-        $model = new SettingsModel();
-        $settings = $model->getAttributes();
-
-        $primarySite = (new Query())
-            ->select(['baseUrl'])
-            ->from(['{{%sites}}'])
-            ->where(['primary' => 1])
-            ->one();
-
-        $primarySiteUrl = Craft::getAlias($primarySite['baseUrl']);
-
-        $settings['primarySiteUrl'] = Craft::parseEnv(Craft::getAlias(rtrim(trim($primarySiteUrl), "/")));;
-
-        Craft::$app->getPlugins()->savePluginSettings(Backup::getInstance(), $settings);
-    }
-
     /**
      * This function creates a default backup and generates the id
      *
@@ -310,9 +292,9 @@ class Backups extends Component
      */
     public function initializeBackup()
     {
-        $info = Craft::$app->getInfo();
+        $primarySite = Craft::$app->getSites()->getPrimarySite();
         $systemName = FileHelper::sanitizeFilename(
-            $info->name,
+            $primarySite->getName(),
             [
                 'asciiOnly' => true,
                 'separator' => '_'

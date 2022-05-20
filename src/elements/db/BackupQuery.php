@@ -16,8 +16,6 @@ class BackupQuery extends ElementQuery
 
     // General - Properties
     // =========================================================================
-    public $id;
-    public $dateCreated;
     public $backupId;
     public $backupStatusId;
 

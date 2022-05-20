@@ -3,7 +3,7 @@
 	<img width="212" height="212" src="https://enupal.com/assets/docs/backup-icon.svg" alt="Enupal Backup"></a>
 </p>
 
-# Enupal Backup Plugin for Craft CMS 3.x
+# Enupal Backup Plugin for Craft CMS
 
 Fully integrated Backup solution for Craft CMS
 

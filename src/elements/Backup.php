@@ -25,11 +25,6 @@ use enupal\backup\Backup as BackupPlugin;
 class Backup extends Element
 {
     /**
-     * @var integer
-     */
-    public $id;
-
-    /**
      * @var string
      */
     public $backupId;
@@ -168,7 +163,7 @@ class Backup extends Element
     /**
      * @inheritdoc
      */
-    public static function refHandle()
+    public static function refHandle(): ?string
     {
         return 'backups';
     }
@@ -208,7 +203,7 @@ class Backup extends Element
     /**
      * @inheritdoc
      */
-    public function getCpEditUrl()
+    public function getCpEditUrl(): ?string
     {
         return UrlHelper::cpUrl(
             'enupal-backup/backup/view/'.$this->id
@@ -221,7 +216,7 @@ class Backup extends Element
      * @return string
      */
     /** @noinspection PhpInconsistentReturnPointsInspection */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->backupId;
     }
@@ -240,7 +235,7 @@ class Backup extends Element
      *
      * @return string|null
      */
-    public function getStatus()
+    public function getStatus(): ?string
     {
         $statusId = $this->backupStatusId;
 
@@ -527,7 +522,7 @@ class Backup extends Element
      * @inheritdoc
      * @throws \Exception if reasons
      */
-    public function afterSave(bool $isNew)
+    public function afterSave(bool $isNew): void
     {
         // Get the Backup record
         if (!$isNew) {
