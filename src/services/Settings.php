@@ -10,6 +10,7 @@ namespace enupal\backup\services;
 
 use Craft;
 use craft\db\Query;
+use craft\helpers\App as CraftApp;
 use craft\helpers\UrlHelper;
 use yii\base\Component;
 use craft\volumes\Local;
@@ -55,8 +56,27 @@ class Settings extends Component
     public function getSettings()
     {
         $backupPlugin = $this->getPlugin();
+        /** @var SettingsModel $settings */
+        $settings = $backupPlugin->getSettings();
 
-        return $backupPlugin->getSettings();
+        if (empty($settings->primarySiteUrl) || !UrlHelper::isFullUrl($settings->primarySiteUrl)) {
+            $settings->primarySiteUrl = $this->getPrimaryUrl();
+        }
+
+        return $settings;
+    }
+
+    private function getPrimaryUrl()
+    {
+        $primarySite = (new Query())
+            ->select(['baseUrl'])
+            ->from(['{{%sites}}'])
+            ->where(['primary' => 1])
+            ->one();
+
+        $primarySiteUrl = Craft::getAlias($primarySite['baseUrl']);
+
+        return CraftApp::parseEnv(Craft::getAlias(rtrim(trim($primarySiteUrl), "/")));
     }
 
     /**

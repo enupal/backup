@@ -33,7 +33,7 @@ class ProcessPendingBackups extends BaseJob
      *
      * @return string
      */
-    protected function defaultDescription(): string
+    protected function defaultDescription(): ?string
     {
         return Backup::t('Checking pending backups');
     }
@@ -41,7 +41,7 @@ class ProcessPendingBackups extends BaseJob
     /**
      * @inheritdoc
      */
-    public function execute($queue)
+    public function execute($queue): void
     {
         $this->pendingBackups = $this->pendingBackups ?? Backup::$app->backups->getPendingBackups();
         $totalSteps = count($this->pendingBackups);
@@ -68,7 +68,5 @@ class ProcessPendingBackups extends BaseJob
         } catch (\Exception $e) {
             Craft::error('Error on pending backups: '.$e->getMessage());
         }
-
-        return true;
     }
 }
