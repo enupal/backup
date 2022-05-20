@@ -76,15 +76,6 @@ class Backup extends Plugin
     }
 
     /**
-     * @throws \yii\base\Exception
-     * @throws \yii\db\Exception
-     */
-    protected function afterInstall(): void
-    {
-        self::$app->backups->installDefaultValues();
-    }
-
-    /**
      * Performs actions before the plugin is Uninstalled.
      *
      * @return bool Whether the plugin should be Uninstalled
@@ -97,8 +88,6 @@ class Backup extends Plugin
         foreach ($backups as $key => $backup) {
             Craft::$app->elements->deleteElementById($backup->id);
         }
-
-        return true;
     }
 
     protected function createSettingsModel(): ?\craft\base\Model

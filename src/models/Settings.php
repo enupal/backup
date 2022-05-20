@@ -395,7 +395,6 @@ class Settings extends Model
     {
         return [
             ['backupsAmount', 'integer', 'min' => 1, 'on' => 'general'],
-            ['primarySiteUrl', 'required', 'on' => 'general'],
             ['primarySiteUrl', 'url', 'on' => 'general'],
             [['backupsAmount'], 'required', 'on' => 'general'],
             [

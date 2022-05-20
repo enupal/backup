@@ -25,11 +25,6 @@ use enupal\backup\Backup as BackupPlugin;
 class Backup extends Element
 {
     /**
-     * @var integer
-     */
-    public ?int $id;
-
-    /**
      * @var string
      */
     public $backupId;

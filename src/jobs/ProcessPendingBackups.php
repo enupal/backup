@@ -68,7 +68,5 @@ class ProcessPendingBackups extends BaseJob
         } catch (\Exception $e) {
             Craft::error('Error on pending backups: '.$e->getMessage());
         }
-
-        return true;
     }
 }

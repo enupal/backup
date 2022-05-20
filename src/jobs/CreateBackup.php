@@ -59,8 +59,6 @@ class CreateBackup extends BaseJob
             $error = '02 - Could not create Enupal Backup: '.$e->getMessage().' --Trace: '.$e->getTraceAsString();
             $this->updateBackupToError($error);
         }
-        // let's dont return false if the backup fails we'll know it
-        return true;
     }
 
 
