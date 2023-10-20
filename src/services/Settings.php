@@ -10,10 +10,11 @@ namespace enupal\backup\services;
 
 use Craft;
 use craft\db\Query;
+use craft\fs\Local;
 use craft\helpers\App as CraftApp;
 use craft\helpers\UrlHelper;
+use craft\models\Volume;
 use yii\base\Component;
-use craft\volumes\Local;
 use Google_Client;
 use Google_Service_Drive;
 use enupal\backup\models\Settings as SettingsModel;
@@ -105,8 +106,13 @@ class Settings extends Component
         $volumes = Craft::$app->getVolumes()->getAllVolumes();
         $response = [];
 
+        /**
+         * @var  $key
+         * @var Volume $volume
+         */
         foreach ($volumes as $key => $volume) {
-            if (get_class($volume) == Local::class) {
+            $fs = $volume->getFs();
+            if (get_class($fs) == Local::class) {
                 $response[] = [
                     'value' => $volume->id,
                     'label' => $volume->name
@@ -125,8 +131,13 @@ class Settings extends Component
         $volumes = Craft::$app->getVolumes()->getAllVolumes();
         $response = [];
 
+        /**
+         * @var  $key
+         * @var Volume $volume
+         */
         foreach ($volumes as $key => $volume) {
-            if (get_class($volume) == Local::class) {
+            $fs = $volume->getFs();
+            if (get_class($fs) == Local::class) {
                 $response[] = $volume;
             }
         }
