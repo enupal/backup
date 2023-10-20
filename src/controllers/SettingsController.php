@@ -11,6 +11,7 @@ namespace enupal\backup\controllers;
 use Craft;
 use craft\web\Controller as BaseController;
 use enupal\backup\Backup;
+use yii\web\ForbiddenHttpException;
 
 class SettingsController extends BaseController
 {
@@ -23,6 +24,11 @@ class SettingsController extends BaseController
      */
     public function actionSaveSettings()
     {
+        // Make sure admin changes are allowed
+        if (!Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
+            throw new ForbiddenHttpException('Administrative changes are disallowed in this environment.');
+        }
+
         $this->requirePostRequest();
         $request = Craft::$app->getRequest();
         $settings = $request->getBodyParam('settings');

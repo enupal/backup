@@ -98,18 +98,23 @@ class Backup extends Plugin
     public function getCpNavItem(): ?array
     {
         $parent = parent::getCpNavItem();
-        return array_merge($parent, [
+        $current = array_merge($parent, [
             'subnav' => [
                 'backups' => [
                     "label" => Backup::t("Backups"),
                     "url" => 'enupal-backup/backups'
-                ],
-                'settings' => [
-                    "label" => Backup::t("Settings"),
-                    "url" => 'enupal-backup/settings'
                 ]
             ]
         ]);
+
+        if (Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
+            $current['subnav']['settings'] = [
+                "label" => Backup::t("Settings"),
+                "url" => 'enupal-backup/settings'
+            ];
+        }
+
+        return $current;
     }
 
     /**

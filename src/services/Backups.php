@@ -10,6 +10,7 @@ namespace enupal\backup\services;
 
 use Craft;
 use craft\db\Query;
+use craft\fs\Local;
 use craft\mail\Message;
 use enupal\backup\events\NotificationEvent;
 use enupal\backup\jobs\ProcessPendingBackups;
@@ -27,7 +28,6 @@ use Google_Service_Drive_DriveFile;
 
 use craft\helpers\FileHelper;
 use craft\errors\ShellCommandException;
-use craft\volumes\Local;
 use craft\helpers\App as CraftApp;
 use mikehaertl\shellcommand\Command as ShellCommand;
 use yii\base\Exception;
@@ -666,13 +666,15 @@ class Backups extends Component
                 $assets = Backup::$app->settings->getAllLocalVolumesObjects();
             }
         }
+
         // Adding the assets
         $assetFileNames = [];
         foreach ($assets as $key => $asset) {
             // Supports local volumes for now.
-            if (get_class($asset) == Local::class) {
+            $fs = $asset->getFs();
+            if (get_class($fs) == Local::class) {
                 // Check if the path exists
-                if (is_dir($asset->getRootPath())) {
+                if (is_dir($fs->getRootPath())) {
                     // So we need store assets files as json could be more than one
                     $assetName = 'assets-' . $asset->handle . '-' . $backup->backupId . $this->getCompressType();
                     $assetFileName = $assetName;
@@ -685,7 +687,7 @@ class Backups extends Component
 
                     $assetBackup = new DirectoryBackup();
                     $assetBackup->name = 'Asset' . $asset->id;
-                    $assetBackup->path = $asset->getRootPath();
+                    $assetBackup->path = $fs->getRootPath();
                     $assetBackup->fileName = $assetName;
                     $assetBackup->dirName = $this->getAssetsPath();
                     $assetBackup->syncs = $syncs;

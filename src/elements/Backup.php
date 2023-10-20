@@ -11,6 +11,7 @@ namespace enupal\backup\elements;
 use Craft;
 use craft\base\Element;
 use craft\elements\db\ElementQueryInterface;
+use craft\elements\User;
 use craft\helpers\UrlHelper;
 use craft\elements\actions\Delete;
 
@@ -247,6 +248,14 @@ class Backup extends Element
     /**
      * @inheritdoc
      */
+    public function canView(User $user): bool
+    {
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected static function defineSources(string $context = null): array
     {
         $sources = [
@@ -320,7 +329,6 @@ class Backup extends Element
     protected static function defineTableAttributes(): array
     {
         $attributes = [];
-        $attributes['backupId'] = ['label' => BackupPlugin::t('Backup Id')];
         $attributes['size'] = ['label' => BackupPlugin::t('Size')];
         $attributes['dateCreated'] = ['label' => BackupPlugin::t('Date')];
         $attributes['status'] = ['label' => BackupPlugin::t('Status')];
@@ -330,7 +338,7 @@ class Backup extends Element
 
     protected static function defineDefaultTableAttributes(string $source): array
     {
-        $attributes = ['backupId', 'size', 'dateCreated', 'status'];
+        $attributes = ['size', 'dateCreated', 'status'];
 
         return $attributes;
     }

@@ -1,5 +1,17 @@
 # Enupal Backup Changelog
 
+## 2.1.0 - 2023.10.20
+
+### Added
+- Added support to remove settings when `allowAdminChanges` is disabled ([#46])
+
+### Fixed
+- Fixed bug where assets were not added on backups ([#45])
+- Fixed bug where the backup ID link disappears on the Backups view on the CP.
+
+[#45]: https://github.com/enupal/stripe/issues/45
+[#46]: https://github.com/enupal/stripe/issues/46
+
 ## 2.0.0 - 2022.05.20
 
 ### Added
