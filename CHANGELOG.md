@@ -1,5 +1,13 @@
 # Enupal Backup Changelog
 
+## 2.2.0 - 2023.10.30
+
+### Fixed
+- Fixed issue when uploading large backups to S3 ([#48])
+- Fixed issue where can delete multiple backups on index page
+
+[#48]: https://github.com/enupal/stripe/issues/48
+
 ## 2.1.0 - 2023.10.20
 
 ### Added
