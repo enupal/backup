@@ -1,5 +1,12 @@
 # Enupal Backup Changelog
 
+## 1.6.0 - 2023.10.30
+
+### Fixed
+- Fixed issue when uploading large backups to S3 ([#48])
+
+[#48]: https://github.com/enupal/stripe/issues/48
+
 ## 1.5.0 - 2020.06.24
 
 > {tip} This release fixes an issue with Amazon SQS queue service, if you have scheduled backups via Webhook you need to add an additional cronjob, instructions under Enupal Backup -> Settings -> Schedule [docs](https://docs.enupal.com/enupal-backup/schedule/webhook.html). We recommend update to this version as the performance is improved. Enjoy!
