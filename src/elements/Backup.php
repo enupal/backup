@@ -306,6 +306,14 @@ class Backup extends Element
     /**
      * @inheritdoc
      */
+    public function canDelete(User $user): bool
+    {
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected static function defineSearchableAttributes(): array
     {
         return ['backupId'];
