@@ -354,7 +354,7 @@ class Backup extends Element
     /**
      * @inheritdoc
      */
-    protected function tableAttributeHtml(string $attribute): string
+    protected function attributeHtml(string $attribute): string
     {
         switch ($attribute) {
             case 'size':
