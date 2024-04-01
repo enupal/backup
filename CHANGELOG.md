@@ -1,5 +1,10 @@
 # Enupal Backup Changelog
 
+## 3.0.0 - 2024.04.01
+
+### Added
+- Added Craft CMS 5 support
+
 ## 2.2.0 - 2023.10.30
 
 ### Fixed
