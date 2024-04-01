@@ -10,8 +10,10 @@ namespace enupal\backup\elements;
 
 use Craft;
 use craft\base\Element;
+use craft\base\NestedElementInterface;
 use craft\elements\db\ElementQueryInterface;
 use craft\elements\User;
+use craft\events\AuthorizationCheckEvent;
 use craft\helpers\UrlHelper;
 use craft\elements\actions\Delete;
 
@@ -322,10 +324,10 @@ class Backup extends Element
     /**
      * @inheritdoc
      */
-    protected static function defineSortOptions(): array
+    public static function sortOptions(): array
     {
         $attributes = [
-            'elements.dateCreated' => BackupPlugin::t('Date Created')
+            'dateCreated' => BackupPlugin::t('Date Created')
         ];
 
         return $attributes;
@@ -389,7 +391,7 @@ class Backup extends Element
                 }
         }
 
-        return parent::tableAttributeHtml($attribute);
+        return parent::attributeHtml($attribute);
     }
 
     /**
